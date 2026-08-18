@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexoTerraCore</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --fundo: #071426;
+      --painel: #132e4d;
+      --campo: #0b1e33;
+      --dourado: #f4c542;
+      --dourado-escuro: #8b6800;
+      --texto: #f8fafc;
+      --texto-suave: #cbd5e1;
+      --borda: #3d6b91;
+      --sucesso: #7ee787;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      color: var(--texto);
+      background: linear-gradient(160deg, #071426, #0f2742);
+    }
+
+    header {
+      padding: 28px 5%;
+      border-bottom: 2px solid var(--dourado-escuro);
+    }
+
+    header h1 {
+      margin: 0;
+      color: var(--dourado);
+      font-size: clamp(30px, 5vw, 48px);
+    }
+
+    header p {
+      margin: 6px 0 0;
+      color: var(--texto-suave);
+      font-size: 20px;
+    }
+
+    main {
+      width: min(92%, 900px);
+      margin: 45px auto;
+      padding: 32px;
+      background: var(--painel);
+      border: 1px solid var(--borda);
+      border-radius: 18px;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: clamp(28px, 4vw, 40px);
+    }
+
+    h3 {
+      margin-top: 32px;
+      color: var(--dourado);
+    }
+
+    p {
+      color: var(--texto-suave);
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .resumo {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 25px 0;
+    }
+
+    .indicador {
+      padding: 18px;
+      background: var(--campo);
+      border: 1px solid var(--borda);
+      border-radius: 10px;
+    }
+
+    .indicador strong {
+      display: block;
+      color: var(--dourado);
+      font-size: 24px;
+    }
+
+    .indicador span {
+      color: var(--texto-suave);
+    }
+
+    .modulos {
+      display: grid;
+      gap: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 18px;
+      color: var(--texto);
+      background: var(--dourado-escuro);
+      border: 0;
+      border-radius: 10px;
+      font-size: 19px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #a77e00;
+    }
+
+    button.secundario {
+      background: #294b6d;
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      margin-top: 8px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 15px;
+      color: var(--texto);
+      background: var(--campo);
+      border: 1px solid #5b7794;
+      border-radius: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid var(--dourado);
+      border-color: var(--dourado);
+    }
+
+    .mensagem {
+      color: var(--sucesso);
+      font-weight: bold;
+    }
+
+    .historico {
+      display: grid;
+      gap: 10px;
+    }
+
+    .registro {
+      padding: 15px;
+      background: var(--campo);
+      border-left: 4px solid var(--dourado);
+      border-radius: 8px;
+    }
+
+    .registro strong {
+      color: var(--texto);
+    }
+
+    .registro span {
+      display: block;
+      margin-top: 5px;
+      color: var(--texto-suave);
+    }
+
+    @media (max-width: 600px) {
+      main {
+        width: 94%;
+        margin: 22px auto;
+        padding: 22px;
+      }
+
+      .resumo {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>NexoTerraCore</h1>
+    <p>Fazenda Digital</p>
+  </header>
+
+  <main id="painel"></main>
+
+  <script>
+    function ler(chave) {
+      return JSON.parse(localStorage.getItem(chave)) || [];
+    }
+
+    function gravar(chave, registro) {
+      const registros = ler(chave);
+      registros.push(registro);
+      localStorage.setItem(chave, JSON.stringify(registros));
+    }
+
+    function hoje() {
+      return new Date().toISOString().split("T")[0];
+    }
+
+    function dinheiro(valor) {
+      return Number(valor).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+    }
+
+    function escapar(texto) {
+      return String(texto)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function abrirPainel() {
+      const producoes = ler("nexoterra_producao");
+      const financeiro = ler("nexoterra_financeiro");
+      const atividades = ler("nexoterra_atividades");
+      const diagnosticos = ler("nexoterra_diagnosticos");
+
+      const saldo = financeiro.reduce((total, item) => {
+        return item.tipo === "Receita"
+          ? total + Number(item.valor)
+          : total - Number(item.valor);
+      }, 0);
+
+      document.getElementById("painel").innerHTML = `
+        <h2>Gestão rural inteligente</h2>
+        <p>Produção, finanças e atividades em um único lugar.</p>
+
+        <section class="resumo">
+          <div class="indicador">
+            <strong>${producoes.length}</strong>
+            <span>Produções registradas</span>
+          </div>
+
+          <div class="indicador">
+            <strong>${dinheiro(saldo)}</strong>
+            <span>Saldo financeiro</span>
+          </div>
+
+          <div class="indicador">
+            <strong>${atividades.length}</strong>
+            <span>Atividades cadastradas</span>
+          </div>
+
+          <div class="indicador">
+            <strong>${diagnosticos.length}</strong>
+            <span>Diagnósticos registrados</span>
+          </div>
+        </section>
+
+        <section class="modulos">
+          <button onclick="abrirProducao()">Produção</button>
+          <button onclick="abrirFinanceiro()">Financeiro</button>
+          <button onclick="abrirAtividades()">Atividades</button>
+          <button onclick="abrirDiagnostico()">Diagnóstico</button>
+        </section>
+      `;
+    }
+
+    function abrirProducao() {
+      const registros = ler("nexoterra_producao")
+        .slice()
+        .reverse()
+        .slice(0, 5);
+
+      const historico = registros.length
+        ? registros.map(item => `
+            <div class="registro">
+              <strong>${escapar(item.produto)} — ${item.quantidade}</strong>
+              <span>${escapar(item.data)}</span>
+            </div>
+          `).join("")
+        : "<p>Nenhuma produção registrada.</p>";
+
+      document.getElementById("painel").innerHTML = `
+        <h2>Cadastro de produção</h2>
+        <p>Registre a produção diária da propriedade.</p>
+
+        <form onsubmit="salvarProducao(event)">
+          <label>Produto</label>
+          <input name="produto" placeholder="Exemplo: ovos" required>
+
+          <label>Quantidade</label>
+          <input name="quantidade" type="number" min="1" required>
+
+          <label>Data</label>
+          <input name="data" type="date" value="${hoje()}" required>
+
+          <button type="submit">Salvar produção</button>
+          <button class="secundario" type="button" onclick="abrirPainel()">
+            Voltar ao painel
+          </button>
+        </form>
+
+        <p id="mensagem" class="mensagem"></p>
+
+        <h3>Últimas produções</h3>
+        <div class="historico">${historico}</div>
+      `;
+    }
+
+    function salvarProducao(evento) {
+      evento.preventDefault();
+      const form = evento.target;
+
+      gravar("nexoterra_producao", {
+        produto: form.produto.value,
+        quantidade: Number(form.quantidade.value),
+        data: form.data.value
+      });
+
+      abrirProducao();
+      document.getElementById("mensagem").textContent =
+        "Produção salva com sucesso.";
+    }
+
+    function abrirFinanceiro() {
+      const registros = ler("nexoterra_financeiro")
+        .slice()
+        .reverse()
+        .slice(0, 5);
+
+      const historico = registros.length
+        ? registros.map(item => `
+            <div class="registro">
+              <strong>${escapar(item.tipo)} — ${dinheiro(item.valor)}</strong>
+              <span>${escapar(item.descricao)} | ${escapar(item.data)}</span>
+            </div>
+          `).join("")
+        : "<p>Nenhum registro financeiro.</p>";
+
+      document.getElementById("painel").innerHTML = `
+        <h2>Registro financeiro</h2>
+        <p>Cadastre receitas e despesas da propriedade.</p>
+
+        <form onsubmit="salvarFinanceiro(event)">
+          <label>Tipo</label>
+          <select name="tipo" required>
+            <option value="">Selecione</option>
+            <option value="Receita">Receita</option>
+            <option value="Despesa">Despesa</option>
+          </select>
+
+          <label>Descrição</label>
+          <input name="descricao" placeholder="Exemplo: venda de ovos" required>
+
+          <label>Valor</label>
+          <input name="valor" type="number" min="0.01" step="0.01" required>
+
+          <label>Data</label>
+          <input name="data" type="date" value="${hoje()}" required>
+
+          <button type="submit">Salvar registro</button>
+          <button class="secundario" type="button" onclick="abrirPainel()">
+            Voltar ao painel
+          </button>
+        </form>
+
+        <p id="mensagem" class="mensagem"></p>
+
+        <h3>Últimos registros</h3>
+        <div class="historico">${historico}</div>
+      `;
+    }
+
+    function salvarFinanceiro(evento) {
+      evento.preventDefault();
+      const form = evento.target;
+
+      gravar("nexoterra_financeiro", {
+        tipo: form.tipo.value,
+        descricao: form.descricao.value,
+        valor: Number(form.valor.value),
+        data: form.data.value
+      });
+
+      abrirFinanceiro();
+      document.getElementById("mensagem").textContent =
+        "Registro financeiro salvo com sucesso.";
+    }
+
+    function abrirAtividades() {
+      const registros = ler("nexoterra_atividades")
+        .slice()
+        .reverse()
+        .slice(0, 5);
+
+      const historico = registros.length
+        ? registros.map(item => `
+            <div class="registro">
+              <strong>${escapar(item.atividade)}</strong>
+              <span>${escapar(item.responsavel)} | ${escapar(item.data)}</span>
+            </div>
+          `).join("")
+        : "<p>Nenhuma atividade cadastrada.</p>";
+
+      document.getElementById("painel").innerHTML = `
+        <h2>Atividades</h2>
+        <p>Organize tarefas, visitas e serviços da propriedade.</p>
+
+        <form onsubmit="salvarAtividade(event)">
+          <label>Atividade</label>
+          <input name="atividade" placeholder="Exemplo: recolher ovos" required>
+
+          <label>Responsável</label>
+          <input name="responsavel" placeholder="Nome do responsável" required>
+
+          <label>Data</label>
+          <input name="data" type="date" value="${hoje()}" required>
+
+          <button type="submit">Salvar atividade</button>
+          <button class="secundario" type="button" onclick="abrirPainel()">
+            Voltar ao painel
+          </button>
+        </form>
+
+        <p id="mensagem" class="mensagem"></p>
+
+        <h3>Últimas atividades</h3>
+        <div class="historico">${historico}</div>
+      `;
+    }
+
+    function salvarAtividade(evento) {
+      evento.preventDefault();
+      const form = evento.target;
+
+      gravar("nexoterra_atividades", {
+        atividade: form.atividade.value,
+        responsavel: form.responsavel.value,
+        data: form.data.value
+      });
+
+      abrirAtividades();
+      document.getElementById("mensagem").textContent =
+        "Atividade salva com sucesso.";
+    }
+
+    function abrirDiagnostico() {
+      const registros = ler("nexoterra_diagnosticos")
+        .slice()
+        .reverse()
+        .slice(0, 5);
+
+      const historico = registros.length
+        ? registros.map(item => `
+            <div class="registro">
+              <strong>${escapar(item.problema)} — ${escapar(item.prioridade)}</strong>
+              <span>${escapar(item.acao)}</span>
+            </div>
+          `).join("")
+        : "<p>Nenhum diagnóstico registrado.</p>";
+
+      document.getElementById("painel").innerHTML = `
+        <h2>Diagnóstico rural</h2>
+        <p>Registre problemas, prioridades e ações recomendadas.</p>
+
+        <form onsubmit="salvarDiagnostico(event)">
+          <label>Problema identificado</label>
+          <input name="problema" placeholder="Exemplo: baixa produção de ovos" required>
+
+          <label>Prioridade</label>
+          <select name="prioridade" required>
+            <option value="">Selecione</option>
+            <option value="Baixa">Baixa</option>
+            <option value="Média">Média</option>
+            <option value="Alta">Alta</option>
+          </select>
+
+          <label>Ação recomendada</label>
+          <textarea name="acao" placeholder="Descreva a solução proposta" required></textarea>
+
+          <button type="submit">Salvar diagnóstico</button>
+          <button class="secundario" type="button" onclick="abrirPainel()">
+            Voltar ao painel
+          </button>
+        </form>
+
+        <p id="mensagem" class="mensagem"></p>
+
+        <h3>Últimos diagnósticos</h3>
+        <div class="historico">${historico}</div>
+      `;
+    }
+
+    function salvarDiagnostico(evento) {
+      evento.preventDefault();
+      const form = evento.target;
+
+      gravar("nexoterra_diagnosticos", {
+        problema: form.problema.value,
+        prioridade: form.prioridade.value,
+        acao: form.acao.value
+      });
+
+      abrirDiagnostico();
+      document.getElementById("mensagem").textContent =
+        "Diagnóstico salvo com sucesso.";
+    }
+
+    abrirPainel();
+  </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  color: #f8fafc;
+  background: linear-gradient(160deg, #071426, #0f2742);
+}
+
+header {
+  padding: 28px 20px;
+  border-bottom: 2px solid #d4a72c;
+}
+
+header h1 {
+  margin: 0;
+  color: #f4c542;
+  font-size: 32px;
+}
+
+header p {
+  margin: 6px 0 0;
+  font-size: 18px;
+}
+
+main {
+  width: min(92%, 700px);
+  margin: 50px auto;
+  padding: 30px;
+  background: #132e4d;
+  border: 1px solid #315474;
+  border-radius: 18px;
+}
+
+main h2 {
+  margin-top: 0;
+  font-size: 30px;
+}
+
+main p {
+  color: #cbd5e1;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+button {
+  width: 100%;
+  margin-top: 14px;
+  padding: 18px;
+  color: #071426;
+  background: #f4c542;
+  border: 0;
+  border-radius: 10px;
+  font-size: 19px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #ffd968;
+}
+form {
+  display: grid;
+  gap: 12px;
+}
+
+label {
+  display: block;
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  color: #f8fafc;
+  background: #0b1e33;
+  border: 1px solid #5b7794;
+  border-radius: 8px;
+  font-size: 18px;
+}
+
+input:focus {
+  outline: 2px solid #f4c542;
+  border-color: #f4c542;
+}
+
+#mensagem {
+  color: #7ee787;
+  font-size: 18px;
+  font-weight: bold;
+}
