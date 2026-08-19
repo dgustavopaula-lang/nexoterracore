@@ -6,105 +6,136 @@ require("dotenv").config();
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
-const databaseConfigurado = Boolean(process.env.DATABASE_URL);
 
-const pool = databaseConfigurado
-  ? new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl:
-        process.env.NODE_ENV === "production"
-          ? { rejectUnauthorized: false }
-          : false
-    })
-  : null;
+if (!process.env.DATABASE_URL) {
+  console.error("DATABASE_URL não configurada.");
+  process.exit(1);
+}
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl:
+    process.env.NODE_ENV === "production"
+      ? { rejectUnauthorized: false }
+      : false
+});
 
 app.use(helmet());
+
 app.use(
   cors({
     origin: process.env.FRONTEND_ORIGIN || "http://127.0.0.1:5500"
   })
 );
+
 app.use(express.json({ limit: "200kb" }));
 
 app.get("/api/health", async (req, res) => {
-  let banco = "não configurado";
+  try {
+    await pool.query("SELECT 1");
 
-  if (pool) {
-    try {
-      await pool.query("SELECT 1");
-      banco = "conectado";
-    } catch {
-      banco = "erro de conexão";
-    }
-  }
+    res.json({
+      sistema: "NexoTerraCore",
+      api: "online",
+      banco: "conectado",
+      horario: new Date().toISOString()
+    });
+  } catch (erro) {
+    console.error(erro);
 
-  res.json({
-    sistema: "NexoTerraCore",
-    api: "online",
-    banco,
-    horario: new Date().toISOString()
-  });
-});
-
-
-
-
-app.get("/api/maquinas", async (req, res) => {
-  if (!pool) {
-    return res.status(503).json({
-      erro: "Banco de dados ainda não configurado."
+    res.status(503).json({
+      sistema: "NexoTerraCore",
+      api: "online",
+      banco: "erro de conexão"
     });
   }
+});
 
+app.get("/api/maquinas", async (req, res) => {
   try {
-    const resultado = await pool.query(
-      `SELECT id, nome, modelo, numero_serie, horimetro,
-              proxima_revisao, status, criado_em
-       FROM maquinas
-       ORDER BY criado_em DESC`
-    );
+    const resultado = await pool.query(`
+      SELECT
+        id,
+        nome,
+        modelo,
+        numero_serie,
+        operacao,
+        horimetro,
+        proxima_revisao,
+        combustivel,
+        data_operacao,
+        observacao,
+        status,
+        criado_em
+      FROM maquinas
+      ORDER BY criado_em DESC
+    `);
 
     res.json(resultado.rows);
   } catch (erro) {
     console.error(erro);
-    res.status(500).json({ erro: "Não foi possível consultar as máquinas." });
+
+    res.status(500).json({
+      erro: "Não foi possível consultar as máquinas."
+    });
   }
 });
 
 app.post("/api/maquinas", async (req, res) => {
-  if (!pool) {
-    return res.status(503).json({
-      erro: "Banco de dados ainda não configurado."
-    });
-  }
-
   const {
-    nome,
+    maquina,
     modelo = "",
     numeroSerie = "",
-    horimetro = 0,
-    proximaRevisao = 0,
+    operacao,
+    horimetro,
+    proximaRevisao,
+    combustivel,
+    data,
+    observacao = "",
     status = "Ativa"
   } = req.body;
 
-  if (!nome || Number(horimetro) < 0 || Number(proximaRevisao) < 0) {
+  if (
+    !maquina ||
+    !operacao ||
+    !data ||
+    Number(horimetro) < 0 ||
+    Number(proximaRevisao) < 0 ||
+    Number(combustivel) < 0
+  ) {
     return res.status(400).json({
-      erro: "Informe um nome e valores válidos de horímetro."
+      erro: "Preencha os dados obrigatórios com valores válidos."
     });
   }
 
   try {
     const resultado = await pool.query(
-      `INSERT INTO maquinas
-       (nome, modelo, numero_serie, horimetro, proxima_revisao, status)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING *`,
+      `
+        INSERT INTO maquinas (
+          nome,
+          modelo,
+          numero_serie,
+          operacao,
+          horimetro,
+          proxima_revisao,
+          combustivel,
+          data_operacao,
+          observacao,
+          status
+        )
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+        RETURNING *
+      `,
       [
-        nome.trim(),
+        maquina.trim(),
         modelo.trim(),
         numeroSerie.trim(),
+        operacao,
         Number(horimetro),
         Number(proximaRevisao),
+        Number(combustivel),
+        data,
+        observacao.trim(),
         status
       ]
     );
@@ -112,7 +143,39 @@ app.post("/api/maquinas", async (req, res) => {
     res.status(201).json(resultado.rows[0]);
   } catch (erro) {
     console.error(erro);
-    res.status(500).json({ erro: "Não foi possível cadastrar a máquina." });
+
+    res.status(500).json({
+      erro: "Não foi possível salvar o registro da máquina."
+    });
+  }
+});
+
+app.delete("/api/maquinas/:id", async (req, res) => {
+  const id = Number(req.params.id);
+
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ erro: "Identificador inválido." });
+  }
+
+  try {
+    const resultado = await pool.query(
+      "DELETE FROM maquinas WHERE id = $1 RETURNING id",
+      [id]
+    );
+
+    if (!resultado.rowCount) {
+      return res.status(404).json({
+        erro: "Registro não encontrado."
+      });
+    }
+
+    res.status(204).end();
+  } catch (erro) {
+    console.error(erro);
+
+    res.status(500).json({
+      erro: "Não foi possível excluir o registro."
+    });
   }
 });
 
