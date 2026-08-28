@@ -13,26 +13,31 @@
   <main><section class="hero"><p>FAZENDA PIPE</p><h1>Painel do gerente</h1><small id="data"></small></section><section id="cards" class="cards"></section><section class="menu"><button onclick="abrir('producao')">🌾 Produção</button><button onclick="abrir('financeiro')">R$ Financeiro</button><button onclick="abrir('atividades')">✓ Atividades</button><button onclick="abrir('maquinas')">⚙ Máquinas</button><button onclick="abrir('diagnostico')">! Diagnóstico</button></section><section id="area"></section></main>
   <script>
     const API='http://localhost:3000/api';
-    const M={producao:['Produto','Quantidade'],financeiro:['Descrição','Valor'],atividades:['Atividade','Responsável'],diagnostico:['Problema','Prioridade']};
+    const M={producao:['Produto','Quantidade'],atividades:['Atividade','Responsável'],diagnostico:['Problema','Prioridade']};
     const g=x=>document.getElementById(x);
     const ler=k=>JSON.parse(localStorage.getItem('nexoterra_'+k)||'[]');
     const salvar=(k,v)=>localStorage.setItem('nexoterra_'+k,JSON.stringify(v));
     const escapar=t=>String(t??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
     const hoje=()=>new Date().toISOString().slice(0,10);
+    const dinheiro=valor=>Number(valor||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
     let maquinaEmEdicao=null;
+    let financeiroEmEdicao=null;
 
     g('data').textContent=new Date().toLocaleDateString('pt-BR',{dateStyle:'full'});
 
     async function listarMaquinas(){const resposta=await fetch(`${API}/maquinas`);if(!resposta.ok)throw new Error('API indisponível');return resposta.json()}
+    async function listarFinanceiro(){const resposta=await fetch(`${API}/financeiro`);if(!resposta.ok)throw new Error('API indisponível');return resposta.json()}
+    async function resumoFinanceiro(){const resposta=await fetch(`${API}/financeiro/resumo`);if(!resposta.ok)throw new Error('API indisponível');return resposta.json()}
 
     async function painel(){
-      const p=ler('producao'),f=ler('financeiro'),a=ler('atividades');let maquinas=[],banco='PostgreSQL conectado';
-      try{maquinas=await listarMaquinas()}catch{banco='Backend indisponível'}
-      g('cards').innerHTML=`<div>Produções<strong>${p.length}</strong></div><div>Saldo<strong>R$ ${f.reduce((s,x)=>s+Number(x.b||0),0).toFixed(2)}</strong></div><div>Atividades<strong>${a.length}</strong></div><div>Máquinas<strong>${maquinas.length}</strong><small>${banco}</small></div>`;
+      const p=ler('producao'),a=ler('atividades');let maquinas=[],resumo={saldo:0},banco='PostgreSQL conectado';
+      try{[maquinas,resumo]=await Promise.all([listarMaquinas(),resumoFinanceiro()])}catch{banco='Backend indisponível'}
+      g('cards').innerHTML=`<div>Produções<strong>${p.length}</strong></div><div>Saldo<strong>${dinheiro(resumo.saldo)}</strong></div><div>Atividades<strong>${a.length}</strong></div><div>Máquinas<strong>${maquinas.length}</strong><small>${banco}</small></div>`;
     }
 
     function abrir(k){
       if(k==='maquinas'){abrirMaquinas();return}
+      if(k==='financeiro'){abrirFinanceiro();return}
       const [a,b]=M[k],r=ler(k);
       g('area').innerHTML=`<h2>${k[0].toUpperCase()+k.slice(1)}</h2><p class="muted">Registros salvos neste aparelho.</p><form id="form"><input required name="a" placeholder="${a}"><input required name="b" placeholder="${b}" ${k==='financeiro'?'type="number"':''}><input type="date" name="data" value="${hoje()}"><button>Salvar registro</button></form>${r.slice().reverse().map((x,i)=>`<div class="item"><span><b>${escapar(x.a)}</b><br><small>${escapar(x.b)} · ${escapar(x.data)}</small></span><button onclick="apagar('${k}',${r.length-1-i})">Excluir</button></div>`).join('')||'<p class="muted">Nenhum registro ainda.</p>'}`;
       g('form').onsubmit=e=>{e.preventDefault();salvar(k,[...r,Object.fromEntries(new FormData(e.target))]);abrir(k);painel()};
@@ -64,8 +69,34 @@
       try{const resposta=await fetch(`${API}/maquinas/${id}`,{method:'DELETE'});if(!resposta.ok){const resultado=await resposta.json().catch(()=>({}));throw new Error(resultado.erro||'Não foi possível excluir.')}await abrirMaquinas('Máquina excluída do PostgreSQL.')}catch(erro){mensagemMaquina(erro.message,true)}
     }
 
+    async function abrirFinanceiro(mensagem='',erro=false){
+      financeiroEmEdicao=null;g('area').innerHTML='<h2>Financeiro</h2><p class="muted">Carregando dados do PostgreSQL...</p>';let registros,resumo;
+      try{[registros,resumo]=await Promise.all([listarFinanceiro(),resumoFinanceiro()])}catch{g('area').innerHTML='<h2>Financeiro</h2><p class="erro">Backend indisponível. Inicie a API na porta 3000.</p>';return}
+      const lista=registros.map(i=>`<div class="item"><span><b>${escapar(i.descricao)}</b><br><small>${escapar(i.tipo)} · ${escapar(i.categoria)} · ${dinheiro(i.valor)} · ${escapar(String(i.data_lancamento).slice(0,10))}${i.observacao?`<br>${escapar(i.observacao)}`:''}</small></span><span class="item-acoes"><button onclick="editarFinanceiro(${Number(i.id)})">Editar</button><button class="perigo" onclick="excluirFinanceiro(${Number(i.id)})">Excluir</button></span></div>`).join('')||'<p class="muted">Nenhum lançamento financeiro cadastrado.</p>';
+      g('area').innerHTML=`<h2>Financeiro</h2><p class="muted">Receitas e despesas armazenadas pela API NexoTerraCore no PostgreSQL.</p><section class="cards"><div>Receitas<strong>${dinheiro(resumo.receitas)}</strong></div><div>Despesas<strong>${dinheiro(resumo.despesas)}</strong></div><div>Saldo<strong>${dinheiro(resumo.saldo)}</strong></div></section><form id="form-financeiro"><input required maxlength="160" name="descricao" placeholder="Descrição"><input required maxlength="100" name="categoria" placeholder="Categoria"><input required type="number" min="0.01" step="0.01" name="valor" placeholder="Valor"><input required type="date" name="data" value="${hoje()}"><select required name="tipo"><option value="">Selecione o tipo</option><option>Receita</option><option>Despesa</option></select><textarea name="observacao" placeholder="Observação"></textarea><button id="salvar-financeiro">Cadastrar lançamento</button><button id="cancelar-financeiro" type="button" onclick="abrirFinanceiro('Edição cancelada.')" hidden>Cancelar edição</button></form><p id="mensagem-financeiro" class="${erro?'erro':'mensagem'}">${escapar(mensagem)}</p><h3>Lançamentos cadastrados</h3>${lista}`;
+      g('form-financeiro').onsubmit=salvarFinanceiro;painel();
+    }
+
+    function mensagemFinanceiro(texto,erro=false){const mensagem=g('mensagem-financeiro');if(!mensagem)return;mensagem.textContent=texto;mensagem.className=erro?'erro':'mensagem'}
+
+    async function salvarFinanceiro(evento){
+      evento.preventDefault();const f=evento.target,id=financeiroEmEdicao,botao=g('salvar-financeiro');botao.disabled=true;mensagemFinanceiro(id?'Atualizando...':'Cadastrando...');
+      const dados={descricao:f.descricao.value,categoria:f.categoria.value,valor:Number(f.valor.value),data:f.data.value,tipo:f.tipo.value,observacao:f.observacao.value};
+      try{const resposta=await fetch(id?`${API}/financeiro/${id}`:`${API}/financeiro`,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(dados)});const resultado=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(resultado.erro||'Não foi possível salvar o lançamento.');await abrirFinanceiro(id?'Lançamento atualizado no PostgreSQL.':'Lançamento cadastrado no PostgreSQL.')}catch(erro){mensagemFinanceiro(erro.message,true);botao.disabled=false}
+    }
+
+    async function editarFinanceiro(id){
+      mensagemFinanceiro('Carregando lançamento...');
+      try{const resposta=await fetch(`${API}/financeiro/${id}`),i=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(i.erro||'Não foi possível carregar o lançamento.');const f=g('form-financeiro');financeiroEmEdicao=id;f.descricao.value=i.descricao||'';f.categoria.value=i.categoria||'';f.valor.value=i.valor;f.data.value=String(i.data_lancamento).slice(0,10);f.tipo.value=i.tipo||'';f.observacao.value=i.observacao||'';g('salvar-financeiro').textContent='Salvar alterações';g('cancelar-financeiro').hidden=false;mensagemFinanceiro('Editando lançamento. Altere os campos e salve.');f.scrollIntoView({behavior:'smooth'});f.descricao.focus()}catch(erro){mensagemFinanceiro(erro.message,true)}
+    }
+
+    async function excluirFinanceiro(id){
+      if(!confirm('Excluir este lançamento do PostgreSQL?'))return;
+      try{const resposta=await fetch(`${API}/financeiro/${id}`,{method:'DELETE'});if(!resposta.ok){const resultado=await resposta.json().catch(()=>({}));throw new Error(resultado.erro||'Não foi possível excluir.')}await abrirFinanceiro('Lançamento excluído do PostgreSQL.')}catch(erro){mensagemFinanceiro(erro.message,true)}
+    }
+
     function apagar(k,i){const r=ler(k);r.splice(i,1);salvar(k,r);abrir(k);painel()}
-    async function exp(){const d={};Object.keys(M).forEach(k=>d[k]=ler(k));try{d.maquinas=await listarMaquinas()}catch{d.maquinas=[]}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)]));a.download='nexoterracore-dados.json';a.click()}
+    async function exp(){const d={};Object.keys(M).forEach(k=>d[k]=ler(k));try{[d.maquinas,d.financeiro]=await Promise.all([listarMaquinas(),listarFinanceiro()])}catch{d.maquinas=[];d.financeiro=[]}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)]));a.download='nexoterracore-dados.json';a.click()}
 
     painel();abrir('producao');
   </script>

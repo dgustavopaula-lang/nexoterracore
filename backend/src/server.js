@@ -126,6 +126,48 @@ function validarMaquina(body) {
   };
 }
 
+function validarLancamentoFinanceiro(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return { erro: "Envie os dados financeiros em um objeto JSON válido." };
+  }
+
+  const descricao =
+    typeof body.descricao === "string" ? body.descricao.trim() : "";
+  const categoria =
+    typeof body.categoria === "string" ? body.categoria.trim() : "";
+  const tipo = typeof body.tipo === "string" ? body.tipo.trim() : "";
+  const observacao =
+    typeof body.observacao === "string" ? body.observacao.trim() : "";
+  const valor = Number(body.valor);
+
+  if (!descricao || !categoria || !dataValida(body.data)) {
+    return { erro: "Informe descrição, categoria e uma data válida." };
+  }
+
+  if (!Number.isFinite(valor) || valor <= 0) {
+    return { erro: "O valor deve ser um número maior que zero." };
+  }
+
+  if (!['Receita', 'Despesa'].includes(tipo)) {
+    return { erro: "O tipo deve ser Receita ou Despesa." };
+  }
+
+  if (descricao.length > 160 || categoria.length > 100) {
+    return { erro: "Descrição ou categoria ultrapassa o tamanho permitido." };
+  }
+
+  return {
+    dados: {
+      descricao,
+      categoria,
+      valor,
+      data: body.data,
+      tipo,
+      observacao
+    }
+  };
+}
+
 app.get("/api/health", async (req, res) => {
   try {
     await pool.query("SELECT 1");
@@ -335,6 +377,187 @@ app.delete("/api/maquinas/:id", async (req, res) => {
     res.status(500).json({
       erro: "Não foi possível excluir o registro."
     });
+  }
+});
+
+app.get("/api/financeiro/resumo", async (req, res) => {
+  try {
+    const resultado = await pool.query(`
+      SELECT
+        COALESCE(SUM(valor) FILTER (WHERE tipo = 'Receita'), 0) AS receitas,
+        COALESCE(SUM(valor) FILTER (WHERE tipo = 'Despesa'), 0) AS despesas,
+        COALESCE(SUM(CASE WHEN tipo = 'Receita' THEN valor ELSE -valor END), 0) AS saldo
+      FROM lancamentos_financeiros
+    `);
+
+    res.json(resultado.rows[0]);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível calcular o resumo financeiro." });
+  }
+});
+
+app.get("/api/financeiro", async (req, res) => {
+  try {
+    const resultado = await pool.query(`
+      SELECT
+        id,
+        descricao,
+        categoria,
+        valor,
+        data_lancamento,
+        tipo,
+        observacao,
+        criado_em,
+        atualizado_em
+      FROM lancamentos_financeiros
+      ORDER BY data_lancamento DESC, criado_em DESC
+    `);
+
+    res.json(resultado.rows);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível consultar os lançamentos financeiros." });
+  }
+});
+
+app.get("/api/financeiro/:id", async (req, res) => {
+  const id = lerId(req.params.id);
+
+  if (!id) {
+    return res.status(400).json({ erro: "Identificador inválido." });
+  }
+
+  try {
+    const resultado = await pool.query(
+      "SELECT * FROM lancamentos_financeiros WHERE id = $1",
+      [id]
+    );
+
+    if (!resultado.rowCount) {
+      return res.status(404).json({ erro: "Lançamento não encontrado." });
+    }
+
+    res.json(resultado.rows[0]);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível consultar o lançamento." });
+  }
+});
+
+app.post("/api/financeiro", async (req, res) => {
+  const validacao = validarLancamentoFinanceiro(req.body);
+
+  if (validacao.erro) {
+    return res.status(400).json({ erro: validacao.erro });
+  }
+
+  const dados = validacao.dados;
+
+  try {
+    const resultado = await pool.query(
+      `
+        INSERT INTO lancamentos_financeiros (
+          descricao,
+          categoria,
+          valor,
+          data_lancamento,
+          tipo,
+          observacao
+        )
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *
+      `,
+      [
+        dados.descricao,
+        dados.categoria,
+        dados.valor,
+        dados.data,
+        dados.tipo,
+        dados.observacao
+      ]
+    );
+
+    res.status(201).json(resultado.rows[0]);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível salvar o lançamento financeiro." });
+  }
+});
+
+app.put("/api/financeiro/:id", async (req, res) => {
+  const id = lerId(req.params.id);
+
+  if (!id) {
+    return res.status(400).json({ erro: "Identificador inválido." });
+  }
+
+  const validacao = validarLancamentoFinanceiro(req.body);
+
+  if (validacao.erro) {
+    return res.status(400).json({ erro: validacao.erro });
+  }
+
+  const dados = validacao.dados;
+
+  try {
+    const resultado = await pool.query(
+      `
+        UPDATE lancamentos_financeiros
+        SET
+          descricao = $1,
+          categoria = $2,
+          valor = $3,
+          data_lancamento = $4,
+          tipo = $5,
+          observacao = $6,
+          atualizado_em = NOW()
+        WHERE id = $7
+        RETURNING *
+      `,
+      [
+        dados.descricao,
+        dados.categoria,
+        dados.valor,
+        dados.data,
+        dados.tipo,
+        dados.observacao,
+        id
+      ]
+    );
+
+    if (!resultado.rowCount) {
+      return res.status(404).json({ erro: "Lançamento não encontrado." });
+    }
+
+    res.json(resultado.rows[0]);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível atualizar o lançamento financeiro." });
+  }
+});
+
+app.delete("/api/financeiro/:id", async (req, res) => {
+  const id = lerId(req.params.id);
+
+  if (!id) {
+    return res.status(400).json({ erro: "Identificador inválido." });
+  }
+
+  try {
+    const resultado = await pool.query(
+      "DELETE FROM lancamentos_financeiros WHERE id = $1 RETURNING id",
+      [id]
+    );
+
+    if (!resultado.rowCount) {
+      return res.status(404).json({ erro: "Lançamento não encontrado." });
+    }
+
+    res.status(204).end();
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível excluir o lançamento financeiro." });
   }
 });
 
