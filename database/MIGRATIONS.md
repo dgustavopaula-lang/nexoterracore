@@ -22,3 +22,7 @@ fazendas, usuários ou vínculos reais que perderiam sua associação.
 A partir da migration `002_autenticacao_autorizacao`, a fazenda ativa é derivada
 da sessão autenticada. Tokens puros não são persistidos; somente seu hash é
 armazenado no PostgreSQL.
+
+A migration `003_desafios_login_multifazenda` adiciona desafios opacos,
+expiráveis e de uso único para selecionar uma fazenda quando o usuário possui
+mais de um vínculo ativo. Somente o hash do desafio é persistido.

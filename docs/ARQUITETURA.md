@@ -11,6 +11,7 @@
 - Fundação multiempresa com organizações, fazendas, usuários e perfis
 - Isolamento obrigatório de máquinas e financeiro por fazenda
 - Autenticação por sessão opaca revogável e autorização por perfil
+- Seleção multifazenda por desafio opaco temporário e de uso único
 
 ## Backend
 

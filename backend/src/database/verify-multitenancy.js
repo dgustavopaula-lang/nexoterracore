@@ -29,6 +29,10 @@ async function verificar() {
       "SELECT COUNT(*) AS total FROM schema_migrations WHERE versao = $1",
       ["002_autenticacao_autorizacao"]
     );
+    const migrationDesafios = await contar(
+      "SELECT COUNT(*) AS total FROM schema_migrations WHERE versao = $1",
+      ["003_desafios_login_multifazenda"]
+    );
     const fazendaInicial = await contar(
       "SELECT COUNT(*) AS total FROM fazendas WHERE codigo = $1 AND ativo = TRUE",
       ["fazenda-inicial"]
@@ -65,25 +69,35 @@ async function verificar() {
        AND uf.fazenda_id = s.fazenda_id
       WHERE uf.usuario_id IS NULL
     `);
+    const desafiosInvalidos = await contar(`
+      SELECT COUNT(*) AS total
+      FROM desafios_login d
+      LEFT JOIN usuarios u ON u.id = d.usuario_id
+      WHERE u.id IS NULL
+    `);
 
     const verificacoes = {
       migration_multiempresa_aplicada: migrationMultiempresa === 1,
       migration_autenticacao_aplicada: migrationAutenticacao === 1,
+      migration_desafios_aplicada: migrationDesafios === 1,
       fazenda_inicial_ativa: fazendaInicial === 1,
       maquinas_orfas: maquinasOrfas,
       financeiro_orfao: financeiroOrfao,
       vinculos_invalidos: vinculosInvalidos,
-      sessoes_invalidas: sessoesInvalidas
+      sessoes_invalidas: sessoesInvalidas,
+      desafios_invalidos: desafiosInvalidos
     };
 
     const valido =
       verificacoes.migration_multiempresa_aplicada &&
       verificacoes.migration_autenticacao_aplicada &&
+      verificacoes.migration_desafios_aplicada &&
       verificacoes.fazenda_inicial_ativa &&
       maquinasOrfas === 0 &&
       financeiroOrfao === 0 &&
       vinculosInvalidos === 0 &&
-      sessoesInvalidas === 0;
+      sessoesInvalidas === 0 &&
+      desafiosInvalidos === 0;
 
     console.log(JSON.stringify(verificacoes, null, 2));
 

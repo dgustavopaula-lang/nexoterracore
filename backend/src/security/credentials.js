@@ -50,6 +50,10 @@ function criarTokenSessao() {
   return crypto.randomBytes(32).toString("base64url");
 }
 
+function criarDesafioLogin() {
+  return crypto.randomBytes(32).toString("base64url");
+}
+
 function hashToken(token) {
   return crypto.createHash("sha256").update(token, "utf8").digest("hex");
 }
@@ -58,5 +62,6 @@ module.exports = {
   criarHashSenha,
   verificarSenha,
   criarTokenSessao,
+  criarDesafioLogin,
   hashToken
 };
