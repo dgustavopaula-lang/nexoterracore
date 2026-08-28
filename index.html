@@ -1,8 +1,73 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NexoTerraCore</title><style>
-:root{--n:#0b1428;--c:#13213c;--d:#d7a84a;--t:#eef4ff;--m:#aab9d5}*{box-sizing:border-box}body{margin:0;background:var(--n);color:var(--t);font:16px Arial}header,main{max-width:850px;margin:auto;padding:18px}header{display:flex;justify-content:space-between;align-items:center}b{font-size:21px}b span,.hero p{color:var(--d)}small,.muted{color:var(--m)}button,input{font:inherit;border-radius:12px;padding:13px;border:1px solid #35507d}button{background:var(--c);color:var(--t);cursor:pointer}.hero,#area,.cards div,.menu button{background:var(--c);border:1px solid #22395f;border-radius:16px}.hero,#area{padding:20px}.hero h1{margin:6px 0}.cards,.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}.cards div{padding:16px}.cards strong{font-size:25px;display:block;color:var(--d);margin-top:6px}.menu button{text-align:left;min-height:70px;font-weight:bold}form{display:grid;gap:10px;margin-top:15px}input{width:100%;background:#091326;color:#fff}form button{background:var(--d);color:#141414;border:0;font-weight:bold}.item{border-top:1px solid #294267;padding:12px 0;display:flex;justify-content:space-between;gap:10px}@media(max-width:600px){header,main{padding:14px}.cards,.menu{grid-template-columns:repeat(2,1fr)}header button{font-size:12px;padding:9px}}
-</style></head><body><header><div><b>NEXOTERRA<span>CORE</span></b><small>Central Inteligente de Gestão Rural</small></div><button onclick="exp()">Exportar dados</button></header><main><section class="hero"><p>FAZENDA PIPE</p><h1>Painel do gerente</h1><small id="data"></small></section><section id="cards" class="cards"></section><section class="menu"><button onclick="abrir('producao')">🌾 Produção</button><button onclick="abrir('financeiro')">R$ Financeiro</button><button onclick="abrir('atividades')">✓ Atividades</button><button onclick="abrir('maquinas')">⚙ Máquinas</button><button onclick="abrir('diagnostico')">! Diagnóstico</button></section><section id="area"></section></main><script>
-const M={producao:['Produto','Quantidade'],financeiro:['Descrição','Valor'],atividades:['Atividade','Responsável'],maquinas:['Máquina','Horímetro'],diagnostico:['Problema','Prioridade']},g=x=>document.getElementById(x),ler=k=>JSON.parse(localStorage.getItem('nexoterra_'+k)||'[]'),salvar=(k,v)=>localStorage.setItem('nexoterra_'+k,JSON.stringify(v));g('data').textContent=new Date().toLocaleDateString('pt-BR',{dateStyle:'full'});
-function painel(){let p=ler('producao'),f=ler('financeiro'),a=ler('atividades'),m=ler('maquinas');g('cards').innerHTML=`<div>Produções<strong>${p.length}</strong></div><div>Saldo<strong>R$ ${f.reduce((s,x)=>s+Number(x.b||0),0).toFixed(2)}</strong></div><div>Atividades<strong>${a.length}</strong></div><div>Máquinas<strong>${m.length}</strong></div>`}
-function abrir(k){let [a,b]=M[k],r=ler(k);g('area').innerHTML=`<h2>${k[0].toUpperCase()+k.slice(1)}</h2><p class="muted">Registros salvos neste aparelho.</p><form id="form"><input required name="a" placeholder="${a}"><input required name="b" placeholder="${b}" ${k==='financeiro'||k==='maquinas'?'type="number"':''}><input type="date" name="data" value="${new Date().toISOString().slice(0,10)}"><button>Salvar registro</button></form>${r.slice().reverse().map((x,i)=>`<div class="item"><span><b>${x.a}</b><br><small>${x.b} · ${x.data}</small></span><button onclick="apagar('${k}',${r.length-1-i})">Excluir</button></div>`).join('')||'<p class="muted">Nenhum registro ainda.</p>'}`;g('form').onsubmit=e=>{e.preventDefault();salvar(k,[...r,Object.fromEntries(new FormData(e.target))]);abrir(k);painel()}}
-function apagar(k,i){let r=ler(k);r.splice(i,1);salvar(k,r);abrir(k);painel()}function exp(){let d={};Object.keys(M).forEach(k=>d[k]=ler(k));let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)]));a.download='nexoterracore-dados.json';a.click()}painel();abrir('producao');
-</script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>NexoTerraCore</title>
+  <style>
+    :root{--n:#0b1428;--c:#13213c;--d:#d7a84a;--t:#eef4ff;--m:#aab9d5}*{box-sizing:border-box}body{margin:0;background:var(--n);color:var(--t);font:16px Arial}header,main{max-width:850px;margin:auto;padding:18px}header{display:flex;justify-content:space-between;align-items:center}b{font-size:21px}b span,.hero p{color:var(--d)}small,.muted{color:var(--m)}button,input,select,textarea{font:inherit;border-radius:12px;padding:13px;border:1px solid #35507d}button{background:var(--c);color:var(--t);cursor:pointer}.hero,#area,.cards div,.menu button{background:var(--c);border:1px solid #22395f;border-radius:16px}.hero,#area{padding:20px}.hero h1{margin:6px 0}.cards,.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}.cards div{padding:16px}.cards strong{font-size:25px;display:block;color:var(--d);margin-top:6px}.menu button{text-align:left;min-height:70px;font-weight:bold}form{display:grid;gap:10px;margin-top:15px}input,select,textarea{width:100%;background:#091326;color:#fff}textarea{min-height:90px;resize:vertical}form button{background:var(--d);color:#141414;border:0;font-weight:bold}.item{border-top:1px solid #294267;padding:12px 0;display:flex;justify-content:space-between;gap:10px}.item-acoes{display:flex;align-items:center;gap:7px}.item-acoes button{padding:9px;width:auto}.perigo{background:#7b3434}.mensagem{color:#7ee787}.erro{color:#ff7b72}@media(max-width:600px){header,main{padding:14px}.cards,.menu{grid-template-columns:repeat(2,1fr)}header button{font-size:12px;padding:9px}.item{display:block}.item-acoes{margin-top:10px}}
+  </style>
+</head>
+<body>
+  <header><div><b>NEXOTERRA<span>CORE</span></b><small>Central Inteligente de Gestão Rural</small></div><button onclick="exp()">Exportar dados</button></header>
+  <main><section class="hero"><p>FAZENDA PIPE</p><h1>Painel do gerente</h1><small id="data"></small></section><section id="cards" class="cards"></section><section class="menu"><button onclick="abrir('producao')">🌾 Produção</button><button onclick="abrir('financeiro')">R$ Financeiro</button><button onclick="abrir('atividades')">✓ Atividades</button><button onclick="abrir('maquinas')">⚙ Máquinas</button><button onclick="abrir('diagnostico')">! Diagnóstico</button></section><section id="area"></section></main>
+  <script>
+    const API='http://localhost:3000/api';
+    const M={producao:['Produto','Quantidade'],financeiro:['Descrição','Valor'],atividades:['Atividade','Responsável'],diagnostico:['Problema','Prioridade']};
+    const g=x=>document.getElementById(x);
+    const ler=k=>JSON.parse(localStorage.getItem('nexoterra_'+k)||'[]');
+    const salvar=(k,v)=>localStorage.setItem('nexoterra_'+k,JSON.stringify(v));
+    const escapar=t=>String(t??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
+    const hoje=()=>new Date().toISOString().slice(0,10);
+    let maquinaEmEdicao=null;
+
+    g('data').textContent=new Date().toLocaleDateString('pt-BR',{dateStyle:'full'});
+
+    async function listarMaquinas(){const resposta=await fetch(`${API}/maquinas`);if(!resposta.ok)throw new Error('API indisponível');return resposta.json()}
+
+    async function painel(){
+      const p=ler('producao'),f=ler('financeiro'),a=ler('atividades');let maquinas=[],banco='PostgreSQL conectado';
+      try{maquinas=await listarMaquinas()}catch{banco='Backend indisponível'}
+      g('cards').innerHTML=`<div>Produções<strong>${p.length}</strong></div><div>Saldo<strong>R$ ${f.reduce((s,x)=>s+Number(x.b||0),0).toFixed(2)}</strong></div><div>Atividades<strong>${a.length}</strong></div><div>Máquinas<strong>${maquinas.length}</strong><small>${banco}</small></div>`;
+    }
+
+    function abrir(k){
+      if(k==='maquinas'){abrirMaquinas();return}
+      const [a,b]=M[k],r=ler(k);
+      g('area').innerHTML=`<h2>${k[0].toUpperCase()+k.slice(1)}</h2><p class="muted">Registros salvos neste aparelho.</p><form id="form"><input required name="a" placeholder="${a}"><input required name="b" placeholder="${b}" ${k==='financeiro'?'type="number"':''}><input type="date" name="data" value="${hoje()}"><button>Salvar registro</button></form>${r.slice().reverse().map((x,i)=>`<div class="item"><span><b>${escapar(x.a)}</b><br><small>${escapar(x.b)} · ${escapar(x.data)}</small></span><button onclick="apagar('${k}',${r.length-1-i})">Excluir</button></div>`).join('')||'<p class="muted">Nenhum registro ainda.</p>'}`;
+      g('form').onsubmit=e=>{e.preventDefault();salvar(k,[...r,Object.fromEntries(new FormData(e.target))]);abrir(k);painel()};
+    }
+
+    async function abrirMaquinas(mensagem='',erro=false){
+      maquinaEmEdicao=null;g('area').innerHTML='<h2>Máquinas</h2><p class="muted">Carregando dados do PostgreSQL...</p>';let registros;
+      try{registros=await listarMaquinas()}catch{g('area').innerHTML='<h2>Máquinas</h2><p class="erro">Backend indisponível. Inicie a API na porta 3000.</p>';return}
+      const lista=registros.map(i=>`<div class="item"><span><b>${escapar(i.nome)}</b><br><small>${escapar(i.modelo||'Sem modelo')} · ${escapar(i.operacao)} · ${escapar(i.horimetro)} h · ${escapar(String(i.data_operacao).slice(0,10))}<br>Status: ${escapar(i.status)} · Próxima revisão: ${escapar(i.proxima_revisao)} h · Combustível: ${escapar(i.combustivel)} L${i.observacao?`<br>${escapar(i.observacao)}`:''}</small></span><span class="item-acoes"><button onclick="editarMaquina(${Number(i.id)})">Editar</button><button class="perigo" onclick="excluirMaquina(${Number(i.id)})">Excluir</button></span></div>`).join('')||'<p class="muted">Nenhuma máquina cadastrada.</p>';
+      g('area').innerHTML=`<h2>Máquinas</h2><p class="muted">Cadastro real pela API NexoTerraCore e PostgreSQL.</p><form id="form-maquina"><input required maxlength="120" name="maquina" placeholder="Máquina"><input maxlength="120" name="modelo" placeholder="Modelo"><input maxlength="120" name="numeroSerie" placeholder="Número de série"><select required name="operacao"><option value="">Selecione a operação</option><option>Plantio</option><option>Colheita</option><option>Preparo do solo</option><option>Pulverização</option><option>Transporte</option><option>Manutenção</option></select><input required type="number" min="0" step="0.1" name="horimetro" placeholder="Horímetro atual"><input required type="number" min="0" step="0.1" name="proximaRevisao" placeholder="Próxima revisão (horas)"><input required type="number" min="0" step="0.1" name="combustivel" placeholder="Combustível consumido (litros)"><input required type="date" name="data" value="${hoje()}"><select required name="status"><option>Ativa</option><option>Manutenção</option><option>Inativa</option></select><textarea name="observacao" placeholder="Observação"></textarea><button id="salvar-maquina">Cadastrar máquina</button><button id="cancelar-edicao" type="button" onclick="abrirMaquinas('Edição cancelada.')" hidden>Cancelar edição</button></form><p id="mensagem-maquina" class="${erro?'erro':'mensagem'}">${escapar(mensagem)}</p><h3>Máquinas cadastradas</h3>${lista}`;
+      g('form-maquina').onsubmit=salvarMaquina;painel();
+    }
+
+    function mensagemMaquina(texto,erro=false){const mensagem=g('mensagem-maquina');if(!mensagem)return;mensagem.textContent=texto;mensagem.className=erro?'erro':'mensagem'}
+
+    async function salvarMaquina(evento){
+      evento.preventDefault();const f=evento.target,id=maquinaEmEdicao,botao=g('salvar-maquina');botao.disabled=true;mensagemMaquina(id?'Atualizando...':'Cadastrando...');
+      const dados={maquina:f.maquina.value,modelo:f.modelo.value,numeroSerie:f.numeroSerie.value,operacao:f.operacao.value,horimetro:Number(f.horimetro.value),proximaRevisao:Number(f.proximaRevisao.value),combustivel:Number(f.combustivel.value),data:f.data.value,status:f.status.value,observacao:f.observacao.value};
+      try{const resposta=await fetch(id?`${API}/maquinas/${id}`:`${API}/maquinas`,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(dados)});const resultado=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(resultado.erro||'Não foi possível salvar a máquina.');await abrirMaquinas(id?'Máquina atualizada no PostgreSQL.':'Máquina cadastrada no PostgreSQL.')}catch(erro){mensagemMaquina(erro.message,true);botao.disabled=false}
+    }
+
+    async function editarMaquina(id){
+      mensagemMaquina('Carregando máquina...');
+      try{const resposta=await fetch(`${API}/maquinas/${id}`),i=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(i.erro||'Não foi possível carregar a máquina.');const f=g('form-maquina');maquinaEmEdicao=id;f.maquina.value=i.nome||'';f.modelo.value=i.modelo||'';f.numeroSerie.value=i.numero_serie||'';f.operacao.value=i.operacao||'';f.horimetro.value=i.horimetro;f.proximaRevisao.value=i.proxima_revisao;f.combustivel.value=i.combustivel;f.data.value=String(i.data_operacao).slice(0,10);f.status.value=i.status||'Ativa';f.observacao.value=i.observacao||'';g('salvar-maquina').textContent='Salvar alterações';g('cancelar-edicao').hidden=false;mensagemMaquina('Editando máquina. Altere os campos e salve.');f.scrollIntoView({behavior:'smooth'});f.maquina.focus()}catch(erro){mensagemMaquina(erro.message,true)}
+    }
+
+    async function excluirMaquina(id){
+      if(!confirm('Excluir esta máquina do PostgreSQL?'))return;
+      try{const resposta=await fetch(`${API}/maquinas/${id}`,{method:'DELETE'});if(!resposta.ok){const resultado=await resposta.json().catch(()=>({}));throw new Error(resultado.erro||'Não foi possível excluir.')}await abrirMaquinas('Máquina excluída do PostgreSQL.')}catch(erro){mensagemMaquina(erro.message,true)}
+    }
+
+    function apagar(k,i){const r=ler(k);r.splice(i,1);salvar(k,r);abrir(k);painel()}
+    async function exp(){const d={};Object.keys(M).forEach(k=>d[k]=ler(k));try{d.maquinas=await listarMaquinas()}catch{d.maquinas=[]}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)]));a.download='nexoterracore-dados.json';a.click()}
+
+    painel();abrir('producao');
+  </script>
+</body>
+</html>
