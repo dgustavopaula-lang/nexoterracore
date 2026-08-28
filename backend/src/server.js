@@ -8,7 +8,7 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const origensPermitidas = (
   process.env.FRONTEND_ORIGIN ||
-  "http://127.0.0.1:5500,http://localhost:5500"
+  "http://127.0.0.1:5500,http://localhost:5500,http://127.0.0.1:5501,http://localhost:5501"
 )
   .split(",")
   .map((origem) => origem.trim())
@@ -36,7 +36,9 @@ app.use(
         return callback(null, true);
       }
 
-      callback(new Error("Origem não permitida pelo CORS."));
+      const erro = new Error("Origem não permitida pelo CORS.");
+      erro.status = 403;
+      callback(erro);
     }
   })
 );
@@ -563,6 +565,34 @@ app.delete("/api/financeiro/:id", async (req, res) => {
 
 app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });
+});
+
+app.use((erro, req, res, next) => {
+  if (res.headersSent) {
+    return next(erro);
+  }
+
+  const status =
+    erro.status === 403
+      ? 403
+      : erro.type === "entity.too.large"
+        ? 413
+        : erro instanceof SyntaxError && erro.status === 400 && "body" in erro
+          ? 400
+          : 500;
+
+  if (status === 500) {
+    console.error(erro);
+  }
+
+  const mensagens = {
+    400: "Envie um objeto JSON válido.",
+    403: "Origem não permitida pelo CORS.",
+    413: "O corpo da requisição ultrapassa o limite permitido.",
+    500: "Erro interno do servidor."
+  };
+
+  res.status(status).json({ erro: mensagens[status] });
 });
 
 app.listen(PORT, () => {
