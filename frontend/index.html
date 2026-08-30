@@ -13,7 +13,7 @@
     .resumo{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:24px 0}.indicador,.registro{padding:16px;background:var(--field);border:1px solid var(--border);border-radius:10px}.indicador strong{display:block;color:var(--gold);font-size:24px}.indicador span,.registro span{display:block;margin-top:5px;color:var(--soft)}
     .modulos,.historico,form{display:grid;gap:12px} button{width:100%;padding:17px;color:var(--text);background:var(--gold2);border:0;border-radius:10px;font-size:18px;font-weight:bold;cursor:pointer}button:hover{filter:brightness(1.15)}button.secundario{background:#294b6d}
     label{margin-top:7px;font-size:17px;font-weight:bold}input,select,textarea{width:100%;padding:14px;color:var(--text);background:var(--field);border:1px solid #5b7794;border-radius:8px;font:17px Arial}textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid var(--gold)}
-    .registro{border-left:4px solid var(--gold)}.acoes-registro{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.registro button{width:auto;margin:0;padding:9px 12px;background:#7b3434;font-size:14px}.registro button.editar{background:var(--gold2)}button.cancelar-edicao{background:#294b6d}.status-ok{color:var(--ok)}.status-warn{color:var(--warn)}.status-danger{color:var(--danger)}.mensagem{color:var(--ok);font-weight:bold}.nota{padding:12px;border:1px solid var(--border);border-radius:8px;background:#0b1e33}.sessao{display:flex;align-items:end;gap:10px;margin-bottom:22px}.sessao label{flex:1}.sessao button{width:auto;padding:14px}.login{max-width:480px;margin:auto}
+    .registro{border-left:4px solid var(--gold)}.acoes-registro{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.registro button{width:auto;margin:0;padding:9px 12px;background:#7b3434;font-size:14px}.registro button.editar{background:var(--gold2)}button.cancelar-edicao{background:#294b6d}.status-ok{color:var(--ok)}.status-warn{color:var(--warn)}.status-danger{color:var(--danger)}.mensagem{color:var(--ok);font-weight:bold}.nota{padding:12px;border:1px solid var(--border);border-radius:8px;background:#0b1e33}.sessao{display:flex;align-items:end;gap:10px;margin-bottom:22px}.sessao label{flex:1}.sessao button{width:auto;padding:14px}.login{max-width:480px;margin:auto}.chat{display:grid;gap:10px;margin:20px 0}.chat-msg{padding:14px;border-radius:10px;white-space:pre-wrap}.chat-usuario{margin-left:12%;background:var(--gold2)}.chat-assistente{margin-right:12%;background:var(--field);border:1px solid var(--border)}
     @media(max-width:600px){main{width:94%;margin:20px auto;padding:20px}.resumo{grid-template-columns:1fr}header{padding:22px 4%}}
   </style>
 </head>
@@ -29,12 +29,13 @@
     let identidade=null;
     let fazendasAutorizadas=[];
     let desafioLogin=null;
+    let mensagensAssistente=[];
     let maquinaEmEdicao=null;
     let financeiroEmEdicao=null;
     const dinheiro=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
     const escapar=t=>String(t??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
     const ultimos=(chave,render)=>{const a=ler(chave).slice().reverse().slice(0,5);return a.length?a.map(render).join(''):'<p>Nenhum registro ainda.</p>'};
-    function limparSessao(){tokenSessao=null;identidade=null;fazendasAutorizadas=[];desafioLogin=null}
+    function limparSessao(){tokenSessao=null;identidade=null;fazendasAutorizadas=[];desafioLogin=null;mensagensAssistente=[]}
     function abrirLogin(mensagem=''){
       limparSessao();document.querySelector('#painel').innerHTML=`<section class="login"><h2>Entrar</h2><p>Acesse a fazenda com seu e-mail e senha.</p><form id="form-login" onsubmit="entrar(event)"><label>E-mail</label><input name="email" type="email" autocomplete="username" maxlength="254" required><label>Senha</label><input name="senha" type="password" autocomplete="current-password" required><button id="entrar">Entrar</button></form><p id="erro-login" class="status-danger">${escapar(mensagem)}</p></section>`
     }
@@ -68,7 +69,7 @@
     function controlesSessao(){return `<div class="sessao"><label>${escapar(identidade.usuario.nome)}<select onchange="trocarFazenda(this.value)" ${fazendasAutorizadas.length<2?'disabled':''}>${fazendasAutorizadas.map(f=>`<option value="${Number(f.id)}" ${Number(f.id)===Number(identidade.fazenda.id)?'selected':''}>${escapar(f.nome)}</option>`).join('')}</select></label><button class="secundario" type="button" onclick="sair()">Sair</button></div>`}
     async function trocarFazenda(fazendaId){
       if(Number(fazendaId)===Number(identidade.fazenda.id))return;
-      try{const resposta=await apiFetch('/auth/trocar-fazenda',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fazendaId:Number(fazendaId)})});const dados=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(dados.erro||'Não foi possível trocar de fazenda.');tokenSessao=dados.token;identidade={usuario:dados.usuario,organizacao:dados.organizacao,fazenda:dados.fazenda};await abrirPainel()}catch(erro){if(tokenSessao){await abrirPainel();alert(erro.message)}}
+      try{const resposta=await apiFetch('/auth/trocar-fazenda',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fazendaId:Number(fazendaId)})});const dados=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(dados.erro||'Não foi possível trocar de fazenda.');tokenSessao=dados.token;identidade={usuario:dados.usuario,organizacao:dados.organizacao,fazenda:dados.fazenda};mensagensAssistente=[];await abrirPainel()}catch(erro){if(tokenSessao){await abrirPainel();alert(erro.message)}}
     }
     async function sair(){const tokenAtual=tokenSessao;try{if(tokenAtual)await apiFetch('/auth/logout',{method:'POST'})}catch{}finally{abrirLogin('Sessão encerrada.')}}
     async function listarMaquinasApi(){const r=await apiFetch('/maquinas');if(!r.ok)throw new Error('API indisponível');return r.json()}
@@ -78,10 +79,18 @@
       const p=ler('nexoterra_producao'),a=ler('nexoterra_atividades'),d=ler('nexoterra_diagnosticos');let m=[],resumo={saldo:0},conexao='PostgreSQL conectado';try{[m,resumo]=await Promise.all([listarMaquinasApi(),resumoFinanceiroApi()])}catch(erro){if(!tokenSessao)return;conexao=erro.message}
       document.querySelector('#painel').innerHTML=`${controlesSessao()}<h2>Painel do gerente</h2><p>Visão direta de ${escapar(identidade.fazenda.nome)}: produção, custos, trabalho e máquinas.</p><div class="nota"><strong>Dados integrados:</strong> ${conexao}</div><section class="resumo">
       <div class="indicador"><strong>${p.length}</strong><span>Produções</span></div><div class="indicador"><strong>${dinheiro(resumo.saldo)}</strong><span>Saldo</span></div><div class="indicador"><strong>${a.length}</strong><span>Atividades</span></div><div class="indicador"><strong>${m.length}</strong><span>Registros de máquinas</span></div></section>
-      <section class="modulos"><button onclick="abrirMaquinas()">Central de Máquinas</button><button onclick="abrirProducao()">Produção</button><button onclick="abrirFinanceiro()">Financeiro</button><button onclick="abrirAtividades()">Atividades</button><button onclick="abrirDiagnostico()">Diagnóstico</button></section>`;
+      <section class="modulos"><button onclick="abrirAssistente()">Assistente — Chat IA</button><button onclick="abrirMaquinas()">Central de Máquinas</button><button onclick="abrirProducao()">Produção</button><button onclick="abrirFinanceiro()">Financeiro</button><button onclick="abrirAtividades()">Atividades</button><button onclick="abrirDiagnostico()">Diagnóstico</button></section>`;
     }
     function tela(titulo,descricao,form,historico){document.querySelector('#painel').innerHTML=`<h2>${titulo}</h2><p>${descricao}</p>${form}<p id="mensagem" class="mensagem"></p><h3>Últimos registros</h3><div class="historico">${historico}</div>`}
     const voltar='<button class="secundario" type="button" onclick="abrirPainel()">Voltar ao painel</button>';
+    function abrirAssistente(){
+      const historico=mensagensAssistente.length?mensagensAssistente.map(item=>`<div class="chat-msg ${item.autor==='Você'?'chat-usuario':'chat-assistente'}"><strong>${item.autor}</strong><br>${escapar(item.texto)}</div>`).join(''):'<div class="chat-msg chat-assistente"><strong>Assistente</strong><br>Faça uma pergunta sobre máquinas ou financeiro desta fazenda.</div>';
+      document.querySelector('#painel').innerHTML=`<h2>Assistente — Chat IA</h2><p>Consulta gerencial somente leitura de ${escapar(identidade.fazenda.nome)}.</p><div class="nota">Exemplos: “Quantas máquinas temos?”, “Quais máquinas estão paradas?”, “Qual é o saldo financeiro?” ou “Quais foram os últimos lançamentos?”.</div><div class="chat" id="chat-historico">${historico}</div><form id="form-assistente" onsubmit="perguntarAssistente(event)"><label>Sua pergunta</label><textarea name="pergunta" maxlength="500" required placeholder="Pergunte sobre os dados da fazenda ativa"></textarea><button id="enviar-assistente">Enviar pergunta</button>${voltar}</form><p id="mensagem" class="mensagem"></p>`;
+    }
+    async function perguntarAssistente(evento){
+      evento.preventDefault();const form=evento.target,botao=document.querySelector('#enviar-assistente'),pergunta=form.pergunta.value.trim();if(!pergunta)return;botao.disabled=true;mostrarMensagem('Consultando dados da fazenda...');
+      try{const resposta=await apiFetch('/assistente/perguntar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pergunta})});const dados=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(dados.erro||'Não foi possível consultar o Assistente.');mensagensAssistente.push({autor:'Você',texto:pergunta},{autor:'Assistente',texto:dados.resposta});abrirAssistente()}catch(erro){mostrarMensagem(erro.message,true);botao.disabled=false}
+    }
     async function abrirMaquinas(mensagem=''){
       maquinaEmEdicao=null;
       document.querySelector('#painel').innerHTML='<h2>Central de Máquinas</h2><p>Carregando dados do PostgreSQL...</p>';

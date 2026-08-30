@@ -9,6 +9,10 @@ const {
   hashToken
 } = require("./security/credentials");
 const { criarMiddlewaresAuth } = require("./middleware/auth");
+const {
+  ErroAssistente,
+  responderPergunta
+} = require("./services/assistente");
 require("dotenv").config();
 
 const app = express();
@@ -198,6 +202,78 @@ function validarMaquina(body) {
       data: body.data,
       observacao,
       status
+    }
+  };
+}
+
+
+function validarFazenda(body) {
+  if (!body || typeof body !== "object" || Array.isArray(body)) {
+    return { erro: "Envie os dados da fazenda em um objeto JSON válido." };
+  }
+
+  const nome = typeof body.nome === "string" ? body.nome.trim() : "";
+  const codigo = typeof body.codigo === "string" ? body.codigo.trim() : "";
+  const proprietario =
+    typeof body.proprietario === "string" ? body.proprietario.trim() : "";
+  const cidade = typeof body.cidade === "string" ? body.cidade.trim() : "";
+  const estado = typeof body.estado === "string" ? body.estado.trim() : "";
+  const pais = typeof body.pais === "string" ? body.pais.trim() : "Brasil";
+  const atividadePrincipal =
+    typeof body.atividadePrincipal === "string"
+      ? body.atividadePrincipal.trim()
+      : "";
+
+  const areaHectares =
+    body.areaHectares === "" || body.areaHectares == null
+      ? null
+      : Number(body.areaHectares);
+
+  const latitude =
+    body.latitude === "" || body.latitude == null
+      ? null
+      : Number(body.latitude);
+
+  const longitude =
+    body.longitude === "" || body.longitude == null
+      ? null
+      : Number(body.longitude);
+
+  if (!nome || !codigo) {
+    return { erro: "Nome e código da fazenda são obrigatórios." };
+  }
+
+  if (nome.length > 160 || codigo.length > 80) {
+    return { erro: "Nome ou código excede o tamanho permitido." };
+  }
+
+  if (areaHectares !== null &&
+      (!Number.isFinite(areaHectares) || areaHectares < 0)) {
+    return { erro: "Área em hectares inválida." };
+  }
+
+  if (latitude !== null &&
+      (!Number.isFinite(latitude) || latitude < -90 || latitude > 90)) {
+    return { erro: "Latitude inválida." };
+  }
+
+  if (longitude !== null &&
+      (!Number.isFinite(longitude) || longitude < -180 || longitude > 180)) {
+    return { erro: "Longitude inválida." };
+  }
+
+  return {
+    dados: {
+      nome,
+      codigo,
+      proprietario: proprietario || null,
+      areaHectares,
+      cidade: cidade || null,
+      estado: estado || null,
+      pais: pais || "Brasil",
+      latitude,
+      longitude,
+      atividadePrincipal: atividadePrincipal || null
     }
   };
 }
@@ -596,6 +672,34 @@ app.delete(
     }
   }
 );
+
+app.post("/api/assistente/perguntar", autenticar, async (req, res, next) => {
+  const pergunta = typeof req.body?.pergunta === "string" ? req.body.pergunta.trim() : "";
+
+  if (!pergunta || pergunta.length > 500) {
+    return res.status(400).json({
+      erro: "A pergunta deve possuir entre 1 e 500 caracteres."
+    });
+  }
+
+  try {
+    const resultado = await responderPergunta(pool, req.auth, pergunta);
+    res.json({
+      ...resultado,
+      modo: "consulta_controlada",
+      escopo: {
+        organizacaoId: req.auth.organizacaoId,
+        fazendaId: req.auth.fazendaId
+      }
+    });
+  } catch (erro) {
+    if (erro instanceof ErroAssistente) {
+      return res.status(erro.status).json({ erro: erro.message });
+    }
+
+    next(erro);
+  }
+});
 
 app.get("/api/health", async (req, res) => {
   try {
