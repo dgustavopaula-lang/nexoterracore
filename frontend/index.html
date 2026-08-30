@@ -1,139 +1,1623 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#071426">
-  <title>NexoTerraCore | Fazenda Digital</title>
-  <style>
-    *{box-sizing:border-box} :root{--bg:#071426;--panel:#132e4d;--field:#0b1e33;--gold:#f4c542;--gold2:#8b6800;--text:#f8fafc;--soft:#cbd5e1;--border:#3d6b91;--ok:#7ee787;--warn:#ffcc66;--danger:#ff7b72}
-    body{margin:0;min-height:100vh;font-family:Arial,sans-serif;color:var(--text);background:linear-gradient(160deg,#071426,#0f2742)}
-    header{padding:26px 5%;border-bottom:2px solid var(--gold2)} header h1{margin:0;color:var(--gold);font-size:clamp(30px,5vw,48px)} header p{margin:6px 0 0;color:var(--soft);font-size:19px}
-    main{width:min(94%,980px);margin:32px auto;padding:30px;background:var(--panel);border:1px solid var(--border);border-radius:18px} h2{margin-top:0;font-size:clamp(27px,4vw,39px)} h3{margin-top:30px;color:var(--gold)} p{color:var(--soft);font-size:17px;line-height:1.5}
-    .resumo{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:24px 0}.indicador,.registro{padding:16px;background:var(--field);border:1px solid var(--border);border-radius:10px}.indicador strong{display:block;color:var(--gold);font-size:24px}.indicador span,.registro span{display:block;margin-top:5px;color:var(--soft)}
-    .modulos,.historico,form{display:grid;gap:12px} button{width:100%;padding:17px;color:var(--text);background:var(--gold2);border:0;border-radius:10px;font-size:18px;font-weight:bold;cursor:pointer}button:hover{filter:brightness(1.15)}button.secundario{background:#294b6d}
-    label{margin-top:7px;font-size:17px;font-weight:bold}input,select,textarea{width:100%;padding:14px;color:var(--text);background:var(--field);border:1px solid #5b7794;border-radius:8px;font:17px Arial}textarea{min-height:100px;resize:vertical}input:focus,select:focus,textarea:focus{outline:2px solid var(--gold)}
-    .registro{border-left:4px solid var(--gold)}.acoes-registro{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.registro button{width:auto;margin:0;padding:9px 12px;background:#7b3434;font-size:14px}.registro button.editar{background:var(--gold2)}button.cancelar-edicao{background:#294b6d}.status-ok{color:var(--ok)}.status-warn{color:var(--warn)}.status-danger{color:var(--danger)}.mensagem{color:var(--ok);font-weight:bold}.nota{padding:12px;border:1px solid var(--border);border-radius:8px;background:#0b1e33}.sessao{display:flex;align-items:end;gap:10px;margin-bottom:22px}.sessao label{flex:1}.sessao button{width:auto;padding:14px}.login{max-width:480px;margin:auto}.chat{display:grid;gap:10px;margin:20px 0}.chat-msg{padding:14px;border-radius:10px;white-space:pre-wrap}.chat-usuario{margin-left:12%;background:var(--gold2)}.chat-assistente{margin-right:12%;background:var(--field);border:1px solid var(--border)}
-    @media(max-width:600px){main{width:94%;margin:20px auto;padding:20px}.resumo{grid-template-columns:1fr}header{padding:22px 4%}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
 </head>
 <body>
-  <header><h1>NexoTerraCore</h1><p>Central Inteligente de Gestão Rural</p></header>
-  <main id="painel"></main>
-  <script>
-    const ler=c=>{try{return JSON.parse(localStorage.getItem(c))||[]}catch{return[]}};
-    const gravar=(c,r)=>{const a=ler(c);a.push(r);localStorage.setItem(c,JSON.stringify(a))};
-    const hoje=()=>new Date().toISOString().split('T')[0];
-    const API='http://localhost:3000/api';
-    let tokenSessao=null;
-    let identidade=null;
-    let fazendasAutorizadas=[];
-    let desafioLogin=null;
-    let mensagensAssistente=[];
-    let maquinaEmEdicao=null;
-    let financeiroEmEdicao=null;
-    const dinheiro=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-    const escapar=t=>String(t??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
-    const ultimos=(chave,render)=>{const a=ler(chave).slice().reverse().slice(0,5);return a.length?a.map(render).join(''):'<p>Nenhum registro ainda.</p>'};
-    function limparSessao(){tokenSessao=null;identidade=null;fazendasAutorizadas=[];desafioLogin=null;mensagensAssistente=[]}
-    function abrirLogin(mensagem=''){
-      limparSessao();document.querySelector('#painel').innerHTML=`<section class="login"><h2>Entrar</h2><p>Acesse a fazenda com seu e-mail e senha.</p><form id="form-login" onsubmit="entrar(event)"><label>E-mail</label><input name="email" type="email" autocomplete="username" maxlength="254" required><label>Senha</label><input name="senha" type="password" autocomplete="current-password" required><button id="entrar">Entrar</button></form><p id="erro-login" class="status-danger">${escapar(mensagem)}</p></section>`
+<x-dc>
+<helmet>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#0B0B0C"/><rect x="60" y="60" width="80" height="80" rx="18" fill="#FF6B1A"/><text x="100" y="115" font-family="monospace" font-size="34" font-weight="700" fill="#0A0A0A" text-anchor="middle">NX</text></svg></template>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin:0; padding:0; background:#08090A; color:#E9E5E0; font-family:'IBM Plex Sans', system-ui, sans-serif; -webkit-font-smoothing:antialiased; }
+  * { box-sizing:border-box; }
+  a { color:#FF7A1A; text-decoration:none; }
+  a:hover { color:#FF9A4A; }
+  input, button, select, textarea { font-family:inherit; }
+  input::placeholder, textarea::placeholder { color:#4A4540; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:#FF6B1A; }
+  select option { background:#101112; color:#EDE9E4; }
+  ::-webkit-scrollbar { width:10px; height:10px; }
+  ::-webkit-scrollbar-thumb { background:#24252A; border-radius:8px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+</style>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B0B0C"></rect><rect x="30" y="30" width="40" height="40" rx="10" fill="#FF6B1A"></rect><text x="50" y="57" font-family="monospace" font-size="18" font-weight="700" fill="#0A0A0A" text-anchor="middle">NX</text></svg></template>
+</helmet>
+
+<sc-if value="{{ showLogin }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:100vh; display:grid; grid-template-columns:1.1fr 1fr; background:#08090A;">
+  <div style="display:flex; flex-direction:column; justify-content:space-between; gap:48px; padding:56px 64px; background:#0B0B0C; border-right:1px solid #1A1B1D;">
+    <div style="display:flex; align-items:center; gap:11px;">
+      <div style="width:28px; height:28px; border-radius:9px; background:rgba(255,107,26,0.14); border:1px solid rgba(255,107,26,0.3); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-weight:500; font-size:11px; letter-spacing:0.02em; color:#FF9A5A;">NX</div>
+      <div style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:#6E6862; border:1px solid #26272A; border-radius:5px; padding:3px 7px;">console</div>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:20px; max-width:540px;">
+      <h1 style="margin:0; font-family:'Instrument Serif', Georgia, serif; font-size:56px; line-height:1.02; font-weight:400; letter-spacing:-0.02em; text-wrap:pretty;">NexoTerraCore<br />Console</h1>
+      <p style="margin:0; font-family:'Instrument Serif', Georgia, serif; font-style:italic; font-size:21px; line-height:1.5; color:#8C867F; text-wrap:pretty;">Gestão de imóveis, fazendas e armazéns.</p>
+    </div>
+    <div></div>
+  </div>
+
+  <div style="display:flex; align-items:center; justify-content:center; padding:56px;">
+    <div style="width:100%; max-width:392px; display:flex; flex-direction:column; gap:26px;">
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <h2 style="margin:0; font-family:'JetBrains Mono', monospace; font-size:15px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:#EDE9E4;">Login</h2>
+        <p style="margin:0; font-size:14px; line-height:1.6; color:#7C766F;">Acesso restrito à equipe operacional.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <label style="display:flex; flex-direction:column; gap:8px;">
+          <span style="font-size:12px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; color:#8C867F;">Usuário</span>
+          <input type="text" value="{{ user }}" onChange="{{ onUser }}" onKeyDown="{{ onKey }}" autoComplete="off" style="height:46px; padding:0 14px; font-size:15px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:9px; transition:border-color .15s;" />
+        </label>
+        <label style="display:flex; flex-direction:column; gap:8px;">
+          <span style="font-size:12px; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; color:#8C867F;">Senha</span>
+          <input type="password" value="{{ pass }}" onChange="{{ onPass }}" onKeyDown="{{ onKey }}" autoComplete="off" style="height:46px; padding:0 14px; font-size:15px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:9px; transition:border-color .15s;" />
+        </label>
+      </div>
+      <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px; color:#FF8A5B; background:rgba(255,107,26,0.08); border:1px solid rgba(255,107,26,0.28); border-radius:8px; padding:10px 12px;">Usuário ou senha inválidos.</div>
+      </sc-if>
+      <button onClick="{{ onSubmit }}" style="align-self:flex-start; height:38px; padding:0 22px; border:1px solid #2C2D31; border-radius:8px; background:#17181A; color:#EDE9E4; font-size:13.5px; font-weight:500; cursor:pointer;" style-hover="background:#FF8433">Acessar</button>
+      <div style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:#5A554F;">
+        
+        <span>·</span>
+        
+      </div>
+
+      <sc-if value="{{ trocaAberta }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:14px; padding:18px; background:#0E0F10; border:1px solid #1E1F22; border-radius:10px;">
+        <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:#5A554F;">Nova senha</div>
+        <label style="display:flex; flex-direction:column; gap:7px;">
+          <span style="font-size:12.5px; color:#8C867F;">Senha atual</span>
+          <input type="password" value="{{ atual }}" onChange="{{ onAtual }}" style="height:40px; padding:0 12px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+        </label>
+        <label style="display:flex; flex-direction:column; gap:7px;">
+          <span style="font-size:12.5px; color:#8C867F;">Nova senha</span>
+          <input type="password" value="{{ nova }}" onChange="{{ onNova }}" style="height:40px; padding:0 12px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+        </label>
+        <label style="display:flex; flex-direction:column; gap:7px;">
+          <span style="font-size:12.5px; color:#8C867F;">Repetir a nova senha</span>
+          <input type="password" value="{{ nova2 }}" onChange="{{ onNova2 }}" style="height:40px; padding:0 12px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+        </label>
+        <sc-if value="{{ senhaMsg }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12.5px; line-height:1.6; color:#B4AFA8;">{{ senhaMsg }}</div>
+        </sc-if>
+        <div style="display:flex; gap:10px;">
+          <button onClick="{{ salvarSenha }}" style="height:34px; padding:0 16px; font-size:13px; font-weight:600; color:#0A0A0A; background:#FF6B1A; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Salvar senha</button>
+          <button onClick="{{ fecharTroca }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:500; color:#B4AFA8; background:transparent; border:1px solid #26272A; border-radius:8px; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#EDE9E4">Fechar</button>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ recuperarAberta }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:12px; padding:18px; background:#0E0F10; border:1px solid #1E1F22; border-radius:10px;">
+        <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:#5A554F;">Recuperar acesso</div>
+        <div style="font-size:13px; line-height:1.7; color:#8C867F;">A senha fica gravada apenas neste navegador. Se você a esqueceu, restaure o acesso padrão e cadastre uma nova em seguida.</div>
+        <div style="display:flex; gap:10px;">
+          <button onClick="{{ restaurarSenha }}" style="height:34px; padding:0 16px; font-size:13px; font-weight:600; color:#0A0A0A; background:#FF6B1A; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Restaurar padrão</button>
+          <button onClick="{{ fecharRecuperar }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:500; color:#B4AFA8; background:transparent; border:1px solid #26272A; border-radius:8px; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#EDE9E4">Fechar</button>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showConsole }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:100vh; display:flex; background:#08090A;">
+
+  <aside style="width:{{ sbWidth }}; flex:none; background:#0B0B0C; border-right:1px solid #1A1B1D; display:flex; flex-direction:column; padding:16px 12px; transition:width .18s ease; position:sticky; top:0; height:100vh; overflow-y:auto;">
+    <div style="display:flex; align-items:center; gap:10px; padding:4px 6px 14px;">
+      <div style="width:28px; height:28px; flex:none; border-radius:7px; background:{{ accent }}; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-weight:600; font-size:12px; color:#0A0A0A;">NX</div>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:14px; font-weight:600; letter-spacing:-0.01em; white-space:nowrap; flex:1;">{{ org }}</div>
+      </sc-if>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ toggle }}" title="Recolher" style="width:26px; height:26px; flex:none; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid #232427; border-radius:6px; color:#8C867F; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#E9E5E0">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"></path></svg>
+        </button>
+      </sc-if>
+    </div>
+    <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggle }}" title="Expandir" style="width:100%; height:32px; margin-bottom:8px; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid #232427; border-radius:7px; color:#8C867F; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#E9E5E0">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg>
+      </button>
+    </sc-if>
+
+    <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+      <div style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#4E4943; padding:6px 8px;">Portfólio</div>
+    </sc-if>
+
+    <button onClick="{{ goPanel }}" title="Painel" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atPanel }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Painel</span></sc-if>
+    </button>
+
+    <button onClick="{{ goImoveis }}" title="Imóveis" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atImoveis }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M3 10.5L12 4l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1z"></path><path d="M9 21v-7h6v7"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Imóveis</span></sc-if>
+    </button>
+
+    <button onClick="{{ goFazendas }}" title="Fazendas" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atFazendas }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M3 20h18"></path><path d="M4 20V9l8-5 8 5v11"></path><path d="M9 20v-6h6v6"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Fazendas</span></sc-if>
+    </button>
+
+    <button onClick="{{ goArmazens }}" title="Armazéns e silos" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atArmazens }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M3 21V8l9-4 9 4v13"></path><path d="M7 21v-8h10v8"></path><path d="M7 17h10"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Armazéns e silos</span></sc-if>
+    </button>
+
+    <button onClick="{{ goImobiliarias }}" title="Proprietários" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atImobiliarias }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M4 21V6a1 1 0 011-1h8a1 1 0 011 1v15"></path><path d="M14 10h5a1 1 0 011 1v10"></path><path d="M8 9h2M8 13h2M8 17h2"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Proprietários</span></sc-if>
+    </button>
+
+    <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+      <div style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#4E4943; padding:16px 8px 6px;">Gestão</div>
+    </sc-if>
+    <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}"><div style="height:1px; background:#1A1B1D; margin:10px 6px;"></div></sc-if>
+
+    <button onClick="{{ goAlugueis }}" title="Aluguéis" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atAlugueis }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Aluguéis</span></sc-if>
+    </button>
+
+    <button onClick="{{ goMatriculas }}" title="Matrículas" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atMatriculas }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Matrículas</span></sc-if>
+    </button>
+
+    <button onClick="{{ goFinanceiro }}" title="Financeiro" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atFinanceiro }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M12 2v20"></path><path d="M17 6H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Financeiro</span></sc-if>
+    </button>
+
+    <button onClick="{{ goPatrimonio }}" title="Patrimônio" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atPatrimonio }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M3 21h18M5 21V10l7-5 7 5v11"></path><path d="M10 21v-5h4v5"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Patrimônio</span></sc-if>
+    </button>
+
+    <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+      <div style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#4E4943; padding:16px 8px 6px;">Comercial</div>
+    </sc-if>
+    <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}"><div style="height:1px; background:#1A1B1D; margin:10px 6px;"></div></sc-if>
+
+    <button onClick="{{ goClientes }}" title="Clientes" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atClientes }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><circle cx="9" cy="8" r="3.4"></circle><path d="M3 20a6 6 0 0112 0"></path><path d="M16 7.5a3 3 0 010 5.5M18 20a5.6 5.6 0 00-2-4"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Clientes</span></sc-if>
+    </button>
+
+    <button onClick="{{ goLigacoes }}" title="Ligações" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atLigacoes }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 006 6L15 14l5 2v4a16 16 0 01-16-16z"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Ligações</span></sc-if>
+    </button>
+
+    <button onClick="{{ goPropostas }}" title="Propostas e visitas" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atPropostas }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M9 12l2 2 4-4"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Propostas</span></sc-if>
+    </button>
+
+    <button onClick="{{ goComissoes }}" title="Comissões" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atComissoes }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M19 5L5 19"></path><circle cx="7.5" cy="7.5" r="2.5"></circle><circle cx="16.5" cy="16.5" r="2.5"></circle></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Comissões</span></sc-if>
+    </button>
+
+    <button onClick="{{ goEmail }}" title="Modelo de e-mail" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atEmail }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3.5 6.5L12 13l8.5-6.5"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Modelo de e-mail</span></sc-if>
+    </button>
+
+    <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+      <div style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#4E4943; padding:16px 8px 6px;">Inteligência</div>
+    </sc-if>
+    <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}"><div style="height:1px; background:#1A1B1D; margin:10px 6px;"></div></sc-if>
+
+    <button onClick="{{ goGeo }}" title="Geo-referência" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atGeo }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 010 18a15 15 0 010-18z"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Geo-referência</span></sc-if>
+    </button>
+
+    <button onClick="{{ goMercado }}" title="PicPay" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atMercado }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><rect x="2" y="6" width="20" height="13" rx="2"></rect><path d="M2 10h20"></path><path d="M16 15h3"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">PicPay</span></sc-if>
+    </button>
+
+    <sc-if value="{{ showEngineering }}" hint-placeholder-val="{{ true }}">
+    <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+      <div style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#4E4943; padding:16px 8px 6px;">Engenharia</div>
+    </sc-if>
+    <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}"><div style="height:1px; background:#1A1B1D; margin:10px 6px;"></div></sc-if>
+
+    <button onClick="{{ goArquitetura }}" title="Arquitetura" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atArquitetura }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><rect x="3" y="3" width="18" height="6" rx="1"></rect><rect x="3" y="15" width="18" height="6" rx="1"></rect><path d="M8 9v6M16 9v6"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Arquitetura</span></sc-if>
+    </button>
+
+    <button onClick="{{ goSchema }}" title="Banco de dados" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atSchema }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><ellipse cx="12" cy="5.5" rx="8" ry="3"></ellipse><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13"></path><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Banco de dados</span></sc-if>
+    </button>
+
+    <button onClick="{{ goVscode }}" title="Rodar no VSCode" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
+      <sc-if value="{{ atVscode }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M8 9l-4 3 4 3"></path><path d="M14 7l-3 10"></path><rect x="2" y="3" width="20" height="18" rx="2"></rect></svg>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Rodar no VSCode</span></sc-if>
+    </button>
+    </sc-if>
+
+    <div style="flex:1; min-height:20px;"></div>
+
+    <div style="border-top:1px solid #1A1B1D; padding-top:12px; display:flex; align-items:center; gap:10px;">
+      <div style="width:28px; height:28px; flex:none; border-radius:50%; background:#1D1E21; border:1px solid #2A2B2F; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; color:#C8C3BC;">G</div>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:1; min-width:0;">
+          <div style="font-size:12.5px; font-weight:500; color:#D6D1CA; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Gustavo</div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10px; color:#5A554F;">admin</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ logout }}" title="Sair" style="width:26px; height:26px; flex:none; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid #232427; border-radius:6px; color:#8C867F; cursor:pointer;" style-hover="border-color:#FF6B1A; color:#FF8433">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 17l5-5-5-5"></path><path d="M20 12H9"></path><path d="M9 3H5v18h4"></path></svg>
+        </button>
+      </sc-if>
+    </div>
+  </aside>
+
+  <main style="flex:1; min-width:0; display:flex; flex-direction:column;">
+    <header style="height:58px; flex:none; border-bottom:1px solid #1A1B1D; background:rgba(8,9,10,0.9); backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:space-between; gap:20px; padding:0 30px; position:sticky; top:0; z-index:5;">
+      <div style="display:flex; align-items:center; gap:9px; font-family:'JetBrains Mono', monospace; font-size:12px; color:#5A554F;">
+        <span>nexoterracore</span><span style="color:#333">/</span><span style="color:#C8C3BC;">{{ crumb }}</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="display:flex; align-items:center; gap:7px; font-family:'JetBrains Mono', monospace; font-size:11px; color:#7C766F; background:#0F1011; border:1px solid #1E1F22; border-radius:7px; padding:6px 10px;">
+          <span style="width:6px; height:6px; border-radius:50%; background:#4ADE80;"></span>db: local:5432
+        </div>
+        <button onClick="{{ newRecord }}" style="height:31px; padding:0 13px; display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:7px; cursor:pointer;" style-hover="background:#FF8433">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
+          {{ newLabel }}
+        </button>
+      </div>
+    </header>
+
+    <div style="flex:1; padding:{{ mainPad }}; max-width:1240px; width:100%;">
+
+      <sc-if value="{{ atPanel }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex; flex-direction:column; gap:22px;">
+        <div style="display:flex; align-items:baseline; justify-content:space-between; gap:20px;">
+          <div style="display:flex; align-items:baseline; gap:12px;">
+            <div style="font-size:26px; font-weight:600; letter-spacing:-0.03em; color:#FF8433; line-height:1;">{{ totalPatrimonio }}</div>
+            <div style="font-size:13px; color:#7C766F;">patrimônio declarado · {{ totalRegistros }} bens</div>
+          </div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:#4E4943;">{{ receitaMensal }} / mês</div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); border:1px solid #1C1D20; border-radius:10px; background:#0C0D0E; overflow:hidden;">
+          <div style="padding:14px 16px; border-right:1px solid #1C1D20; display:flex; align-items:baseline; gap:8px;">
+            <div style="font-size:18px; font-weight:600; letter-spacing:-0.02em; line-height:1;">{{ nImoveis }}</div>
+            <div style="font-size:12px; color:#6E6862;">imóveis</div>
+          </div>
+          <div style="padding:14px 16px; border-right:1px solid #1C1D20; display:flex; align-items:baseline; gap:8px;">
+            <div style="font-size:18px; font-weight:600; letter-spacing:-0.02em; line-height:1;">{{ totalHectares }}</div>
+            <div style="font-size:12px; color:#6E6862;">hectares</div>
+          </div>
+          <div style="padding:14px 16px; border-right:1px solid #1C1D20; display:flex; align-items:baseline; gap:8px;">
+            <div style="font-size:18px; font-weight:600; letter-spacing:-0.02em; line-height:1;">{{ totalCapacidade }}</div>
+            <div style="font-size:12px; color:#6E6862;">t de armazenagem</div>
+          </div>
+          <div style="padding:14px 16px; display:flex; align-items:baseline; gap:8px;">
+            <div style="font-size:18px; font-weight:600; letter-spacing:-0.02em; line-height:1;">{{ nAlugueis }}</div>
+            <div style="font-size:12px; color:#6E6862;">contratos</div>
+          </div>
+        </div>
+
+        <div style="border:1px solid #1C1D20; border-radius:10px; background:#0C0D0E; overflow:hidden;">
+          <div style="padding:12px 18px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Últimos registros</div>
+          <sc-if value="{{ semRegistros }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:30px 18px; display:flex; align-items:center; gap:16px;">
+              <div style="font-size:13.5px; color:#6E6862;">Nenhum bem registrado.</div>
+              <button onClick="{{ newRecord }}" style="height:30px; padding:0 12px; font-size:12.5px; font-weight:600; color:#FF8433; background:transparent; border:1px solid rgba(255,107,26,0.35); border-radius:7px; cursor:pointer;" style-hover="background:rgba(255,107,26,0.1)">Registrar</button>
+            </div>
+          </sc-if>
+          <sc-for list="{{ recentes }}" as="r" hint-placeholder-count="0">
+            <div style="display:flex; align-items:center; gap:14px; padding:12px 18px; border-bottom:1px solid #17181A;">
+              <span style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:#FF8433; width:88px; flex:none;">{{ r.kind }}</span>
+              <span style="flex:1; font-size:13.5px; color:#D6D1CA;">{{ r.nome }}</span>
+              <span style="font-size:13px; color:#7C766F;">{{ r.local }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atImoveis }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px;">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Imóveis</h1>
+            <p style="margin:0; font-size:14.5px; color:#7C766F;">Urbanos, comerciais e lotes, com matrícula e imobiliária responsável.</p>
+          </div>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Cadastrar imóvel</button>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
+          <div style="display:grid; grid-template-columns:1.7fr 0.9fr 1.1fr 1fr 0.9fr 0.8fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
+            <div>Título</div><div>Tipo</div><div>Cidade / UF</div><div>Matrícula</div><div>Valor</div><div>Status</div>
+          </div>
+          <sc-if value="{{ semImoveis }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:56px 20px; text-align:center; font-size:14px; color:#6E6862;">Nenhum imóvel cadastrado.</div>
+          </sc-if>
+          <sc-for list="{{ imoveis }}" as="i" hint-placeholder-count="0">
+            <div style="display:grid; grid-template-columns:1.7fr 0.9fr 1.1fr 1fr 0.9fr 0.8fr; gap:14px; padding:14px 20px; min-width:840px; border-bottom:1px solid #17181A; font-size:13.5px; color:#C8C3BC; align-items:center;">
+              <div style="color:#EDE9E4; font-weight:500;">{{ i.titulo }}</div>
+              <div style="color:#8C867F;">{{ i.tipo }}</div>
+              <div>{{ i.local }}</div>
+              <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">{{ i.matricula }}</div>
+              <div>{{ i.valorFmt }}</div>
+              <div style="font-size:12px; color:#FF8433;">{{ i.status }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atFazendas }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px;">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Fazendas</h1>
+            <p style="margin:0; font-size:14.5px; color:#7C766F;">Área, matrícula, CAR, cultura e coordenada do sede.</p>
+          </div>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Cadastrar fazenda</button>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
+          <div style="display:grid; grid-template-columns:1.6fr 1.1fr 0.8fr 1fr 1.1fr 0.8fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
+            <div>Propriedade</div><div>Município / UF</div><div>Hectares</div><div>Cultura</div><div>Coordenada</div><div>Status</div>
+          </div>
+          <sc-if value="{{ semFazendas }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:56px 20px; text-align:center; font-size:14px; color:#6E6862;">Nenhuma fazenda cadastrada.</div>
+          </sc-if>
+          <sc-for list="{{ fazendas }}" as="f" hint-placeholder-count="0">
+            <div style="display:grid; grid-template-columns:1.6fr 1.1fr 0.8fr 1fr 1.1fr 0.8fr; gap:14px; padding:14px 20px; min-width:840px; border-bottom:1px solid #17181A; font-size:13.5px; color:#C8C3BC; align-items:center;">
+              <div style="color:#EDE9E4; font-weight:500;">{{ f.nome }}</div>
+              <div>{{ f.local }}</div>
+              <div>{{ f.hectares }}</div>
+              <div style="color:#8C867F;">{{ f.cultura }}</div>
+              <div style="font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#8C867F;">{{ f.coord }}</div>
+              <div style="font-size:12px; color:#FF8433;">{{ f.status }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atArmazens }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px;">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Armazéns e silos</h1>
+            <p style="margin:0; font-size:14.5px; color:#7C766F;">Capacidade estática, tipo de estrutura e ocupação.</p>
+          </div>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Cadastrar unidade</button>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
+          <div style="display:grid; grid-template-columns:1.6fr 1fr 1.1fr 1fr 0.9fr 0.8fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
+            <div>Unidade</div><div>Estrutura</div><div>Cidade / UF</div><div>Capacidade</div><div>Ocupação</div><div>Status</div>
+          </div>
+          <sc-if value="{{ semArmazens }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:56px 20px; text-align:center; font-size:14px; color:#6E6862;">Nenhuma unidade cadastrada.</div>
+          </sc-if>
+          <sc-for list="{{ armazens }}" as="a" hint-placeholder-count="0">
+            <div style="display:grid; grid-template-columns:1.6fr 1fr 1.1fr 1fr 0.9fr 0.8fr; gap:14px; padding:14px 20px; min-width:840px; border-bottom:1px solid #17181A; font-size:13.5px; color:#C8C3BC; align-items:center;">
+              <div style="color:#EDE9E4; font-weight:500;">{{ a.nome }}</div>
+              <div style="color:#8C867F;">{{ a.tipo }}</div>
+              <div>{{ a.local }}</div>
+              <div>{{ a.capacidade }} t</div>
+              <div>{{ a.ocupacao }}</div>
+              <div style="font-size:12px; color:#FF8433;">{{ a.status }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atImobiliarias }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px;">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Proprietários</h1>
+            <p style="margin:0; font-size:14.5px; color:#7C766F;">Titulares dos bens sob minha gestão, com taxa de administração e contato.</p>
+          </div>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Cadastrar imobiliária</button>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
+          <div style="display:grid; grid-template-columns:1.7fr 1.1fr 0.9fr 1.1fr 1fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
+            <div>Nome / razão social</div><div>CPF / CNPJ</div><div>Taxa adm.</div><div>Cidade / UF</div><div>Contato</div>
+          </div>
+          <sc-if value="{{ semImobiliarias }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:56px 20px; text-align:center; font-size:14px; color:#6E6862;">Nenhum proprietário cadastrado.</div>
+          </sc-if>
+          <sc-for list="{{ imobiliarias }}" as="m" hint-placeholder-count="0">
+            <div style="display:grid; grid-template-columns:1.7fr 1.1fr 0.9fr 1.1fr 1fr; gap:14px; padding:14px 20px; min-width:840px; border-bottom:1px solid #17181A; font-size:13.5px; color:#C8C3BC; align-items:center;">
+              <div style="color:#EDE9E4; font-weight:500;">{{ m.nome }}</div>
+              <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">{{ m.cnpj }}</div>
+              <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">{{ m.creci }}</div>
+              <div>{{ m.local }}</div>
+              <div>{{ m.responsavel }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atAlugueis }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px;">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Aluguéis</h1>
+            <p style="margin:0; font-size:14.5px; color:#7C766F;">Contratos, inquilinos, vencimento e reajuste.</p>
+          </div>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Novo contrato</button>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
+          <div style="display:grid; grid-template-columns:1.6fr 1.3fr 1fr 0.9fr 1fr 0.8fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
+            <div>Ativo</div><div>Inquilino</div><div>Aluguel</div><div>Venc.</div><div>Vigência</div><div>Status</div>
+          </div>
+          <sc-if value="{{ semAlugueis }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:56px 20px; text-align:center; font-size:14px; color:#6E6862;">Nenhum contrato cadastrado.</div>
+          </sc-if>
+          <sc-for list="{{ alugueis }}" as="l" hint-placeholder-count="0">
+            <div style="display:grid; grid-template-columns:1.6fr 1.3fr 1fr 0.9fr 1fr 0.8fr; gap:14px; padding:14px 20px; min-width:840px; border-bottom:1px solid #17181A; font-size:13.5px; color:#C8C3BC; align-items:center;">
+              <div style="color:#EDE9E4; font-weight:500;">{{ l.ativo }}</div>
+              <div>{{ l.inquilino }}</div>
+              <div>{{ l.valorFmt }}</div>
+              <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">dia {{ l.vencimento }}</div>
+              <div style="font-size:12.5px; color:#8C867F;">{{ l.vigencia }}</div>
+              <div style="font-size:12px; color:#FF8433;">{{ l.status }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atMatriculas }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Matrículas</h1>
+          <p style="margin:0; font-size:14.5px; color:#7C766F;">Registro de cartório por ativo, com ônus e averbações.</p>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
+          <div style="display:grid; grid-template-columns:1fr 1.7fr 1.1fr 1.1fr 0.9fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
+            <div>Matrícula</div><div>Ativo</div><div>Cartório</div><div>Comarca</div><div>Ônus</div>
+          </div>
+          <sc-if value="{{ semMatriculas }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:56px 20px; text-align:center; font-size:14px; color:#6E6862;">Nenhuma matrícula registrada. Ela é criada junto com o imóvel ou a fazenda.</div>
+          </sc-if>
+          <sc-for list="{{ matriculas }}" as="t" hint-placeholder-count="0">
+            <div style="display:grid; grid-template-columns:1fr 1.7fr 1.1fr 1.1fr 0.9fr; gap:14px; padding:14px 20px; min-width:840px; border-bottom:1px solid #17181A; font-size:13.5px; color:#C8C3BC; align-items:center;">
+              <div style="font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#EDE9E4;">{{ t.matricula }}</div>
+              <div>{{ t.ativo }}</div>
+              <div style="color:#8C867F;">{{ t.cartorio }}</div>
+              <div style="color:#8C867F;">{{ t.comarca }}</div>
+              <div style="font-size:12px; color:#FF8433;">{{ t.onus }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atFinanceiro }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px;">
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Financeiro</h1>
+            <p style="margin:0; font-size:14.5px; color:#7C766F;">Receitas, despesas e comissões por ativo.</p>
+          </div>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Novo lançamento</button>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
+          <div style="padding:20px 24px; border-right:1px solid #1C1D20; display:flex; flex-direction:column; gap:9px;">
+            <div style="font-size:12.5px; color:#7C766F;">Receitas</div>
+            <div style="font-size:24px; font-weight:600; letter-spacing:-0.03em; color:#4ADE80;">{{ totalReceita }}</div>
+          </div>
+          <div style="padding:20px 24px; border-right:1px solid #1C1D20; display:flex; flex-direction:column; gap:9px;">
+            <div style="font-size:12.5px; color:#7C766F;">Despesas</div>
+            <div style="font-size:24px; font-weight:600; letter-spacing:-0.03em; color:#FF6B6B;">{{ totalDespesa }}</div>
+          </div>
+          <div style="padding:20px 24px; display:flex; flex-direction:column; gap:9px;">
+            <div style="font-size:12.5px; color:#7C766F;">Resultado</div>
+            <div style="font-size:24px; font-weight:600; letter-spacing:-0.03em;">{{ totalResultado }}</div>
+          </div>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
+          <div style="display:grid; grid-template-columns:1.7fr 0.9fr 1.1fr 1fr 0.9fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
+            <div>Descrição</div><div>Tipo</div><div>Categoria</div><div>Valor</div><div>Data</div>
+          </div>
+          <sc-if value="{{ semLancamentos }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:56px 20px; text-align:center; font-size:14px; color:#6E6862;">Nenhum lançamento registrado.</div>
+          </sc-if>
+          <sc-for list="{{ lancamentos }}" as="c" hint-placeholder-count="0">
+            <div style="display:grid; grid-template-columns:1.7fr 0.9fr 1.1fr 1fr 0.9fr; gap:14px; padding:14px 20px; min-width:840px; border-bottom:1px solid #17181A; font-size:13.5px; color:#C8C3BC; align-items:center;">
+              <div style="color:#EDE9E4; font-weight:500;">{{ c.descricao }}</div>
+              <div style="font-size:12px; color:#8C867F;">{{ c.tipo }}</div>
+              <div style="color:#8C867F;">{{ c.categoria }}</div>
+              <div>{{ c.valorFmt }}</div>
+              <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">{{ c.data }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atPatrimonio }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Patrimônio</h1>
+          <p style="margin:0; font-size:14.5px; color:#7C766F;">Composição do portfólio por classe de ativo.</p>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:26px; display:flex; flex-direction:column; gap:22px;">
+          <div style="display:flex; align-items:baseline; gap:12px;">
+            <div style="font-size:38px; font-weight:600; letter-spacing:-0.04em; color:#FF8433; line-height:1;">{{ totalPatrimonio }}</div>
+            <div style="font-size:13.5px; color:#7C766F;">valor declarado, {{ totalRegistros }} ativos</div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:0;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-top:1px solid #17181A; font-size:14px;">
+              <span style="color:#C8C3BC;">Imóveis urbanos</span><span style="color:#8C867F;">{{ nImoveis }} ativos</span><span style="color:#EDE9E4; min-width:140px; text-align:right;">{{ valorImoveis }}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-top:1px solid #17181A; font-size:14px;">
+              <span style="color:#C8C3BC;">Terra rural</span><span style="color:#8C867F;">{{ totalHectares }} ha</span><span style="color:#EDE9E4; min-width:140px; text-align:right;">{{ valorFazendas }}</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 0; border-top:1px solid #17181A; font-size:14px;">
+              <span style="color:#C8C3BC;">Armazenagem</span><span style="color:#8C867F;">{{ totalCapacidade }} t</span><span style="color:#EDE9E4; min-width:140px; text-align:right;">{{ valorArmazens }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atGeo }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Geo-referência</h1>
+          <p style="margin:0; font-size:14.5px; color:#7C766F;">Coordenadas e polígonos dos ativos, prontos para a camada Google Earth.</p>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
+          <div style="height:300px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; background:#0A0B0C; border-bottom:1px solid #1C1D20;">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#3E3F42" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 010 18a15 15 0 010-18z"></path></svg>
+            <div style="font-size:14px; color:#8C867F;">Camada de mapa desconectada</div>
+            <div style="font-size:13px; line-height:1.6; color:#6E6862; max-width:440px; text-align:center;">O visualizador carrega tiles do Google Earth/Maps com a chave em <span style="font-family:'JetBrains Mono', monospace; color:#8C867F;">GOOGLE_MAPS_API_KEY</span> e desenha os polígonos vindos do PostGIS.</div>
+          </div>
+          <div style="display:grid; grid-template-columns:1.6fr 1.2fr 1.2fr 0.9fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
+            <div>Ativo</div><div>Coordenada</div><div>SRID</div><div>Geometria</div>
+          </div>
+          <sc-if value="{{ semGeo }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:48px 20px; text-align:center; font-size:14px; color:#6E6862;">Nenhuma coordenada cadastrada.</div>
+          </sc-if>
+          <sc-for list="{{ geos }}" as="g" hint-placeholder-count="0">
+            <div style="display:grid; grid-template-columns:1.6fr 1.2fr 1.2fr 0.9fr; gap:14px; padding:14px 20px; min-width:840px; border-bottom:1px solid #17181A; font-size:13.5px; color:#C8C3BC; align-items:center;">
+              <div style="color:#EDE9E4; font-weight:500;">{{ g.nome }}</div>
+              <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">{{ g.coord }}</div>
+              <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">EPSG:4674</div>
+              <div style="font-size:12px; color:#FF8433;">{{ g.tipo }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atMercado }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">PicPay</h1>
+          <p style="margin:0; font-size:14.5px; color:#7C766F;">Ciclo de gestão: cobrar o inquilino, repassar ao proprietário, retirar a administração.</p>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); border:1px solid #1C1D20; border-radius:10px; background:#0C0D0E; overflow:hidden;">
+          <div style="padding:16px 18px; border-right:1px solid #1C1D20; display:flex; flex-direction:column; gap:8px;">
+            <div style="font-size:12px; color:#6E6862;">A receber no mês</div>
+            <div style="font-size:18px; font-weight:600; letter-spacing:-0.02em;">{{ receitaMensal }}</div>
+          </div>
+          <div style="padding:16px 18px; border-right:1px solid #1C1D20; display:flex; flex-direction:column; gap:8px;">
+            <div style="font-size:12px; color:#6E6862;">Repasse aos proprietários</div>
+            <div style="font-size:18px; font-weight:600; letter-spacing:-0.02em;">{{ repasse }}</div>
+          </div>
+          <div style="padding:16px 18px; display:flex; flex-direction:column; gap:8px;">
+            <div style="font-size:12px; color:#6E6862;">Taxa de administração (10%)</div>
+            <div style="font-size:18px; font-weight:600; letter-spacing:-0.02em; color:#4ADE80;">{{ taxaAdm }}</div>
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px;">
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; flex-direction:column; gap:12px;">
+            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">1 · Cobrança</div>
+            <div style="font-size:14.5px; font-weight:600; letter-spacing:-0.015em;">Pix ou boleto por contrato</div>
+            <div style="font-size:13px; line-height:1.75; color:#7C766F;">Todo contrato ativo gera a cobrança no dia do vencimento, com o link no próprio registro.</div>
+          </div>
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; flex-direction:column; gap:12px;">
+            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">2 · Repasse</div>
+            <div style="font-size:14.5px; font-weight:600; letter-spacing:-0.015em;">Split para o titular</div>
+            <div style="font-size:13px; line-height:1.75; color:#7C766F;">Pagamento confirmado, o valor líquido vai ao proprietário e a administração fica retida.</div>
+          </div>
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; flex-direction:column; gap:12px;">
+            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">3 · Inadimplência</div>
+            <div style="font-size:14.5px; font-weight:600; letter-spacing:-0.015em;">Régua de cobrança</div>
+            <div style="font-size:13px; line-height:1.75; color:#7C766F;">Sem baixa no vencimento, o contrato entra em atraso e a régua de avisos é disparada.</div>
+          </div>
+        </div>
+
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; flex-direction:column; gap:12px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Integração</div>
+          <div style="font-size:13.5px; line-height:1.8; color:#7C766F;">Credenciais em <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">PICPAY_TOKEN</span> e <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">PICPAY_SELLER_TOKEN</span>. O webhook de confirmação grava a receita em <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">ledger</span> e dá baixa no contrato. Nenhuma conta conectada.</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atArquitetura }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Arquitetura</h1>
+          <p style="margin:0; font-size:14.5px; color:#7C766F;">Três camadas, um repositório, tudo local com um comando.</p>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;">
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:14px;">
+            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#FF8433;">apps/web</div>
+            <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Front-end</div>
+            <div style="font-size:13.5px; line-height:1.75; color:#7C766F;">Next.js 14 (App Router), TypeScript, Tailwind. Sidebar recolhível com estado em cookie. Server Components nas listagens, client nos formulários.</div>
+          </div>
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:14px;">
+            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#FF8433;">apps/api</div>
+            <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Back-end</div>
+            <div style="font-size:13.5px; line-height:1.75; color:#7C766F;">Node 20 com Fastify, Zod na validação, JWT em cookie httpOnly, senha em argon2. REST por recurso, camada de serviço isolada do ORM.</div>
+          </div>
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:14px;">
+            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#FF8433;">packages/db</div>
+            <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Dados</div>
+            <div style="font-size:13.5px; line-height:1.75; color:#7C766F;">PostgreSQL 16 com PostGIS para polígonos. Prisma dono das migrações. Row Level Security por imobiliária.</div>
+          </div>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:16px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Estrutura de pastas</div>
+          <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.9; color:#9A948C; overflow-x:auto;">nexoterra/
+├─ apps/
+│  ├─ web/        console, login, sidebar recolhível
+│  └─ api/        auth, imóveis, fazendas, armazéns, financeiro
+├─ packages/
+│  ├─ db/         Prisma schema + migrações
+│  └─ ui/         componentes compartilhados
+├─ docker-compose.yml   Postgres 16 + PostGIS
+└─ .env.example</pre>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:14px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Fluxo de autenticação</div>
+          <div style="font-size:13.5px; line-height:1.85; color:#7C766F;">O formulário envia usuário e senha para <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">POST /auth/login</span>. A API confere o hash argon2, emite JWT de 15 minutos e refresh de 7 dias, ambos em cookie httpOnly. O middleware do Next protege tudo sob <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">/console</span> e devolve ao login quando o token expira.</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atSchema }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Banco de dados</h1>
+          <p style="margin:0; font-size:14.5px; color:#7C766F;">Esquema criado vazio pelas migrações.</p>
+        </div>
+        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:16px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">schema.sql</div>
+          <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.9; color:#9A948C; overflow-x:auto;">create extension if not exists pgcrypto;
+create extension if not exists postgis;
+
+create table users (
+  id uuid primary key default gen_random_uuid(),
+  username text unique not null,
+  password text not null,              -- hash argon2
+  role text not null default 'admin',
+  created_at timestamptz default now()
+);
+
+create table agencies (                -- imobiliárias
+  id uuid primary key default gen_random_uuid(),
+  name text not null, cnpj text unique, creci text,
+  city text, state char(2), manager text
+);
+
+create table properties (              -- imóveis
+  id uuid primary key default gen_random_uuid(),
+  agency_id uuid references agencies(id),
+  title text not null, kind text,
+  address text, city text, state char(2),
+  area_m2 numeric(12,2), bedrooms int,
+  registration text,                   -- matrícula
+  price_cents bigint, status text default 'draft',
+  lat numeric(9,6), lng numeric(9,6)
+);
+
+create table farms (                   -- fazendas
+  id uuid primary key default gen_random_uuid(),
+  name text not null, municipality text, state char(2),
+  hectares numeric(12,2), registration text, car_code text,
+  crop text, price_cents bigint, status text default 'draft',
+  geom geometry(Polygon, 4674)
+);
+
+create table warehouses (              -- armazéns e silos
+  id uuid primary key default gen_random_uuid(),
+  name text not null, kind text,       -- silo | granel | convencional
+  city text, state char(2), country text default 'BR',
+  capacity_t numeric(12,2), occupancy_pct numeric(5,2),
+  price_cents bigint, status text default 'draft'
+);
+
+create table leases (                  -- aluguéis
+  id uuid primary key default gen_random_uuid(),
+  asset_type text not null, asset_id uuid not null,
+  tenant text not null, rent_cents bigint,
+  due_day int, start_date date, end_date date,
+  status text default 'active'
+);
+
+create table ledger (                  -- financeiro
+  id uuid primary key default gen_random_uuid(),
+  description text not null,
+  kind text not null,                  -- receita | despesa
+  category text, amount_cents bigint, entry_date date,
+  asset_type text, asset_id uuid
+);
+
+create table market_quotes (
+  id bigserial primary key,
+  region text, commodity text,
+  price numeric(14,4), currency char(3),
+  observed_at timestamptz default now()
+);</pre>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ atVscode }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex; flex-direction:column; gap:26px;">
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Rodar no VSCode</h1>
+          <p style="margin:0; font-size:14.5px; color:#7C766F;">Do clone ao login funcionando. Requer Node 20, pnpm e Docker.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
+            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">1</div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+              <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Abrir a pasta e instalar</div>
+              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">No VSCode: <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">File → Open Folder</span>. Terminal integrado com <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">Ctrl+`</span>.</div>
+              <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">git clone &lt;repo&gt; nexoterra
+cd nexoterra
+pnpm install</pre>
+            </div>
+          </div>
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
+            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">2</div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+              <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Subir o PostgreSQL</div>
+              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">Postgres 16 com PostGIS na porta 5432.</div>
+              <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">docker compose up -d db
+cp .env.example .env</pre>
+            </div>
+          </div>
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
+            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">3</div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+              <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Criar tabelas e o usuário admin</div>
+              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">As migrações criam o esquema vazio e um único usuário.</div>
+              <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">pnpm --filter db prisma migrate dev
+pnpm --filter db bootstrap:admin   # admin / 123</pre>
+            </div>
+          </div>
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
+            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">4</div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+              <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Rodar front e back</div>
+              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">API em <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">:3001</span>, console em <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">:3000</span>.</div>
+              <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">pnpm dev</pre>
+            </div>
+          </div>
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
+            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">5</div>
+            <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
+              <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Entrar e trocar a senha</div>
+              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">Abra <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">http://localhost:3000</span>, entre com admin / 123 e troque a senha antes de expor o ambiente.</div>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; flex-direction:column; gap:12px;">
+            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">.env</div>
+            <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; overflow-x:auto;">DATABASE_URL="postgresql://nexo:nexo@localhost:5432/nexoterra"
+JWT_SECRET="troque-este-valor"
+API_URL="http://localhost:3001"
+GOOGLE_MAPS_API_KEY=""</pre>
+          </div>
+          <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; flex-direction:column; gap:12px;">
+            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Extensões recomendadas</div>
+            <div style="font-size:13.5px; line-height:1.85; color:#7C766F;">Prisma · ESLint · Tailwind CSS IntelliSense · PostgreSQL (ms-ossdata) · Docker · Error Lens</div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+    </div>
+  </main>
+
+  <sc-if value="{{ formOpen }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed; inset:0; z-index:40; background:rgba(4,5,6,0.72); backdrop-filter:blur(3px); display:flex; justify-content:flex-end;">
+    <div style="width:min(620px, 100%); height:100%; background:#0B0B0C; border-left:1px solid #1E1F22; display:flex; flex-direction:column; overflow-y:auto;">
+      <div style="flex:none; height:60px; padding:0 26px; border-bottom:1px solid #1A1B1D; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; background:#0B0B0C;">
+        <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">{{ formTitle }}</div>
+        <button onClick="{{ closeForm }}" title="Fechar" style="width:28px; height:28px; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid #232427; border-radius:7px; color:#8C867F; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#E9E5E0">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div style="flex:1; padding:26px; display:flex; flex-direction:column; gap:22px;">
+
+        <sc-if value="{{ formImovel }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Identificação</div>
+          <label style="display:flex; flex-direction:column; gap:7px;">
+            <span style="font-size:12.5px; color:#8C867F;">Cadastro</span>
+            <input name="titulo" value="{{ f.titulo }}" onChange="{{ setField }}" placeholder="Sala comercial, Centro" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+          </label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Tipo</span>
+              <select name="tipo" value="{{ f.tipo }}" onChange="{{ setField }}" style="height:42px; padding:0 11px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
+                <option value="Casa">Casa</option>
+                <option value="Apartamento">Apartamento</option>
+                <option value="Sala comercial">Sala comercial</option>
+                <option value="Galpão">Galpão</option>
+                <option value="Terreno">Terreno</option>
+                <option value="Chácara">Chácara</option>
+              </select>
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Finalidade</span>
+              <select name="status" value="{{ f.status }}" onChange="{{ setField }}" style="height:42px; padding:0 11px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
+                <option value="Venda">Venda</option>
+                <option value="Aluguel">Aluguel</option>
+                <option value="Venda e aluguel">Venda e aluguel</option>
+                <option value="Rascunho">Rascunho</option>
+              </select>
+            </label>
+          </div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F; padding-top:6px;">Localização</div>
+          <div style="display:grid; grid-template-columns:2.4fr 0.8fr 1.2fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Logradouro</span>
+              <input name="endereco" value="{{ f.endereco }}" onChange="{{ setField }}" placeholder="Rua, avenida" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Número</span>
+              <input name="numero" value="{{ f.numero }}" onChange="{{ setField }}" placeholder="1250" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Complemento</span>
+              <input name="complemento" value="{{ f.complemento }}" onChange="{{ setField }}" placeholder="Apto 42, bloco B" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <label style="display:flex; flex-direction:column; gap:7px;">
+            <span style="font-size:12.5px; color:#8C867F;">Bairro</span>
+            <input name="bairro" value="{{ f.bairro }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+          </label>
+          <div style="display:grid; grid-template-columns:2fr 0.7fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Cidade</span>
+              <input name="cidade" value="{{ f.cidade }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">UF</span>
+              <input name="uf" value="{{ f.uf }}" onChange="{{ setField }}" maxLength="2" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px; text-transform:uppercase;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">CEP</span>
+              <input name="cep" value="{{ f.cep }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F; padding-top:6px;">Mapa</div>
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Link do Google Maps ou coordenada</span>
+              <input name="mapa" value="{{ f.mapa }}" onChange="{{ setField }}" placeholder="https://maps.app.goo.gl/… ou -23.550520, -46.633308" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:12.5px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <div style="display:flex; gap:10px;">
+              <button onClick="{{ abrirMaps }}" style="height:34px; padding:0 14px; display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:500; color:#B4AFA8; background:transparent; border:1px solid #26272A; border-radius:8px; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#EDE9E4">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 21s7-6.3 7-11a7 7 0 10-14 0c0 4.7 7 11 7 11z"></path><circle cx="12" cy="10" r="2.4"></circle></svg>
+                Localizar no Google Maps
+              </button>
+              <button onClick="{{ abrirEarth }}" style="height:34px; padding:0 14px; display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:500; color:#B4AFA8; background:transparent; border:1px solid #26272A; border-radius:8px; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#EDE9E4">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 010 18a15 15 0 010-18z"></path></svg>
+                Ver no Google Earth
+              </button>
+            </div>
+            <div style="font-size:12px; line-height:1.6; color:#5A554F;">Abre em uma nova aba com o endereço preenchido. Cole o link de volta no campo acima para guardar no cadastro.</div>
+          </div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F; padding-top:6px;">Lote e terreno</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Loteamento</span>
+              <input name="loteamento" value="{{ f.loteamento }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Quadra</span>
+              <input name="quadra" value="{{ f.quadra }}" onChange="{{ setField }}" placeholder="12" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Lote nº</span>
+              <input name="lote" value="{{ f.lote }}" onChange="{{ setField }}" placeholder="07" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Terreno (m²)</span>
+              <input name="terreno" value="{{ f.terreno }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Frente (m)</span>
+              <input name="frente" value="{{ f.frente }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Fundo (m)</span>
+              <input name="fundo" value="{{ f.fundo }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F; padding-top:6px;">Construção</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Área construída (m²)</span>
+              <input name="area" value="{{ f.area }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Quartos</span>
+              <input name="quartos" value="{{ f.quartos }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Vagas</span>
+              <input name="vagas" value="{{ f.vagas }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F; padding-top:6px;">Registro e valor</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Matrícula</span>
+              <input name="matricula" value="{{ f.matricula }}" onChange="{{ setField }}" placeholder="00.000" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Cartório / comarca</span>
+              <input name="cartorio" value="{{ f.cartorio }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Valor (R$)</span>
+              <input name="valor" value="{{ f.valor }}" onChange="{{ setField }}" placeholder="750000" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Proprietário / titular</span>
+              <input name="titular" value="{{ f.titular }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ formFazenda }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Propriedade</div>
+          <label style="display:flex; flex-direction:column; gap:7px;">
+            <span style="font-size:12.5px; color:#8C867F;">Nome da fazenda</span>
+            <input name="nome" value="{{ f.nome }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+          </label>
+          <div style="display:grid; grid-template-columns:2fr 0.7fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Município</span>
+              <input name="municipio" value="{{ f.municipio }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">UF</span>
+              <input name="uf" value="{{ f.uf }}" onChange="{{ setField }}" maxLength="2" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px; text-transform:uppercase;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Hectares</span>
+              <input name="hectares" value="{{ f.hectares }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Cultura principal</span>
+              <select name="cultura" value="{{ f.cultura }}" onChange="{{ setField }}" style="height:42px; padding:0 11px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
+                <option value="Soja">Soja</option>
+                <option value="Milho">Milho</option>
+                <option value="Algodão">Algodão</option>
+                <option value="Café">Café</option>
+                <option value="Cana">Cana</option>
+                <option value="Pecuária">Pecuária</option>
+                <option value="Floresta">Floresta</option>
+              </select>
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Finalidade</span>
+              <select name="status" value="{{ f.status }}" onChange="{{ setField }}" style="height:42px; padding:0 11px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
+                <option value="Venda">Venda</option>
+                <option value="Arrendamento">Arrendamento</option>
+                <option value="Próprio">Próprio</option>
+                <option value="Rascunho">Rascunho</option>
+              </select>
+            </label>
+          </div>
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F; padding-top:6px;">Regularização</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Matrícula</span>
+              <input name="matricula" value="{{ f.matricula }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">CAR</span>
+              <input name="car" value="{{ f.car }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Latitude</span>
+              <input name="lat" value="{{ f.lat }}" onChange="{{ setField }}" placeholder="-15.601" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Longitude</span>
+              <input name="lng" value="{{ f.lng }}" onChange="{{ setField }}" placeholder="-56.097" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Valor (R$)</span>
+              <input name="valor" value="{{ f.valor }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ formArmazem }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Unidade</div>
+          <label style="display:flex; flex-direction:column; gap:7px;">
+            <span style="font-size:12.5px; color:#8C867F;">Nome da unidade</span>
+            <input name="nome" value="{{ f.nome }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+          </label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Estrutura</span>
+              <select name="tipo" value="{{ f.tipo }}" onChange="{{ setField }}" style="height:42px; padding:0 11px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
+                <option value="Silo metálico">Silo metálico</option>
+                <option value="Graneleiro">Graneleiro</option>
+                <option value="Convencional">Convencional</option>
+                <option value="Bolsa / silo bag">Bolsa / silo bag</option>
+              </select>
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">País</span>
+              <select name="pais" value="{{ f.pais }}" onChange="{{ setField }}" style="height:42px; padding:0 11px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
+                <option value="Brasil">Brasil</option>
+                <option value="Angola">Angola</option>
+                <option value="Moçambique">Moçambique</option>
+                <option value="Zâmbia">Zâmbia</option>
+              </select>
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns:2fr 0.7fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Cidade</span>
+              <input name="cidade" value="{{ f.cidade }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">UF</span>
+              <input name="uf" value="{{ f.uf }}" onChange="{{ setField }}" maxLength="2" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px; text-transform:uppercase;" />
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Capacidade (t)</span>
+              <input name="capacidade" value="{{ f.capacidade }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Ocupação (%)</span>
+              <input name="ocupacao" value="{{ f.ocupacao }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Valor (R$)</span>
+              <input name="valor" value="{{ f.valor }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <label style="display:flex; flex-direction:column; gap:7px;">
+            <span style="font-size:12.5px; color:#8C867F;">Situação</span>
+            <select name="status" value="{{ f.status }}" onChange="{{ setField }}" style="height:42px; padding:0 11px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
+              <option value="Operando">Operando</option>
+              <option value="Venda">Venda</option>
+              <option value="Locação">Locação</option>
+              <option value="Obra">Obra</option>
+            </select>
+          </label>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ formImobiliaria }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Titular</div>
+          <label style="display:flex; flex-direction:column; gap:7px;">
+            <span style="font-size:12.5px; color:#8C867F;">Nome / razão social</span>
+            <input name="nome" value="{{ f.nome }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+          </label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">CPF / CNPJ</span>
+              <input name="cnpj" value="{{ f.cnpj }}" onChange="{{ setField }}" placeholder="000.000.000-00" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Taxa de administração (%)</span>
+              <input name="creci" value="{{ f.creci }}" onChange="{{ setField }}" placeholder="10" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns:2fr 0.7fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Cidade</span>
+              <input name="cidade" value="{{ f.cidade }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">UF</span>
+              <input name="uf" value="{{ f.uf }}" onChange="{{ setField }}" maxLength="2" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px; text-transform:uppercase;" />
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Contato</span>
+              <input name="responsavel" value="{{ f.responsavel }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Telefone</span>
+              <input name="telefone" value="{{ f.telefone }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ formAluguel }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Contrato</div>
+          <label style="display:flex; flex-direction:column; gap:7px;">
+            <span style="font-size:12.5px; color:#8C867F;">Ativo locado</span>
+            <input name="ativo" value="{{ f.ativo }}" onChange="{{ setField }}" placeholder="Nome do imóvel, fazenda ou armazém" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+          </label>
+          <label style="display:flex; flex-direction:column; gap:7px;">
+            <span style="font-size:12.5px; color:#8C867F;">Inquilino</span>
+            <input name="inquilino" value="{{ f.inquilino }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+          </label>
+          <div style="display:grid; grid-template-columns:1fr 0.7fr 1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Aluguel (R$)</span>
+              <input name="valor" value="{{ f.valor }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Venc.</span>
+              <input name="vencimento" value="{{ f.vencimento }}" onChange="{{ setField }}" placeholder="10" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Início</span>
+              <input name="inicio" value="{{ f.inicio }}" onChange="{{ setField }}" placeholder="2026-09" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Fim</span>
+              <input name="fim" value="{{ f.fim }}" onChange="{{ setField }}" placeholder="2029-08" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+          <label style="display:flex; flex-direction:column; gap:7px;">
+            <span style="font-size:12.5px; color:#8C867F;">Situação</span>
+            <select name="status" value="{{ f.status }}" onChange="{{ setField }}" style="height:42px; padding:0 11px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
+              <option value="Ativo">Ativo</option>
+              <option value="Em análise">Em análise</option>
+              <option value="Encerrado">Encerrado</option>
+              <option value="Inadimplente">Inadimplente</option>
+            </select>
+          </label>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ formLancamento }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Lançamento</div>
+          <label style="display:flex; flex-direction:column; gap:7px;">
+            <span style="font-size:12.5px; color:#8C867F;">Descrição</span>
+            <input name="descricao" value="{{ f.descricao }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+          </label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Tipo</span>
+              <select name="tipo" value="{{ f.tipo }}" onChange="{{ setField }}" style="height:42px; padding:0 11px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
+                <option value="Receita">Receita</option>
+                <option value="Despesa">Despesa</option>
+              </select>
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Categoria</span>
+              <select name="categoria" value="{{ f.categoria }}" onChange="{{ setField }}" style="height:42px; padding:0 11px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
+                <option value="Aluguel">Aluguel</option>
+                <option value="Comissão">Comissão</option>
+                <option value="Venda">Venda</option>
+                <option value="Manutenção">Manutenção</option>
+                <option value="Imposto">Imposto</option>
+                <option value="Arrendamento">Arrendamento</option>
+              </select>
+            </label>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Valor (R$)</span>
+              <input name="valor" value="{{ f.valor }}" onChange="{{ setField }}" style="height:42px; padding:0 13px; font-size:14px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+            <label style="display:flex; flex-direction:column; gap:7px;">
+              <span style="font-size:12.5px; color:#8C867F;">Data</span>
+              <input name="data" value="{{ f.data }}" onChange="{{ setField }}" placeholder="2026-08-29" style="height:42px; padding:0 13px; font-family:'JetBrains Mono', monospace; font-size:13px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
+            </label>
+          </div>
+        </div>
+        </sc-if>
+
+      </div>
+
+      <div style="flex:none; padding:18px 26px; border-top:1px solid #1A1B1D; display:flex; align-items:center; justify-content:space-between; gap:14px; position:sticky; bottom:0; background:#0B0B0C;">
+        <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:#4E4943;">{{ formEndpoint }}</div>
+        <div style="display:flex; gap:10px;">
+          <button onClick="{{ closeForm }}" style="height:38px; padding:0 16px; font-size:13.5px; font-weight:500; color:#B4AFA8; background:transparent; border:1px solid #26272A; border-radius:8px; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#EDE9E4">Cancelar</button>
+          <button onClick="{{ save }}" style="height:38px; padding:0 20px; font-size:13.5px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Salvar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;orgName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;NexoTerraCore&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FF6B1A&quot;,&quot;options&quot;:[&quot;#FF6B1A&quot;,&quot;#F59E0B&quot;,&quot;#E8590C&quot;,&quot;#22C55E&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca&quot;},&quot;sidebarCollapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Interface&quot;},&quot;showEngineering&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Interface&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Compacta&quot;,&quot;Padrão&quot;,&quot;Confortável&quot;],&quot;default&quot;:&quot;Padrão&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Interface&quot;},&quot;requireAuth&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Acesso&quot;}}">
+class Component extends DCLogic {
+  state = {
+    authed: false, user: '', pass: '', error: false,
+    open: null, view: 'panel',
+    formOpen: false, formKind: null, f: {},
+    imoveis: [], fazendas: [], armazens: [], imobiliarias: [], alugueis: [], lancamentos: []
+  };
+
+  defaults = {
+    imovel: { titulo:'', tipo:'Casa', status:'Venda', endereco:'', numero:'', complemento:'', bairro:'', cidade:'', uf:'', cep:'', loteamento:'', quadra:'', lote:'', mapa:'', terreno:'', frente:'', fundo:'', area:'', quartos:'', vagas:'', matricula:'', cartorio:'', valor:'', titular:'' },
+    fazenda: { nome:'', municipio:'', uf:'', hectares:'', cultura:'Soja', status:'Venda', matricula:'', car:'', lat:'', lng:'', valor:'' },
+    armazem: { nome:'', tipo:'Silo metálico', pais:'Brasil', cidade:'', uf:'', capacidade:'', ocupacao:'', valor:'', status:'Operando' },
+    imobiliaria: { nome:'', cnpj:'', creci:'', cidade:'', uf:'', responsavel:'', telefone:'' },
+    aluguel: { ativo:'', inquilino:'', valor:'', vencimento:'', inicio:'', fim:'', status:'Ativo' },
+    lancamento: { descricao:'', tipo:'Receita', categoria:'Aluguel', valor:'', data:'' }
+  };
+
+  formForView = {
+    panel:'imovel', imoveis:'imovel', fazendas:'fazenda', armazens:'armazem', imobiliarias:'imobiliaria',
+    alugueis:'aluguel', financeiro:'lancamento', matriculas:'imovel', patrimonio:'imovel', geo:'fazenda',
+    mercado:'lancamento', arquitetura:'imovel', schema:'imovel', vscode:'imovel'
+  };
+
+  labels = {
+    imovel:['Cadastrar imóvel','POST /properties','Novo imóvel'],
+    fazenda:['Cadastrar fazenda','POST /farms','Nova fazenda'],
+    armazem:['Cadastrar armazém ou silo','POST /warehouses','Nova unidade'],
+    imobiliaria:['Cadastrar proprietário','POST /owners','Novo proprietário'],
+    aluguel:['Novo contrato de aluguel','POST /leases','Novo contrato'],
+    lancamento:['Novo lançamento financeiro','POST /ledger','Novo lançamento']
+  };
+
+  STORE = 'nexoterracore.registros.v1';
+  TABELAS = ['imoveis','fazendas','armazens','imobiliarias','alugueis','lancamentos'];
+
+  componentDidMount() {
+    try {
+      const raw = window.localStorage.getItem(this.STORE);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      const next = {};
+      this.TABELAS.forEach(k => { if (Array.isArray(data[k])) next[k] = data[k]; });
+      if (Object.keys(next).length) this.setState(next);
+    } catch (e) {}
+  }
+
+  persist(state) {
+    try {
+      const out = {};
+      this.TABELAS.forEach(k => { out[k] = state[k] || []; });
+      window.localStorage.setItem(this.STORE, JSON.stringify(out));
+    } catch (e) {}
+  }
+
+  SENHA_KEY = 'nexoterracore.senha.v1';
+
+  senhaAtual() {
+    try { return window.localStorage.getItem(this.SENHA_KEY) || '123'; } catch (e) { return '123'; }
+  }
+
+  login = async () => {
+    const email = this.state.user.trim().toLowerCase();
+    const senha = this.state.pass;
+
+    if (!email || !senha) {
+      this.setState({ error:true });
+      return;
     }
-    function erroLogin(texto){const e=document.querySelector('#erro-login');if(e)e.textContent=texto}
-    async function requisicaoPublica(caminho,opcoes={}){
-      try{return await fetch(`${API}${caminho}`,opcoes)}catch{throw new Error('Backend indisponível. Tente novamente em instantes.')}
+
+    try {
+      let resposta = await fetch('http://localhost:3000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha })
+      });
+
+      let dados = await resposta.json();
+
+      if (!resposta.ok) {
+        this.setState({ error:true, pass:'' });
+        return;
+      }
+
+      if (dados.requerSelecaoFazenda) {
+        const lista = (dados.fazendas || [])
+          .map(f => `${f.id} - ${f.nome}`)
+          .join('\n');
+
+        const escolha = window.prompt(
+          `Selecione a fazenda pelo ID:\n\n${lista}`
+        );
+
+        const fazendaId = Number(escolha);
+
+        if (!Number.isSafeInteger(fazendaId) || fazendaId <= 0) {
+          this.setState({ error:true, pass:'' });
+          return;
+        }
+
+        resposta = await fetch(
+          'http://localhost:3000/api/auth/selecionar-fazenda',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              desafio: dados.desafio,
+              fazendaId
+            })
+          }
+        );
+
+        dados = await resposta.json();
+
+        if (!resposta.ok) {
+          this.setState({ error:true, pass:'' });
+          return;
+        }
+      }
+
+      this.token = dados.token;
+      this.sessao = dados;
+
+      this.setState({
+        authed:true,
+        error:false,
+        pass:'',
+        usuarioSessao:dados.usuario || null,
+        organizacaoSessao:dados.organizacao || null,
+        fazendaSessao:dados.fazenda || null
+      });
+
+    } catch (erro) {
+      console.error('Erro no login:', erro);
+      this.setState({ error:true, pass:'' });
     }
-    async function apiFetch(caminho,opcoes={}){
-      if(!tokenSessao){abrirLogin('Faça login para continuar.');throw new Error('Sessão necessária.')}
-      const headers=new Headers(opcoes.headers||{});headers.set('Authorization',`Bearer ${tokenSessao}`);
-      let resposta;try{resposta=await fetch(`${API}${caminho}`,{...opcoes,headers})}catch{throw new Error('Backend indisponível. Tente novamente em instantes.')}
-      if(resposta.status===401){abrirLogin('Sua sessão expirou. Entre novamente.');throw new Error('Sessão expirada.')}
-      if(resposta.status===403)throw new Error('Sem permissão');
-      return resposta;
-    }
-    async function entrar(evento){
-      evento.preventDefault();const form=evento.target,botao=document.querySelector('#entrar');botao.disabled=true;erroLogin('Entrando...');
-      try{const resposta=await requisicaoPublica('/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:form.email.value,senha:form.senha.value})});form.senha.value='';const dados=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(dados.erro||'Não foi possível entrar.');if(dados.requerSelecaoFazenda){desafioLogin=dados.desafio;fazendasAutorizadas=dados.fazendas||[];abrirSelecaoFazenda();return}await concluirLogin(dados)}catch(erro){erroLogin(erro.message);botao.disabled=false}
-    }
-    function abrirSelecaoFazenda(){
-      document.querySelector('#painel').innerHTML=`<section class="login"><h2>Selecionar fazenda</h2><p>Escolha uma das fazendas vinculadas ao seu usuário.</p><form onsubmit="selecionarFazenda(event)"><label>Fazenda</label><select name="fazendaId" required><option value="">Selecione</option>${fazendasAutorizadas.map(f=>`<option value="${Number(f.id)}">${escapar(f.nome)} — ${escapar(f.organizacao.nome)}</option>`).join('')}</select><button>Continuar</button></form><p id="erro-login" class="status-danger"></p><button class="secundario" type="button" onclick="abrirLogin()">Voltar</button></section>`
-    }
-    async function selecionarFazenda(evento){
-      evento.preventDefault();const botao=evento.target.querySelector('button');botao.disabled=true;erroLogin('Validando acesso...');
-      try{const resposta=await requisicaoPublica('/auth/selecionar-fazenda',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({desafio:desafioLogin,fazendaId:Number(evento.target.fazendaId.value)})});const dados=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(dados.erro||'Não foi possível selecionar a fazenda.');desafioLogin=null;await concluirLogin(dados)}catch(erro){erroLogin(erro.message);botao.disabled=false}
-    }
-    async function concluirLogin(sessao){
-      tokenSessao=sessao.token;identidade={usuario:sessao.usuario,organizacao:sessao.organizacao,fazenda:sessao.fazenda};
-      try{const resposta=await apiFetch('/auth/fazendas');if(!resposta.ok)throw new Error('Não foi possível carregar as fazendas.');fazendasAutorizadas=(await resposta.json()).fazendas||[];await abrirPainel()}catch(erro){if(tokenSessao)abrirLogin(erro.message)}
-    }
-    function controlesSessao(){return `<div class="sessao"><label>${escapar(identidade.usuario.nome)}<select onchange="trocarFazenda(this.value)" ${fazendasAutorizadas.length<2?'disabled':''}>${fazendasAutorizadas.map(f=>`<option value="${Number(f.id)}" ${Number(f.id)===Number(identidade.fazenda.id)?'selected':''}>${escapar(f.nome)}</option>`).join('')}</select></label><button class="secundario" type="button" onclick="sair()">Sair</button></div>`}
-    async function trocarFazenda(fazendaId){
-      if(Number(fazendaId)===Number(identidade.fazenda.id))return;
-      try{const resposta=await apiFetch('/auth/trocar-fazenda',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({fazendaId:Number(fazendaId)})});const dados=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(dados.erro||'Não foi possível trocar de fazenda.');tokenSessao=dados.token;identidade={usuario:dados.usuario,organizacao:dados.organizacao,fazenda:dados.fazenda};mensagensAssistente=[];await abrirPainel()}catch(erro){if(tokenSessao){await abrirPainel();alert(erro.message)}}
-    }
-    async function sair(){const tokenAtual=tokenSessao;try{if(tokenAtual)await apiFetch('/auth/logout',{method:'POST'})}catch{}finally{abrirLogin('Sessão encerrada.')}}
-    async function listarMaquinasApi(){const r=await apiFetch('/maquinas');if(!r.ok)throw new Error('API indisponível');return r.json()}
-    async function listarFinanceiroApi(){const r=await apiFetch('/financeiro');if(!r.ok)throw new Error('API indisponível');return r.json()}
-    async function resumoFinanceiroApi(){const r=await apiFetch('/financeiro/resumo');if(!r.ok)throw new Error('API indisponível');return r.json()}
-    async function abrirPainel(){
-      const p=ler('nexoterra_producao'),a=ler('nexoterra_atividades'),d=ler('nexoterra_diagnosticos');let m=[],resumo={saldo:0},conexao='PostgreSQL conectado';try{[m,resumo]=await Promise.all([listarMaquinasApi(),resumoFinanceiroApi()])}catch(erro){if(!tokenSessao)return;conexao=erro.message}
-      document.querySelector('#painel').innerHTML=`${controlesSessao()}<h2>Painel do gerente</h2><p>Visão direta de ${escapar(identidade.fazenda.nome)}: produção, custos, trabalho e máquinas.</p><div class="nota"><strong>Dados integrados:</strong> ${conexao}</div><section class="resumo">
-      <div class="indicador"><strong>${p.length}</strong><span>Produções</span></div><div class="indicador"><strong>${dinheiro(resumo.saldo)}</strong><span>Saldo</span></div><div class="indicador"><strong>${a.length}</strong><span>Atividades</span></div><div class="indicador"><strong>${m.length}</strong><span>Registros de máquinas</span></div></section>
-      <section class="modulos"><button onclick="abrirAssistente()">Assistente — Chat IA</button><button onclick="abrirMaquinas()">Central de Máquinas</button><button onclick="abrirProducao()">Produção</button><button onclick="abrirFinanceiro()">Financeiro</button><button onclick="abrirAtividades()">Atividades</button><button onclick="abrirDiagnostico()">Diagnóstico</button></section>`;
-    }
-    function tela(titulo,descricao,form,historico){document.querySelector('#painel').innerHTML=`<h2>${titulo}</h2><p>${descricao}</p>${form}<p id="mensagem" class="mensagem"></p><h3>Últimos registros</h3><div class="historico">${historico}</div>`}
-    const voltar='<button class="secundario" type="button" onclick="abrirPainel()">Voltar ao painel</button>';
-    function abrirAssistente(){
-      const historico=mensagensAssistente.length?mensagensAssistente.map(item=>`<div class="chat-msg ${item.autor==='Você'?'chat-usuario':'chat-assistente'}"><strong>${item.autor}</strong><br>${escapar(item.texto)}</div>`).join(''):'<div class="chat-msg chat-assistente"><strong>Assistente</strong><br>Faça uma pergunta sobre máquinas ou financeiro desta fazenda.</div>';
-      document.querySelector('#painel').innerHTML=`<h2>Assistente — Chat IA</h2><p>Consulta gerencial somente leitura de ${escapar(identidade.fazenda.nome)}.</p><div class="nota">Exemplos: “Quantas máquinas temos?”, “Quais máquinas estão paradas?”, “Qual é o saldo financeiro?” ou “Quais foram os últimos lançamentos?”.</div><div class="chat" id="chat-historico">${historico}</div><form id="form-assistente" onsubmit="perguntarAssistente(event)"><label>Sua pergunta</label><textarea name="pergunta" maxlength="500" required placeholder="Pergunte sobre os dados da fazenda ativa"></textarea><button id="enviar-assistente">Enviar pergunta</button>${voltar}</form><p id="mensagem" class="mensagem"></p>`;
-    }
-    async function perguntarAssistente(evento){
-      evento.preventDefault();const form=evento.target,botao=document.querySelector('#enviar-assistente'),pergunta=form.pergunta.value.trim();if(!pergunta)return;botao.disabled=true;mostrarMensagem('Consultando dados da fazenda...');
-      try{const resposta=await apiFetch('/assistente/perguntar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pergunta})});const dados=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(dados.erro||'Não foi possível consultar o Assistente.');mensagensAssistente.push({autor:'Você',texto:pergunta},{autor:'Assistente',texto:dados.resposta});abrirAssistente()}catch(erro){mostrarMensagem(erro.message,true);botao.disabled=false}
-    }
-    async function abrirMaquinas(mensagem=''){
-      maquinaEmEdicao=null;
-      document.querySelector('#painel').innerHTML='<h2>Central de Máquinas</h2><p>Carregando dados do PostgreSQL...</p>';
-      let registros=[];
-      try{registros=await listarMaquinasApi()}catch(erro){if(!tokenSessao)return;document.querySelector('#painel').innerHTML=`<h2>Central de Máquinas</h2><p class="status-danger">${escapar(erro.message)}</p>${voltar}`;return}
-      const hist=registros.length?registros.map(i=>{const alerta=Number(i.horimetro)>=Number(i.proxima_revisao);return `<div class="registro"><strong>${escapar(i.nome)} — ${escapar(i.operacao)}</strong><span>Modelo: ${escapar(i.modelo||'Não informado')} | Série: ${escapar(i.numero_serie||'Não informada')} | Status: ${escapar(i.status)}</span><span>${escapar(String(i.data_operacao).slice(0,10))} | Horímetro: ${escapar(i.horimetro)} h | Próxima revisão: ${escapar(i.proxima_revisao)} h | Combustível: ${escapar(i.combustivel)} L</span>${i.observacao?`<span>${escapar(i.observacao)}</span>`:''}<span class="${alerta?'status-danger':'status-ok'}">${alerta?'REVISÃO VENCIDA':'Operação normal'}</span><div class="acoes-registro"><button class="editar" onclick="editarMaquina(${Number(i.id)})">Editar</button><button onclick="excluirMaquina(${Number(i.id)})">Excluir</button></div></div>`}).join(''):'<p>Nenhum registro ainda.</p>';
-      tela('Central de Máquinas','Cadastre, consulte, edite e exclua máquinas com armazenamento real no PostgreSQL.',`<div class="nota"><strong>Armazenamento:</strong> API NexoTerraCore conectada ao PostgreSQL.</div><form id="form-maquina" onsubmit="salvarMaquina(event)">
-      <label>Máquina</label><input name="maquina" maxlength="120" placeholder="Exemplo: Trator principal" required><label>Modelo</label><input name="modelo" maxlength="120" placeholder="Exemplo: John Deere 6110J"><label>Número de série</label><input name="numeroSerie" maxlength="120" placeholder="Exemplo: JD6110-001"><label>Operação</label><select name="operacao" required><option value="">Selecione</option><option>Plantio</option><option>Colheita</option><option>Preparo do solo</option><option>Pulverização</option><option>Transporte</option><option>Manutenção</option></select>
-      <label>Horímetro atual</label><input name="horimetro" type="number" min="0" step="0.1" required><label>Próxima revisão (horas)</label><input name="proximaRevisao" type="number" min="0" step="0.1" required><label>Combustível consumido (litros)</label><input name="combustivel" type="number" min="0" step="0.1" required><label>Data</label><input name="data" type="date" value="${hoje()}" required><label>Status</label><select name="status" required><option>Ativa</option><option>Manutenção</option><option>Inativa</option></select><label>Observação</label><textarea name="observacao" placeholder="Falhas, manutenção ou condição da máquina"></textarea><button id="salvar-maquina">Cadastrar máquina</button><button id="cancelar-edicao" class="cancelar-edicao" type="button" onclick="cancelarEdicao()" hidden>Cancelar edição</button>${voltar}</form>`,hist);
-      if(mensagem)mostrarMensagem(mensagem,false);
-    }
-    function mostrarMensagem(texto,erro=false){const m=document.querySelector('#mensagem');if(!m)return;m.textContent=texto;m.style.color=erro?'var(--danger)':'var(--ok)'}
-    async function salvarMaquina(e){
-      e.preventDefault();const f=e.target,botao=document.querySelector('#salvar-maquina'),id=maquinaEmEdicao;
-      botao.disabled=true;mostrarMensagem(id?'Atualizando...':'Salvando...');
-      const dados={maquina:f.maquina.value,modelo:f.modelo.value,numeroSerie:f.numeroSerie.value,operacao:f.operacao.value,horimetro:Number(f.horimetro.value),proximaRevisao:Number(f.proximaRevisao.value),combustivel:Number(f.combustivel.value),data:f.data.value,status:f.status.value,observacao:f.observacao.value};
-      try{const r=await apiFetch(id?`/maquinas/${id}`:'/maquinas',{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(dados)});const x=await r.json().catch(()=>({}));if(!r.ok)throw new Error(x.erro||'Não foi possível salvar a máquina.');await abrirMaquinas(id?'Máquina atualizada no PostgreSQL.':'Máquina cadastrada no PostgreSQL.')}catch(erro){mostrarMensagem(erro.message,true);botao.disabled=false}
-    }
-    async function editarMaquina(id){
-      mostrarMensagem('Carregando máquina...');
-      try{const r=await apiFetch(`/maquinas/${id}`);const i=await r.json().catch(()=>({}));if(!r.ok)throw new Error(i.erro||'Não foi possível carregar a máquina.');const f=document.querySelector('#form-maquina');maquinaEmEdicao=id;f.maquina.value=i.nome||'';f.modelo.value=i.modelo||'';f.numeroSerie.value=i.numero_serie||'';f.operacao.value=i.operacao||'';f.horimetro.value=i.horimetro;f.proximaRevisao.value=i.proxima_revisao;f.combustivel.value=i.combustivel;f.data.value=String(i.data_operacao).slice(0,10);f.status.value=i.status||'Ativa';f.observacao.value=i.observacao||'';document.querySelector('#salvar-maquina').textContent='Salvar alterações';document.querySelector('#cancelar-edicao').hidden=false;mostrarMensagem('Editando máquina. Altere os campos e salve.');f.scrollIntoView({behavior:'smooth',block:'start'});f.maquina.focus()}catch(erro){mostrarMensagem(erro.message,true)}
-    }
-    function cancelarEdicao(){abrirMaquinas('Edição cancelada.')}
-    async function excluirMaquina(id){
-      if(!confirm('Excluir esta máquina do banco?'))return;
-      try{const r=await apiFetch(`/maquinas/${id}`,{method:'DELETE'});if(!r.ok){const x=await r.json().catch(()=>({}));throw new Error(x.erro||'Não foi possível excluir a máquina.')}await abrirMaquinas('Máquina excluída do PostgreSQL.')}catch(erro){mostrarMensagem(erro.message,true)}
-    }
-    function abrirProducao(){const h=ultimos('nexoterra_producao',i=>`<div class="registro"><strong>${escapar(i.produto)} — ${escapar(i.quantidade)}</strong><span>${escapar(i.data)}</span></div>`);tela('Cadastro de produção','Registre a produção diária.',`<form onsubmit="salvarProducao(event)"><label>Produto</label><input name="produto" placeholder="Exemplo: milho" required><label>Quantidade</label><input name="quantidade" type="number" min="1" required><label>Data</label><input name="data" type="date" value="${hoje()}" required><button>Salvar produção</button>${voltar}</form>`,h)}
-    function salvarProducao(e){e.preventDefault();const f=e.target;gravar('nexoterra_producao',{produto:f.produto.value,quantidade:Number(f.quantidade.value),data:f.data.value});abrirProducao();document.querySelector('#mensagem').textContent='Produção salva com sucesso.'}
-    async function abrirFinanceiro(mensagem=''){
-      financeiroEmEdicao=null;document.querySelector('#painel').innerHTML='<h2>Financeiro</h2><p>Carregando dados do PostgreSQL...</p>';let registros,resumo;
-      try{[registros,resumo]=await Promise.all([listarFinanceiroApi(),resumoFinanceiroApi()])}catch(erro){if(!tokenSessao)return;document.querySelector('#painel').innerHTML=`<h2>Financeiro</h2><p class="status-danger">${escapar(erro.message)}</p>${voltar}`;return}
-      const h=registros.length?registros.map(i=>`<div class="registro"><strong>${escapar(i.tipo)} — ${dinheiro(i.valor)}</strong><span>${escapar(i.descricao)} | ${escapar(i.categoria)} | ${escapar(String(i.data_lancamento).slice(0,10))}</span>${i.observacao?`<span>${escapar(i.observacao)}</span>`:''}<div class="acoes-registro"><button class="editar" onclick="editarFinanceiro(${Number(i.id)})">Editar</button><button onclick="excluirFinanceiro(${Number(i.id)})">Excluir</button></div></div>`).join(''):'<p>Nenhum lançamento financeiro cadastrado.</p>';
-      tela('Financeiro','Cadastre receitas e despesas com armazenamento real no PostgreSQL.',`<section class="resumo"><div class="indicador"><strong>${dinheiro(resumo.receitas)}</strong><span>Receitas</span></div><div class="indicador"><strong>${dinheiro(resumo.despesas)}</strong><span>Despesas</span></div><div class="indicador"><strong>${dinheiro(resumo.saldo)}</strong><span>Saldo</span></div></section><form id="form-financeiro" onsubmit="salvarFinanceiro(event)"><label>Descrição</label><input name="descricao" maxlength="160" required><label>Categoria</label><input name="categoria" maxlength="100" required><label>Valor</label><input name="valor" type="number" min="0.01" step="0.01" required><label>Data</label><input name="data" type="date" value="${hoje()}" required><label>Tipo</label><select name="tipo" required><option value="">Selecione</option><option>Receita</option><option>Despesa</option></select><label>Observação</label><textarea name="observacao"></textarea><button id="salvar-financeiro">Cadastrar lançamento</button><button id="cancelar-financeiro" class="cancelar-edicao" type="button" onclick="abrirFinanceiro('Edição cancelada.')" hidden>Cancelar edição</button>${voltar}</form>`,h);if(mensagem)mostrarMensagem(mensagem)
-    }
-    async function salvarFinanceiro(e){e.preventDefault();const f=e.target,id=financeiroEmEdicao,botao=document.querySelector('#salvar-financeiro');botao.disabled=true;mostrarMensagem(id?'Atualizando...':'Salvando...');const dados={descricao:f.descricao.value,categoria:f.categoria.value,valor:Number(f.valor.value),data:f.data.value,tipo:f.tipo.value,observacao:f.observacao.value};try{const r=await apiFetch(id?`/financeiro/${id}`:'/financeiro',{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(dados)});const x=await r.json().catch(()=>({}));if(!r.ok)throw new Error(x.erro||'Não foi possível salvar o lançamento.');await abrirFinanceiro(id?'Lançamento atualizado no PostgreSQL.':'Lançamento cadastrado no PostgreSQL.')}catch(erro){mostrarMensagem(erro.message,true);botao.disabled=false}}
-    async function editarFinanceiro(id){mostrarMensagem('Carregando lançamento...');try{const r=await apiFetch(`/financeiro/${id}`),i=await r.json().catch(()=>({}));if(!r.ok)throw new Error(i.erro||'Não foi possível carregar o lançamento.');const f=document.querySelector('#form-financeiro');financeiroEmEdicao=id;f.descricao.value=i.descricao||'';f.categoria.value=i.categoria||'';f.valor.value=i.valor;f.data.value=String(i.data_lancamento).slice(0,10);f.tipo.value=i.tipo||'';f.observacao.value=i.observacao||'';document.querySelector('#salvar-financeiro').textContent='Salvar alterações';document.querySelector('#cancelar-financeiro').hidden=false;mostrarMensagem('Editando lançamento. Altere os campos e salve.');f.scrollIntoView({behavior:'smooth',block:'start'});f.descricao.focus()}catch(erro){mostrarMensagem(erro.message,true)}}
-    async function excluirFinanceiro(id){if(!confirm('Excluir este lançamento do PostgreSQL?'))return;try{const r=await apiFetch(`/financeiro/${id}`,{method:'DELETE'});if(!r.ok){const x=await r.json().catch(()=>({}));throw new Error(x.erro||'Não foi possível excluir.')}await abrirFinanceiro('Lançamento excluído do PostgreSQL.')}catch(erro){mostrarMensagem(erro.message,true)}}
-    function abrirAtividades(){const h=ultimos('nexoterra_atividades',i=>`<div class="registro"><strong>${escapar(i.atividade)}</strong><span>${escapar(i.responsavel)} | ${escapar(i.data)}</span></div>`);tela('Atividades','Organize tarefas e responsáveis.',`<form onsubmit="salvarAtividade(event)"><label>Atividade</label><input name="atividade" required><label>Responsável</label><input name="responsavel" required><label>Data</label><input name="data" type="date" value="${hoje()}" required><button>Salvar atividade</button>${voltar}</form>`,h)}
-    function salvarAtividade(e){e.preventDefault();const f=e.target;gravar('nexoterra_atividades',{atividade:f.atividade.value,responsavel:f.responsavel.value,data:f.data.value});abrirAtividades();document.querySelector('#mensagem').textContent='Atividade salva.'}
-    function abrirDiagnostico(){const h=ultimos('nexoterra_diagnosticos',i=>`<div class="registro"><strong>${escapar(i.problema)} — ${escapar(i.prioridade)}</strong><span>${escapar(i.acao)}</span></div>`);tela('Diagnóstico rural','Registre problemas e ações recomendadas.',`<form onsubmit="salvarDiagnostico(event)"><label>Problema</label><input name="problema" required><label>Prioridade</label><select name="prioridade" required><option value="">Selecione</option><option>Baixa</option><option>Média</option><option>Alta</option></select><label>Ação recomendada</label><textarea name="acao" required></textarea><button>Salvar diagnóstico</button>${voltar}</form>`,h)}
-    function salvarDiagnostico(e){e.preventDefault();const f=e.target;gravar('nexoterra_diagnosticos',{problema:f.problema.value,prioridade:f.prioridade.value,acao:f.acao.value});abrirDiagnostico();document.querySelector('#mensagem').textContent='Diagnóstico salvo.'}
-    abrirLogin();
-  </script>
+  };
+
+  salvarSenha = () => {
+    const { atual, nova, nova2 } = this.state;
+    if ((atual || '') !== this.senhaAtual()) { this.setState({ senhaMsg:'A senha atual não confere.' }); return; }
+    if (!nova || nova.length < 3) { this.setState({ senhaMsg:'A nova senha precisa de ao menos 3 caracteres.' }); return; }
+    if (nova !== nova2) { this.setState({ senhaMsg:'As duas senhas não são iguais.' }); return; }
+    try { window.localStorage.setItem(this.SENHA_KEY, nova); } catch (e) {}
+    this.setState({ senhaMsg:'Senha alterada. Use a nova no próximo acesso.', atual:'', nova:'', nova2:'' });
+  };
+
+  restaurarSenha = () => {
+    try { window.localStorage.setItem(this.SENHA_KEY, '123'); } catch (e) {}
+    this.setState({ recuperarAberta:false, trocaAberta:true, senhaMsg:'Acesso padrão restaurado: senha 123. Cadastre uma nova agora.' });
+  };
+
+  go = (view) => () => this.setState({ view });
+
+  query() {
+    const f = this.state.f || {};
+    const raw = String(f.mapa || '').trim();
+    if (/^https?:/i.test(raw)) return { url: raw, isLink: true };
+    const parts = [f.endereco, f.numero, f.bairro, f.cidade, f.uf, f.cep, f.municipio, f.nome]
+      .filter(v => String(v || '').trim() !== '').join(', ');
+    return { url: null, isLink: false, q: raw || parts };
+  }
+
+  abrirMaps = () => {
+    const r = this.query();
+    if (r.isLink) { window.open(r.url, '_blank'); return; }
+    if (!r.q) return;
+    window.open('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(r.q), '_blank');
+  };
+
+  abrirEarth = () => {
+    const r = this.query();
+    const coord = String(r.q || '').match(/(-?\d+\.\d+)[,\s]+(-?\d+\.\d+)/);
+    if (coord) { window.open('https://earth.google.com/web/@' + coord[1] + ',' + coord[2] + ',1000a,2000d,35y,0h,0t,0r', '_blank'); return; }
+    if (r.isLink) { window.open(r.url, '_blank'); return; }
+    if (!r.q) return;
+    window.open('https://earth.google.com/web/search/' + encodeURIComponent(r.q), '_blank');
+  };
+
+  openForm = () => {
+    const kind = this.formForView[this.state.view] || 'imovel';
+    this.setState({ formOpen:true, formKind:kind, f: Object.assign({}, this.defaults[kind]) });
+  };
+
+  save = () => {
+    const { formKind, f } = this.state;
+    const rec = Object.assign({ id: Date.now() }, f);
+    const map = { imovel:'imoveis', fazenda:'fazendas', armazem:'armazens', imobiliaria:'imobiliarias', aluguel:'alugueis', lancamento:'lancamentos' };
+    const key = map[formKind];
+    const nav = { imovel:'imoveis', fazenda:'fazendas', armazem:'armazens', imobiliaria:'imobiliarias', aluguel:'alugueis', lancamento:'financeiro' };
+    this.setState(s => {
+      const next = { [key]: s[key].concat([rec]), formOpen:false, view: nav[formKind] };
+      this.persist(Object.assign({}, s, next));
+      return next;
+    });
+  };
+
+  remover = (key, id) => () => {
+    this.setState(s => {
+      const next = { [key]: s[key].filter(r => r.id !== id) };
+      this.persist(Object.assign({}, s, next));
+      return next;
+    });
+  };
+
+  num(v) { const n = parseFloat(String(v).replace(/\./g,'').replace(',','.')); return isNaN(n) ? 0 : n; }
+  brl(n) {
+    if (!n) return 'R$ 0';
+    if (n >= 1e6) return 'R$ ' + (n/1e6).toFixed(n >= 1e7 ? 0 : 1).replace('.',',') + ' mi';
+    if (n >= 1e3) return 'R$ ' + Math.round(n/1e3) + ' mil';
+    return 'R$ ' + n.toLocaleString('pt-BR');
+  }
+  dash(v, fb) { const t = String(v == null ? '' : v).trim(); return t === '' ? (fb || '—') : t; }
+  loc(a, b) { const c = this.dash(a), u = String(b || '').toUpperCase(); return u ? c + ' / ' + u : c; }
+  coord(la, ln) { return (la && ln) ? Number(la).toFixed(4) + ', ' + Number(ln).toFixed(4) : '—'; }
+
+  renderVals() {
+    const s = this.state;
+    const crumbs = { panel:'painel', imoveis:'imoveis', fazendas:'fazendas', armazens:'armazens-silos', imobiliarias:'imobiliarias', alugueis:'alugueis', matriculas:'matriculas', financeiro:'financeiro', patrimonio:'patrimonio', geo:'geo', mercado:'mercado', arquitetura:'arquitetura', schema:'banco-de-dados', vscode:'vscode' };
+    const kind = s.formKind || 'imovel';
+    const lab = this.labels[kind];
+    const newKind = this.formForView[s.view] || 'imovel';
+
+    const valImoveis = s.imoveis.reduce((t,i) => t + this.num(i.valor), 0);
+    const valFazendas = s.fazendas.reduce((t,i) => t + this.num(i.valor), 0);
+    const valArmazens = s.armazens.reduce((t,i) => t + this.num(i.valor), 0);
+    const receita = s.lancamentos.filter(l => l.tipo === 'Receita').reduce((t,l) => t + this.num(l.valor), 0);
+    const despesa = s.lancamentos.filter(l => l.tipo === 'Despesa').reduce((t,l) => t + this.num(l.valor), 0);
+    const aluguelMensal = s.alugueis.filter(a => a.status === 'Ativo').reduce((t,a) => t + this.num(a.valor), 0);
+
+    const imoveis = s.imoveis.map(i => ({ id:i.id, titulo:this.dash(i.titulo,'(sem título)'), tipo:this.dash(i.tipo), local:this.loc(i.cidade,i.uf), matricula:this.dash(i.matricula), valorFmt:this.brl(this.num(i.valor)), status:this.dash(i.status) }));
+    const fazendas = s.fazendas.map(f => ({ id:f.id, nome:this.dash(f.nome,'(sem nome)'), local:this.loc(f.municipio,f.uf), hectares:this.dash(f.hectares), cultura:this.dash(f.cultura), coord:this.coord(f.lat,f.lng), status:this.dash(f.status) }));
+    const armazens = s.armazens.map(a => ({ id:a.id, nome:this.dash(a.nome,'(sem nome)'), tipo:this.dash(a.tipo), local:this.loc(a.cidade,a.uf), capacidade:this.dash(a.capacidade,'0'), ocupacao:a.ocupacao ? a.ocupacao + '%' : '—', status:this.dash(a.status) }));
+    const imobiliarias = s.imobiliarias.map(m => ({ id:m.id, nome:this.dash(m.nome,'(sem nome)'), cnpj:this.dash(m.cnpj), creci:(m.creci ? m.creci + '%' : '10%'), local:this.loc(m.cidade,m.uf), responsavel:this.dash(m.responsavel) }));
+    const alugueis = s.alugueis.map(l => ({ id:l.id, ativo:this.dash(l.ativo), inquilino:this.dash(l.inquilino), valorFmt:this.brl(this.num(l.valor)), vencimento:this.dash(l.vencimento,'—'), vigencia:this.dash(l.inicio) + ' → ' + this.dash(l.fim), status:this.dash(l.status) }));
+    const lancamentos = s.lancamentos.map(c => ({ id:c.id, descricao:this.dash(c.descricao), tipo:this.dash(c.tipo), categoria:this.dash(c.categoria), valorFmt:this.brl(this.num(c.valor)), data:this.dash(c.data) }));
+
+    const matriculas = s.imoveis.filter(i => i.matricula).map(i => ({ id:i.id, matricula:i.matricula, ativo:this.dash(i.titulo), cartorio:this.dash(i.cartorio), comarca:this.dash(i.cidade), onus:'Nenhum' }))
+      .concat(s.fazendas.filter(f => f.matricula).map(f => ({ id:'f'+f.id, matricula:f.matricula, ativo:this.dash(f.nome), cartorio:'—', comarca:this.dash(f.municipio), onus:'Nenhum' })));
+
+    const geos = s.fazendas.filter(f => f.lat && f.lng).map(f => ({ id:f.id, nome:this.dash(f.nome), coord:this.coord(f.lat,f.lng), tipo:'Polígono' }))
+      .concat(s.imoveis.filter(i => i.lat && i.lng).map(i => ({ id:'i'+i.id, nome:this.dash(i.titulo), coord:this.coord(i.lat,i.lng), tipo:'Ponto' })));
+
+    const recentes = [].concat(
+      s.imoveis.map(i => ({ id:'i'+i.id, kind:'imóvel', nome:this.dash(i.titulo), local:this.loc(i.cidade,i.uf) })),
+      s.fazendas.map(f => ({ id:'f'+f.id, kind:'fazenda', nome:this.dash(f.nome), local:this.loc(f.municipio,f.uf) })),
+      s.armazens.map(a => ({ id:'a'+a.id, kind:'armazém', nome:this.dash(a.nome), local:this.loc(a.cidade,a.uf) })),
+      s.imobiliarias.map(m => ({ id:'m'+m.id, kind:'imobiliária', nome:this.dash(m.nome), local:this.loc(m.cidade,m.uf) }))
+    ).slice(-6).reverse();
+
+    const totalRegistros = s.imoveis.length + s.fazendas.length + s.armazens.length;
+
+    const accent = this.props.accent || '#FF6B1A';
+    const org = this.props.orgName || 'NexoTerraCore';
+    const requireAuth = this.props.requireAuth !== false;
+    const openState = s.open === null ? !this.props.sidebarCollapsed : s.open;
+    const pads = { 'Compacta':'24px 22px 56px', 'Padrão':'34px 30px 72px', 'Confortável':'48px 44px 96px' };
+
+    return {
+      accent, org,
+      accentSoft: 'rgba(255,107,26,0.12)',
+      showEngineering: this.props.showEngineering !== false,
+      mainPad: pads[this.props.density] || pads['Padrão'],
+      showLogin: requireAuth && !s.authed, showConsole: !requireAuth || s.authed,
+      user: s.user, pass: s.pass, error: s.error,
+      onUser: (e) => this.setState({ user:e.target.value, error:false }),
+      onPass: (e) => this.setState({ pass:e.target.value, error:false }),
+      onKey: (e) => { if (e.key === 'Enter') this.login(); },
+      onSubmit: this.login,
+      trocaAberta: !!s.trocaAberta, recuperarAberta: !!s.recuperarAberta,
+      atual: s.atual || '', nova: s.nova || '', nova2: s.nova2 || '', senhaMsg: s.senhaMsg || '',
+      onAtual: (e) => this.setState({ atual:e.target.value, senhaMsg:'' }),
+      onNova: (e) => this.setState({ nova:e.target.value, senhaMsg:'' }),
+      onNova2: (e) => this.setState({ nova2:e.target.value, senhaMsg:'' }),
+      abrirTrocaSenha: (e) => { if (e) e.preventDefault(); this.setState({ trocaAberta:true, recuperarAberta:false, senhaMsg:'' }); },
+      fecharTroca: () => this.setState({ trocaAberta:false, senhaMsg:'', atual:'', nova:'', nova2:'' }),
+      abrirRecuperar: (e) => { if (e) e.preventDefault(); this.setState({ recuperarAberta:true, trocaAberta:false }); },
+      fecharRecuperar: () => this.setState({ recuperarAberta:false }),
+      salvarSenha: this.salvarSenha, restaurarSenha: this.restaurarSenha,
+      logout: () => this.setState({ authed:false, user:'', pass:'', view:'panel', formOpen:false }),
+      open: openState, closed: !openState, sbWidth: openState ? '238px' : '62px',
+      toggle: () => this.setState({ open: !openState }),
+      crumb: crumbs[s.view] || s.view,
+      goPanel: this.go('panel'), goImoveis: this.go('imoveis'), goFazendas: this.go('fazendas'),
+      goArmazens: this.go('armazens'), goImobiliarias: this.go('imobiliarias'), goAlugueis: this.go('alugueis'),
+      goMatriculas: this.go('matriculas'), goFinanceiro: this.go('financeiro'), goPatrimonio: this.go('patrimonio'),
+      goGeo: this.go('geo'), goMercado: this.go('mercado'), goArquitetura: this.go('arquitetura'),
+      goSchema: this.go('schema'), goVscode: this.go('vscode'),
+      atPanel: s.view==='panel', atImoveis: s.view==='imoveis', atFazendas: s.view==='fazendas',
+      atArmazens: s.view==='armazens', atImobiliarias: s.view==='imobiliarias', atAlugueis: s.view==='alugueis',
+      atMatriculas: s.view==='matriculas', atFinanceiro: s.view==='financeiro', atPatrimonio: s.view==='patrimonio',
+      atGeo: s.view==='geo', atMercado: s.view==='mercado', atArquitetura: s.view==='arquitetura',
+      atSchema: s.view==='schema', atVscode: s.view==='vscode',
+
+      newRecord: this.openForm,
+      newLabel: this.labels[newKind][2],
+      closeForm: () => this.setState({ formOpen:false }),
+      save: this.save,
+      setField: (e) => { const n = e.target.name, v = e.target.value; this.setState(st => ({ f: Object.assign({}, st.f, { [n]: v }) })); },
+      abrirMaps: this.abrirMaps, abrirEarth: this.abrirEarth,
+      formOpen: s.formOpen, f: s.f, formTitle: lab[0], formEndpoint: lab[1],
+      formImovel: kind==='imovel', formFazenda: kind==='fazenda', formArmazem: kind==='armazem',
+      formImobiliaria: kind==='imobiliaria', formAluguel: kind==='aluguel', formLancamento: kind==='lancamento',
+
+      imoveis, fazendas, armazens, imobiliarias, alugueis, lancamentos, matriculas, geos, recentes,
+      semImoveis: imoveis.length===0, semFazendas: fazendas.length===0, semArmazens: armazens.length===0,
+      semImobiliarias: imobiliarias.length===0, semAlugueis: alugueis.length===0, semLancamentos: lancamentos.length===0,
+      semMatriculas: matriculas.length===0, semGeo: geos.length===0, semRegistros: recentes.length===0,
+      nImoveis: s.imoveis.length, nFazendas: s.fazendas.length, nArmazens: s.armazens.length,
+      nImobiliarias: s.imobiliarias.length, nAlugueis: s.alugueis.length,
+      totalRegistros,
+      totalHectares: s.fazendas.reduce((t,f) => t + this.num(f.hectares), 0).toLocaleString('pt-BR'),
+      totalCapacidade: s.armazens.reduce((t,a) => t + this.num(a.capacidade), 0).toLocaleString('pt-BR'),
+      totalPatrimonio: this.brl(valImoveis + valFazendas + valArmazens),
+      valorImoveis: this.brl(valImoveis), valorFazendas: this.brl(valFazendas), valorArmazens: this.brl(valArmazens),
+      totalReceita: this.brl(receita), totalDespesa: this.brl(despesa), totalResultado: this.brl(receita - despesa),
+      receitaMensal: this.brl(aluguelMensal),
+      repasse: this.brl(aluguelMensal * 0.9),
+      taxaAdm: this.brl(aluguelMensal * 0.1)
+    };
+  }
+}
+</script>
 </body>
 </html>
