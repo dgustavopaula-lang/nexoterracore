@@ -841,7 +841,7 @@ pnpm --filter db bootstrap:admin   # admin / 123</pre>
             <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">5</div>
             <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
               <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Entrar e trocar a senha</div>
-              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">Abra <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">http://localhost:3000</span>, entre com admin / 123 e troque a senha antes de expor o ambiente.</div>
+              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">Abra <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">https://nexoterracore-api.onrender.com</span>, entre com admin / 123 e troque a senha antes de expor o ambiente.</div>
             </div>
           </div>
         </div>
@@ -1367,7 +1367,7 @@ class Component extends DCLogic {
     }
 
     try {
-      let resposta = await fetch('http://localhost:3000/api/auth/login', {
+      let resposta = await fetch('https://nexoterracore-api.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha })
@@ -1397,7 +1397,7 @@ class Component extends DCLogic {
         }
 
         resposta = await fetch(
-          'http://localhost:3000/api/auth/selecionar-fazenda',
+          'https://nexoterracore-api.onrender.com/api/auth/selecionar-fazenda',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
