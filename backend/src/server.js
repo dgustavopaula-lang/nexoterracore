@@ -802,6 +802,155 @@ app.post("/api/assistente/perguntar", autenticar, async (req, res, next) => {
   }
 });
 
+
+// PUT /api/imoveis/:id - Editar imóvel
+app.put("/api/imoveis/:id", autenticar, autorizar("imoveis", "PUT"), async (req, res) => {
+  const id = lerId(req.params.id);
+
+  if (!id) {
+    return res.status(400).json({ erro: "Identificador inválido." });
+  }
+
+  try {
+    const imovelAtual = await pool.query(
+      `SELECT * FROM imoveis
+       WHERE id = $1 AND organizacao_id = $2 AND ativo = TRUE`,
+      [id, req.auth.organizacaoId]
+    );
+
+    if (!imovelAtual.rowCount) {
+      return res.status(404).json({ erro: "Imóvel não encontrado." });
+    }
+
+    const atual = imovelAtual.rows[0];
+    const b = req.body || {};
+
+    const valor = (campo, atualValor) =>
+      Object.prototype.hasOwnProperty.call(b, campo) ? b[campo] : atualValor;
+
+    const titulo = String(valor("titulo", atual.titulo) || "").trim();
+    const matricula = String(valor("matricula", atual.matricula) || "").trim();
+
+    if (!titulo || !matricula) {
+      return res.status(400).json({ erro: "Título e matrícula são obrigatórios." });
+    }
+
+    const atualizado = await comTransacao(async (cliente) => {
+      const r = await cliente.query(
+        `UPDATE imoveis SET
+          titulo=$1,
+          tipo=$2,
+          status=$3,
+          endereco=$4,
+          numero=$5,
+          complemento=$6,
+          bairro=$7,
+          cidade=$8,
+          uf=$9,
+          cep=$10,
+          loteamento=$11,
+          quadra=$12,
+          lote=$13,
+          mapa=$14,
+          terreno_m2=$15,
+          frente_m=$16,
+          fundo_m=$17,
+          area_construida_m2=$18,
+          quartos=$19,
+          vagas=$20,
+          cartorio=$21,
+          valor=$22,
+          titular=$23,
+          observacao=$24,
+          dados_extras=$25::jsonb,
+          atualizado_por_usuario_id=$26,
+          atualizado_em=NOW()
+        WHERE id=$27
+          AND organizacao_id=$28
+          AND ativo=TRUE
+        RETURNING *`,
+        [
+          titulo,
+          valor("tipo", atual.tipo),
+          valor("status", atual.status),
+          valor("endereco", atual.endereco),
+          valor("numero", atual.numero),
+          valor("complemento", atual.complemento),
+          valor("bairro", atual.bairro),
+          valor("cidade", atual.cidade),
+          valor("uf", atual.uf),
+          valor("cep", atual.cep),
+          valor("loteamento", atual.loteamento),
+          valor("quadra", atual.quadra),
+          valor("lote", atual.lote),
+          valor("mapa", atual.mapa),
+          valor("terreno", atual.terreno_m2),
+          valor("frente", atual.frente_m),
+          valor("fundo", atual.fundo_m),
+          valor("area", atual.area_construida_m2),
+          valor("quartos", atual.quartos),
+          valor("vagas", atual.vagas),
+          valor("cartorio", atual.cartorio),
+          valor("valor", atual.valor),
+          valor("titular", atual.titular),
+          valor("observacao", atual.observacao),
+          JSON.stringify(valor("dados_extras", atual.dados_extras || {})),
+          req.auth.usuarioId,
+          id,
+          req.auth.organizacaoId
+        ]
+      );
+
+      await registrarAuditoria(cliente, req, "UPDATE", "imoveis", id);
+      return r.rows[0];
+    });
+
+    res.json(atualizado);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível atualizar o imóvel." });
+  }
+});
+
+// DELETE /api/imoveis/:id - Soft delete
+app.delete("/api/imoveis/:id", autenticar, autorizar("imoveis", "DELETE"), async (req, res) => {
+  const id = lerId(req.params.id);
+
+  if (!id) {
+    return res.status(400).json({ erro: "Identificador inválido." });
+  }
+
+  try {
+    const removido = await comTransacao(async (cliente) => {
+      const r = await cliente.query(
+        `UPDATE imoveis
+         SET ativo = FALSE,
+             atualizado_por_usuario_id = $1,
+             atualizado_em = NOW()
+         WHERE id = $2
+           AND organizacao_id = $3
+           AND ativo = TRUE
+         RETURNING id`,
+        [req.auth.usuarioId, id, req.auth.organizacaoId]
+      );
+
+      if (!r.rowCount) return false;
+
+      await registrarAuditoria(cliente, req, "DELETE", "imoveis", id);
+      return true;
+    });
+
+    if (!removido) {
+      return res.status(404).json({ erro: "Imóvel não encontrado." });
+    }
+
+    res.status(204).end();
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível excluir o imóvel." });
+  }
+});
+
 app.get("/api/health", async (req, res) => {
   try {
     await pool.query("SELECT 1");
