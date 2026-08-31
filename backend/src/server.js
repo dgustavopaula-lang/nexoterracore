@@ -475,7 +475,7 @@ app.post("/api/auth/login", async (req, res) => {
           INSERT INTO usuarios_organizacoes
             (usuario_id, organizacao_id, perfil_id, ativo)
           SELECT DISTINCT
-            $1, f.organizacao_id, $2, TRUE
+            $1::BIGINT, f.organizacao_id, $2::SMALLINT, TRUE
           FROM fazendas f
           JOIN organizacoes o ON o.id = f.organizacao_id
           WHERE f.ativo = TRUE
@@ -491,7 +491,7 @@ app.post("/api/auth/login", async (req, res) => {
           INSERT INTO usuarios_fazendas
             (usuario_id, organizacao_id, fazenda_id, perfil_id, ativo)
           SELECT
-            $1, f.organizacao_id, f.id, $2, TRUE
+            $1::BIGINT, f.organizacao_id, f.id, $2::SMALLINT, TRUE
           FROM fazendas f
           JOIN organizacoes o ON o.id = f.organizacao_id
           WHERE f.ativo = TRUE
