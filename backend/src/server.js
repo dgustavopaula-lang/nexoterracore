@@ -1324,6 +1324,100 @@ app.get("/api/imoveis", autenticar, autorizar("imoveis", "GET"), async (req, res
   }
 });
 
+
+app.post("/api/imoveis", autenticar, autorizar("imoveis", "POST"), async (req, res, next) => {
+  const b = req.body || {};
+
+  const titulo = typeof b.titulo === "string" ? b.titulo.trim() : "";
+  const tipo = typeof b.tipo === "string" ? b.tipo.trim() : "Imóvel";
+  const matricula = typeof b.matricula === "string" ? b.matricula.trim() : "";
+  const area = b.area == null || b.area === "" ? null : Number(b.area);
+
+  if (!titulo || !matricula) {
+    return res.status(400).json({ erro: "Título e matrícula são obrigatórios." });
+  }
+
+  if (area !== null && (!Number.isFinite(area) || area < 0)) {
+    return res.status(400).json({ erro: "Área inválida." });
+  }
+
+  try {
+    const registro = await comTransacao(async (cliente) => {
+      const codigo = b.dados_extras?.unidade_codigo || null;
+
+      if (codigo) {
+        const existente = await cliente.query(`
+          SELECT *
+          FROM imoveis
+          WHERE organizacao_id = $1
+            AND matricula = $2
+            AND dados_extras->>'unidade_codigo' = $3
+            AND ativo = TRUE
+          LIMIT 1
+        `, [req.auth.organizacaoId, matricula, codigo]);
+
+        if (existente.rowCount) {
+          return existente.rows[0];
+        }
+      }
+
+      const r = await cliente.query(`
+        INSERT INTO imoveis (
+          organizacao_id,
+          titulo,tipo,status,
+          endereco,numero,bairro,cidade,uf,cep,
+          quadra,lote,
+          area_construida_m2,
+          matricula,cartorio,
+          valor,titular,
+          observacao,dados_extras,ativo,
+          criado_por_usuario_id,
+          atualizado_por_usuario_id
+        )
+        VALUES (
+          $1,$2,$3,$4,
+          $5,$6,$7,$8,$9,$10,
+          $11,$12,
+          $13,
+          $14,$15,
+          $16,$17,
+          $18,$19::jsonb,TRUE,
+          $20,$20
+        )
+        RETURNING *
+      `, [
+        req.auth.organizacaoId,
+        titulo,
+        tipo,
+        b.status || "Venda",
+        b.endereco || null,
+        b.numero || null,
+        b.bairro || null,
+        b.cidade || null,
+        b.uf || null,
+        b.cep || null,
+        b.quadra || null,
+        b.lote || null,
+        area,
+        matricula,
+        b.cartorio || null,
+        b.valor == null || b.valor === "" ? null : Number(b.valor),
+        b.titular || null,
+        b.observacao || null,
+        JSON.stringify(b.dados_extras || {}),
+        req.auth.usuarioId
+      ]);
+
+      await registrarAuditoria(cliente, req, "CREATE", "imoveis", r.rows[0].id);
+      return r.rows[0];
+    });
+
+    res.status(201).json(registro);
+  } catch (erro) {
+    next(erro);
+  }
+});
+
 app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });
 });

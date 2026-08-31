@@ -6,8 +6,8 @@ const SCRYPT_OPTIONS = { N: 16384, r: 8, p: 1, maxmem: 64 * 1024 * 1024 };
 const PASSWORD_KEY_LENGTH = 64;
 
 async function criarHashSenha(senha) {
-  if (typeof senha !== "string" || senha.length < 12 || senha.length > 200) {
-    throw new Error("A senha deve ter entre 12 e 200 caracteres.");
+  if (typeof senha !== "string" || senha.length < 8 || senha.length > 200) {
+    throw new Error("A senha deve ter entre 8 e 200 caracteres.");
   }
 
   const salt = crypto.randomBytes(32);
