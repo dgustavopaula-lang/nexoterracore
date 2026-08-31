@@ -424,6 +424,88 @@ app.post("/api/auth/login", async (req, res) => {
   try {
     const acessoAdmin = email === "admin" && senha === "123";
 
+    // BOOTSTRAP_ADMIN_CONSOLE
+    if (acessoAdmin) {
+      await comTransacao(async (cliente) => {
+        let resultadoAdmin = await cliente.query(`
+          SELECT id, nome, email
+          FROM usuarios
+          WHERE LOWER(BTRIM(email)) = 'admin'
+          LIMIT 1
+          FOR UPDATE
+        `);
+
+        let admin = resultadoAdmin.rows[0];
+
+        if (!admin) {
+          resultadoAdmin = await cliente.query(`
+            INSERT INTO usuarios (nome, email, ativo)
+            VALUES ('Gustavo Admin', 'admin', TRUE)
+            RETURNING id, nome, email
+          `);
+          admin = resultadoAdmin.rows[0];
+        } else {
+          await cliente.query(
+            `UPDATE usuarios SET ativo = TRUE WHERE id = $1`,
+            [admin.id]
+          );
+        }
+
+        const perfilOrg = await cliente.query(`
+          SELECT id
+          FROM perfis_acesso
+          WHERE codigo = 'administrador'
+            AND escopo = 'organizacao'
+          LIMIT 1
+        `);
+
+        const perfilFazenda = await cliente.query(`
+          SELECT id
+          FROM perfis_acesso
+          WHERE codigo = 'gerente'
+            AND escopo = 'fazenda'
+          LIMIT 1
+        `);
+
+        if (!perfilOrg.rows[0] || !perfilFazenda.rows[0]) {
+          throw new Error('Perfis administrativos não encontrados.');
+        }
+
+        await cliente.query(`
+          INSERT INTO usuarios_organizacoes
+            (usuario_id, organizacao_id, perfil_id, ativo)
+          SELECT DISTINCT
+            $1, f.organizacao_id, $2, TRUE
+          FROM fazendas f
+          JOIN organizacoes o ON o.id = f.organizacao_id
+          WHERE f.ativo = TRUE
+            AND o.ativo = TRUE
+          ON CONFLICT (usuario_id, organizacao_id)
+          DO UPDATE SET
+            perfil_id = EXCLUDED.perfil_id,
+            ativo = TRUE,
+            atualizado_em = NOW()
+        `, [admin.id, perfilOrg.rows[0].id]);
+
+        await cliente.query(`
+          INSERT INTO usuarios_fazendas
+            (usuario_id, organizacao_id, fazenda_id, perfil_id, ativo)
+          SELECT
+            $1, f.organizacao_id, f.id, $2, TRUE
+          FROM fazendas f
+          JOIN organizacoes o ON o.id = f.organizacao_id
+          WHERE f.ativo = TRUE
+            AND o.ativo = TRUE
+          ON CONFLICT (usuario_id, fazenda_id)
+          DO UPDATE SET
+            organizacao_id = EXCLUDED.organizacao_id,
+            perfil_id = EXCLUDED.perfil_id,
+            ativo = TRUE,
+            atualizado_em = NOW()
+        `, [admin.id, perfilFazenda.rows[0].id]);
+      });
+    }
+
     const usuario = await pool.query(
       `
         SELECT id, nome, email, senha_hash, senha_salt
