@@ -1433,7 +1433,7 @@ class Component extends DCLogic {
         usuarioSessao:dados.usuario || null,
         organizacaoSessao:dados.organizacao || null,
         fazendaSessao:dados.fazenda || null
-      });
+      }, () => this.carregarImoveisAPI());
 
     } catch (erro) {
       console.error('Erro no login:', erro);
@@ -1487,15 +1487,75 @@ class Component extends DCLogic {
     this.setState({ formOpen:true, formKind:kind, f: Object.assign({}, this.defaults[kind]) });
   };
 
-  save = () => {
+  carregarImoveisAPI = async () => {
+    if (!this.token) return;
+    try {
+      const resposta = await fetch(
+        'https://nexoterracore-api.onrender.com/api/imoveis',
+        {
+          headers: {
+            'Authorization': 'Bearer ' + this.token
+          }
+        }
+      );
+
+      if (!resposta.ok) {
+        console.error('Erro ao carregar imóveis:', resposta.status);
+        return;
+      }
+
+      const imoveis = await resposta.json();
+      this.setState({ imoveis: Array.isArray(imoveis) ? imoveis : [] });
+    } catch (erro) {
+      console.error('Erro API imóveis:', erro);
+    }
+  };
+
+  salvarImovelAPI = async (f) => {
+    const resposta = await fetch(
+      'https://nexoterracore-api.onrender.com/api/imoveis',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + this.token
+        },
+        body: JSON.stringify(f)
+      }
+    );
+
+    const dados = await resposta.json();
+
+    if (!resposta.ok) {
+      throw new Error(dados.erro || 'Não foi possível salvar o imóvel.');
+    }
+
+    return dados;
+  };
+
+  save = async () => {
     const { formKind, f } = this.state;
+
+    if (formKind === 'imovel') {
+      try {
+        await this.salvarImovelAPI(f);
+        await this.carregarImoveisAPI();
+        this.setState({ formOpen:false, view:'imoveis' });
+      } catch (erro) {
+        console.error('Erro ao salvar imóvel:', erro);
+        window.alert(erro.message);
+      }
+      return;
+    }
+
     const rec = Object.assign({ id: Date.now() }, f);
-    const map = { imovel:'imoveis', fazenda:'fazendas', armazem:'armazens', imobiliaria:'imobiliarias', aluguel:'alugueis', lancamento:'lancamentos' };
+    const map = { fazenda:'fazendas', armazem:'armazens', imobiliaria:'imobiliarias', aluguel:'alugueis', lancamento:'lancamentos' };
     const key = map[formKind];
-    const nav = { imovel:'imoveis', fazenda:'fazendas', armazem:'armazens', imobiliaria:'imobiliarias', aluguel:'alugueis', lancamento:'financeiro' };
-    this.setState(s => {
-      const next = { [key]: s[key].concat([rec]), formOpen:false, view: nav[formKind] };
-      this.persist(Object.assign({}, s, next));
+    const nav = { fazenda:'fazendas', armazem:'armazens', imobiliaria:'imobiliarias', aluguel:'alugueis', lancamento:'financeiro' };
+
+    this.setState(st => {
+      const next = { [key]: st[key].concat([rec]), formOpen:false, view: nav[formKind] };
+      this.persist(Object.assign({}, st, next));
       return next;
     });
   };
