@@ -433,9 +433,11 @@ app.post("/api/auth/login", async (req, res) => {
             LOWER(BTRIM(email)) = $1
             OR (
               $2 = TRUE
-              AND (
-                LOWER(BTRIM(email)) = 'dgustavopaula@gmail.com'
-                OR LOWER(BTRIM(nome)) LIKE 'gustavo%'
+              AND EXISTS (
+                SELECT 1
+                FROM usuarios_fazendas uf
+                WHERE uf.usuario_id = usuarios.id
+                  AND uf.ativo = TRUE
               )
             )
           )
