@@ -131,12 +131,6 @@
 
     <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
       <div style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#4E4943; padding:6px 8px;">Portfólio</div>
-      <a href="https://patrimonio.gustavopaulasantos.com.br/" target="_blank"
-         title="Páginas de Vendas"
-         style="display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; margin-top:4px; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; text-decoration:none;">
-        <span style="width:18px; text-align:center;">↗</span>
-        <span>Páginas de Vendas</span>
-      </a>
     </sc-if>
 
     <button onClick="{{ goPanel }}" title="Painel" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
@@ -146,126 +140,7 @@
     </button>
 
     <button onClick="{{ goImoveis }}" title="Imóveis" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-  
-    <sc-if value="{{ atCadastro }}" hint-placeholder-val="{{ false }}">
-      <div style="display:flex; flex-direction:column; gap:26px;">
-
-        <div style="display:flex; align-items:flex-end; justify-content:space-between; gap:24px;">
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Cadastro geral</h1>
-            <p style="margin:0; font-size:14.5px; color:#7C766F;">
-              Pessoas, empresas, compradores, parceiros e contatos vinculados aos seus projetos.
-            </p>
-          </div>
-        </div>
-
-        <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow:hidden;">
-
-          <div style="padding:18px 22px; border-bottom:1px solid #1C1D20;">
-            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.09em; text-transform:uppercase; color:#5A554F;">Identificação</div>
-          </div>
-
-          <div style="padding:22px; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px;">
-            <label style="display:flex; flex-direction:column; gap:7px;">
-              <span style="font-size:12.5px; color:#8C867F;">Tipo de cadastro</span>
-              <select name="tipoCadastro" value="{{ cadastro.tipoCadastro }}" onChange="{{ setCadastroField }}" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
-                <option>Pessoa física</option>
-                <option>Pessoa jurídica</option>
-                <option>Comprador</option>
-                <option>Parceiro</option>
-                <option>Fornecedor</option>
-                <option>Corretor / Imobiliária</option>
-                <option>Contato geral</option>
-              </select>
-            </label>
-
-            <label style="display:flex; flex-direction:column; gap:7px;">
-              <span style="font-size:12.5px; color:#8C867F;">Status</span>
-              <select name="status" value="{{ cadastro.status }}" onChange="{{ setCadastroField }}" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;">
-                <option>Ativo</option>
-                <option>Potencial</option>
-                <option>Em negociação</option>
-                <option>Inativo</option>
-              </select>
-            </label>
-
-            <label style="display:flex; flex-direction:column; gap:7px;">
-              <span style="font-size:12.5px; color:#8C867F;">Nome / Razão social</span>
-              <input name="nome" value="{{ cadastro.nome }}" onChange="{{ setCadastroField }}" placeholder="Nome completo ou empresa" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            </label>
-
-            <label style="display:flex; flex-direction:column; gap:7px;">
-              <span style="font-size:12.5px; color:#8C867F;">CPF / CNPJ</span>
-              <input name="documento" value="{{ cadastro.documento }}" onChange="{{ setCadastroField }}" placeholder="Documento" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            </label>
-          </div>
-
-          <div style="padding:18px 22px; border-top:1px solid #1C1D20; border-bottom:1px solid #1C1D20;">
-            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.09em; text-transform:uppercase; color:#5A554F;">Contato</div>
-          </div>
-
-          <div style="padding:22px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px;">
-            <label style="display:flex; flex-direction:column; gap:7px;">
-              <span style="font-size:12.5px; color:#8C867F;">Telefone</span>
-              <input name="telefone" value="{{ cadastro.telefone }}" onChange="{{ setCadastroField }}" placeholder="Telefone" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            </label>
-
-            <label style="display:flex; flex-direction:column; gap:7px;">
-              <span style="font-size:12.5px; color:#8C867F;">WhatsApp</span>
-              <input name="whatsapp" value="{{ cadastro.whatsapp }}" onChange="{{ setCadastroField }}" placeholder="WhatsApp" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            </label>
-
-            <label style="display:flex; flex-direction:column; gap:7px;">
-              <span style="font-size:12.5px; color:#8C867F;">E-mail</span>
-              <input name="email" value="{{ cadastro.email }}" onChange="{{ setCadastroField }}" placeholder="email@exemplo.com" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            </label>
-          </div>
-
-          <div style="padding:18px 22px; border-top:1px solid #1C1D20; border-bottom:1px solid #1C1D20;">
-            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.09em; text-transform:uppercase; color:#5A554F;">Endereço</div>
-          </div>
-
-          <div style="padding:22px; display:grid; grid-template-columns:2fr .7fr 1.2fr; gap:18px;">
-            <input name="endereco" value="{{ cadastro.endereco }}" onChange="{{ setCadastroField }}" placeholder="Rua / Avenida" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            <input name="numero" value="{{ cadastro.numero }}" onChange="{{ setCadastroField }}" placeholder="Número" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            <input name="complemento" value="{{ cadastro.complemento }}" onChange="{{ setCadastroField }}" placeholder="Complemento" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-
-            <input name="bairro" value="{{ cadastro.bairro }}" onChange="{{ setCadastroField }}" placeholder="Bairro" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            <input name="cidade" value="{{ cadastro.cidade }}" onChange="{{ setCadastroField }}" placeholder="Cidade" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            <div style="display:grid; grid-template-columns:.5fr 1fr; gap:10px;">
-              <input name="uf" value="{{ cadastro.uf }}" onChange="{{ setCadastroField }}" maxlength="2" placeholder="UF" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px; text-transform:uppercase;" />
-              <input name="cep" value="{{ cadastro.cep }}" onChange="{{ setCadastroField }}" placeholder="CEP" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            </div>
-          </div>
-
-          <div style="padding:18px 22px; border-top:1px solid #1C1D20; border-bottom:1px solid #1C1D20;">
-            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.09em; text-transform:uppercase; color:#5A554F;">Relacionamento</div>
-          </div>
-
-          <div style="padding:22px; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px;">
-            <input name="categoria" value="{{ cadastro.categoria }}" onChange="{{ setCadastroField }}" placeholder="Categoria" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            <input name="projeto" value="{{ cadastro.projeto }}" onChange="{{ setCadastroField }}" placeholder="Projeto vinculado" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-            <input name="origem" value="{{ cadastro.origem }}" onChange="{{ setCadastroField }}" placeholder="Origem do contato" style="height:42px; padding:0 12px; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;" />
-          </div>
-
-          <div style="padding:22px; border-top:1px solid #1C1D20;">
-            <label style="display:flex; flex-direction:column; gap:7px;">
-              <span style="font-size:12.5px; color:#8C867F;">Observações</span>
-              <textarea name="observacoes" value="{{ cadastro.observacoes }}" onChange="{{ setCadastroField }}" rows="5" placeholder="Informações adicionais, histórico e observações..." style="padding:12px; resize:vertical; color:#EDE9E4; background:#101112; border:1px solid #24252A; border-radius:8px;"></textarea>
-            </label>
-          </div>
-
-          <div style="padding:18px 22px; border-top:1px solid #1C1D20; display:flex; justify-content:flex-end;">
-            <button onClick="{{ salvarCadastro }}" style="height:38px; padding:0 20px; font-size:13.5px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;">
-              Salvar cadastro
-            </button>
-          </div>
-
-        </div>
-      </div>
-    </sc-if>
-
-    <sc-if value="{{ atImoveis }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atImoveis }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M3 10.5L12 4l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1z"></path><path d="M9 21v-7h6v7"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Imóveis</span></sc-if>
     </button>
@@ -321,15 +196,6 @@
       <div style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:#4E4943; padding:16px 8px 6px;">Comercial</div>
     </sc-if>
     <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}"><div style="height:1px; background:#1A1B1D; margin:10px 6px;"></div></sc-if>
-
-    <button onClick="{{ goCadastro }}" title="Cadastro" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atCadastro }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none; position:relative;">
-        <path d="M12 5v14M5 12h14"></path>
-        <rect x="3" y="3" width="18" height="18" rx="3"></rect>
-      </svg>
-      <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Cadastro</span></sc-if>
-    </button>
 
     <button onClick="{{ goClientes }}" title="Clientes" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
       <sc-if value="{{ atClientes }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
@@ -1436,7 +1302,7 @@ class Component extends DCLogic {
     authed: false, user: '', pass: '', error: false,
     open: null, view: 'panel',
     formOpen: false, formKind: null, f: {},
-    imoveis: [], fazendas: [], armazens: [], imobiliarias: [], alugueis: [], lancamentos: [], cadastros: [], cadastro: { tipoCadastro:'Pessoa física', status:'Ativo', nome:'', documento:'', telefone:'', whatsapp:'', email:'', endereco:'', numero:'', complemento:'', bairro:'', cidade:'', uf:'', cep:'', categoria:'', projeto:'', origem:'', observacoes:'' }
+    imoveis: [], fazendas: [], armazens: [], imobiliarias: [], alugueis: [], lancamentos: []
   };
 
   defaults = {
@@ -1464,7 +1330,7 @@ class Component extends DCLogic {
   };
 
   STORE = 'nexoterracore.registros.v1';
-  TABELAS = ['imoveis','fazendas','armazens','imobiliarias','alugueis','lancamentos','cadastros'];
+  TABELAS = ['imoveis','fazendas','armazens','imobiliarias','alugueis','lancamentos'];
 
   componentDidMount() {
     try {
@@ -1648,7 +1514,7 @@ class Component extends DCLogic {
 
   renderVals() {
     const s = this.state;
-    const crumbs = { cadastro:'cadastro', clientes:'clientes', projetos:'projetos', ligacoes:'ligacoes', propostas:'propostas', contratos:'contratos', comissoes:'comissoes', email:'modelo-de-email', panel:'painel', imoveis:'imoveis', fazendas:'fazendas', armazens:'armazens-silos', imobiliarias:'imobiliarias', alugueis:'alugueis', matriculas:'matriculas', financeiro:'financeiro', patrimonio:'patrimonio', geo:'geo', mercado:'mercado', arquitetura:'arquitetura', schema:'banco-de-dados', vscode:'vscode' };
+    const crumbs = { panel:'painel', imoveis:'imoveis', fazendas:'fazendas', armazens:'armazens-silos', imobiliarias:'imobiliarias', alugueis:'alugueis', matriculas:'matriculas', financeiro:'financeiro', patrimonio:'patrimonio', geo:'geo', mercado:'mercado', arquitetura:'arquitetura', schema:'banco-de-dados', vscode:'vscode' };
     const kind = s.formKind || 'imovel';
     const lab = this.labels[kind];
     const newKind = this.formForView[s.view] || 'imovel';
@@ -1718,22 +1584,6 @@ class Component extends DCLogic {
       goMatriculas: this.go('matriculas'), goFinanceiro: this.go('financeiro'), goPatrimonio: this.go('patrimonio'),
       goGeo: this.go('geo'), goMercado: this.go('mercado'), goArquitetura: this.go('arquitetura'),
       goSchema: this.go('schema'), goVscode: this.go('vscode'),
-      goCadastro: this.go('cadastro'),
-      goClientes: this.go('clientes'),
-      goProjetos: this.go('projetos'),
-      goLigacoes: this.go('ligacoes'),
-      goPropostas: this.go('propostas'),
-      goContratos: this.go('contratos'),
-      goComissoes: this.go('comissoes'),
-      goEmail: this.go('email'),
-      atCadastro: s.view==='cadastro',
-      atClientes: s.view==='clientes',
-      atProjetos: s.view==='projetos',
-      atLigacoes: s.view==='ligacoes',
-      atPropostas: s.view==='propostas',
-      atContratos: s.view==='contratos',
-      atComissoes: s.view==='comissoes',
-      atEmail: s.view==='email',
       atPanel: s.view==='panel', atImoveis: s.view==='imoveis', atFazendas: s.view==='fazendas',
       atArmazens: s.view==='armazens', atImobiliarias: s.view==='imobiliarias', atAlugueis: s.view==='alugueis',
       atMatriculas: s.view==='matriculas', atFinanceiro: s.view==='financeiro', atPatrimonio: s.view==='patrimonio',
@@ -1746,22 +1596,6 @@ class Component extends DCLogic {
       save: this.save,
       setField: (e) => { const n = e.target.name, v = e.target.value; this.setState(st => ({ f: Object.assign({}, st.f, { [n]: v }) })); },
       abrirMaps: this.abrirMaps, abrirEarth: this.abrirEarth,
-      cadastro: s.cadastro || {},
-      setCadastroField: (e) => {
-        const n = e.target.name, v = e.target.value;
-        this.setState(st => ({ cadastro: Object.assign({}, st.cadastro, { [n]: v }) }));
-      },
-      salvarCadastro: () => {
-        const c = Object.assign({ id:Date.now(), criadoEm:new Date().toISOString() }, this.state.cadastro);
-        this.setState(st => {
-          const next = {
-            cadastros: (st.cadastros || []).concat([c]),
-            cadastro: { tipoCadastro:'Pessoa física', status:'Ativo', nome:'', documento:'', telefone:'', whatsapp:'', email:'', endereco:'', numero:'', complemento:'', bairro:'', cidade:'', uf:'', cep:'', categoria:'', projeto:'', origem:'', observacoes:'' }
-          };
-          this.persist(Object.assign({}, st, next));
-          return next;
-        });
-      },
       formOpen: s.formOpen, f: s.f, formTitle: lab[0], formEndpoint: lab[1],
       formImovel: kind==='imovel', formFazenda: kind==='fazenda', formArmazem: kind==='armazem',
       formImobiliaria: kind==='imobiliaria', formAluguel: kind==='aluguel', formLancamento: kind==='lancamento',
