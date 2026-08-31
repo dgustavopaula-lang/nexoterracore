@@ -1279,6 +1279,51 @@ app.delete("/api/financeiro/:id", autenticar, autorizar("financeiro", "DELETE"),
   }
 });
 
+
+app.get("/api/imoveis", autenticar, autorizar("imoveis", "GET"), async (req, res) => {
+  try {
+    const resultado = await pool.query(`
+      SELECT
+        id,
+        titulo,
+        tipo,
+        status,
+        endereco,
+        numero,
+        complemento,
+        bairro,
+        cidade,
+        uf,
+        cep,
+        loteamento,
+        quadra,
+        lote,
+        mapa,
+        terreno_m2 AS terreno,
+        frente_m AS frente,
+        fundo_m AS fundo,
+        area_construida_m2 AS area,
+        quartos,
+        vagas,
+        matricula,
+        cartorio,
+        valor,
+        titular,
+        observacao,
+        dados_extras
+      FROM imoveis
+      WHERE organizacao_id = $1
+        AND ativo = TRUE
+      ORDER BY matricula, id
+    `, [req.auth.organizacaoId]);
+
+    res.json(resultado.rows);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível consultar os imóveis." });
+  }
+});
+
 app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });
 });
