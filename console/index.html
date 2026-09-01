@@ -696,12 +696,12 @@
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:14px;">
             <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#FF8433;">apps/api</div>
             <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Back-end</div>
-            <div style="font-size:13.5px; line-height:1.75; color:#7C766F;">Node 20 com Fastify, Zod na validação, JWT em cookie httpOnly, senha em argon2. REST por recurso, camada de serviço isolada do ORM.</div>
+            <div style="font-size:13.5px; line-height:1.75; color:#7C766F;">Node.js com Express, autenticação por sessão para humanos e API Keys para sistemas. PostgreSQL como núcleo de dados, autorização por perfis e scopes, rate limiting e metering no backend.</div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:14px;">
             <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#FF8433;">packages/db</div>
             <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Dados</div>
-            <div style="font-size:13.5px; line-height:1.75; color:#7C766F;">PostgreSQL 16 com PostGIS para polígonos. Prisma dono das migrações. Row Level Security por imobiliária.</div>
+            <div style="font-size:13.5px; line-height:1.75; color:#7C766F;">PostgreSQL como núcleo de dados. Migrações SQL versionadas controlam a evolução do schema e o isolamento multi-tenant é aplicado por organização.</div>
           </div>
         </div>
         <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:16px;">
@@ -711,14 +711,14 @@
 │  ├─ web/        console, login, sidebar recolhível
 │  └─ api/        auth, imóveis, fazendas, armazéns, financeiro
 ├─ packages/
-│  ├─ db/         Prisma schema + migrações
+│  ├─ database/    migrações SQL versionadas
 │  └─ ui/         componentes compartilhados
 ├─ docker-compose.yml   Postgres 16 + PostGIS
 └─ .env.example</pre>
         </div>
         <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:14px;">
           <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Fluxo de autenticação</div>
-          <div style="font-size:13.5px; line-height:1.85; color:#7C766F;">O formulário envia usuário e senha para <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">POST /auth/login</span>. A API confere o hash argon2, emite JWT de 15 minutos e refresh de 7 dias, ambos em cookie httpOnly. O middleware do Next protege tudo sob <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">/console</span> e devolve ao login quando o token expira.</div>
+          <div style="font-size:13.5px; line-height:1.85; color:#7C766F;">Usuários humanos autenticam com senha e recebem uma sessão controlada pelo backend. Sistemas e integrações usam API Keys vinculadas à organização, com scopes próprios. O Core valida identidade, tenant e permissão antes de liberar cada recurso.</div>
         </div>
       </div>
       </sc-if>
@@ -737,7 +737,7 @@ create extension if not exists postgis;
 create table users (
   id uuid primary key default gen_random_uuid(),
   username text unique not null,
-  password text not null,              -- hash argon2
+  password text not null,              -- hash scrypt + salt
   role text not null default 'admin',
   created_at timestamptz default now()
 );
@@ -805,7 +805,7 @@ create table market_quotes (
       <div style="display:flex; flex-direction:column; gap:26px;">
         <div style="display:flex; flex-direction:column; gap:6px;">
           <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Rodar no VSCode</h1>
-          <p style="margin:0; font-size:14.5px; color:#7C766F;">Do clone ao login funcionando. Requer Node 20, pnpm e Docker.</p>
+          <p style="margin:0; font-size:14.5px; color:#7C766F;">Do clone ao login funcionando. Requer Node 20, npm e Docker.</p>
         </div>
         <div style="display:flex; flex-direction:column; gap:12px;">
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
@@ -815,7 +815,7 @@ create table market_quotes (
               <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">No VSCode: <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">File → Open Folder</span>. Terminal integrado com <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">Ctrl+`</span>.</div>
               <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">git clone &lt;repo&gt; nexoterra
 cd nexoterra
-pnpm install</pre>
+npm install</pre>
             </div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
@@ -830,18 +830,22 @@ cp .env.example .env</pre>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
             <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">3</div>
             <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
-              <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Criar tabelas e o usuário admin</div>
-              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">As migrações criam o esquema vazio e um único usuário.</div>
-              <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">pnpm --filter db prisma migrate dev
-pnpm --filter db bootstrap:admin   # admin / 123</pre>
+              <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Aplicar migrações do Core</div>
+              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">As migrações SQL versionadas atualizam PostgreSQL sem expor credenciais no Console.</div>
+              <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">cd backend
+npm run db:migrate
+npm run check</pre>
             </div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
             <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">4</div>
             <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
-              <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Rodar front e back</div>
-              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">API em <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">:3001</span>, console em <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">:3000</span>.</div>
-              <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">pnpm dev</pre>
+              <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Control Plane operacional</div>
+              <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">Organização, API Keys, scopes, rate limit e consumo passam a ser governados pelo NexoTerraCore.</div>
+              <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">Tenant: NexoTenant
+Scope: assets.read
+Rate limit: 60 req/min
+Metering: ativo</pre>
             </div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
@@ -854,15 +858,16 @@ pnpm --filter db bootstrap:admin   # admin / 123</pre>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; flex-direction:column; gap:12px;">
-            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">.env</div>
-            <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; overflow-x:auto;">DATABASE_URL="postgresql://nexo:nexo@localhost:5432/nexoterra"
-JWT_SECRET="troque-este-valor"
-API_URL="http://localhost:3001"
-GOOGLE_MAPS_API_KEY=""</pre>
+            <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Configuração protegida</div>
+            <div style="font-size:13.5px; line-height:1.85; color:#7C766F;">Segredos, credenciais e conexões ficam somente no backend/provedor. O Console exibe estado operacional, nunca valores sensíveis.</div>
+            <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; overflow-x:auto;">Database: conectado
+API: localhost:3000
+Secrets: protegidos
+API Keys: hash no banco</pre>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; flex-direction:column; gap:12px;">
             <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:#5A554F;">Extensões recomendadas</div>
-            <div style="font-size:13.5px; line-height:1.85; color:#7C766F;">Prisma · ESLint · Tailwind CSS IntelliSense · PostgreSQL (ms-ossdata) · Docker · Error Lens</div>
+            <div style="font-size:13.5px; line-height:1.85; color:#7C766F;">ESLint · PostgreSQL (ms-ossdata) · Docker · Error Lens</div>
           </div>
         </div>
       </div>
