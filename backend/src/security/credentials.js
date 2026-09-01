@@ -50,6 +50,11 @@ function criarTokenSessao() {
   return crypto.randomBytes(32).toString("base64url");
 }
 
+function criarApiKey() {
+  const segredo = crypto.randomBytes(32).toString("base64url");
+  return `ntc_live_${segredo}`;
+}
+
 function criarDesafioLogin() {
   return crypto.randomBytes(32).toString("base64url");
 }
@@ -62,6 +67,7 @@ module.exports = {
   criarHashSenha,
   verificarSenha,
   criarTokenSessao,
+  criarApiKey,
   criarDesafioLogin,
   hashToken
 };

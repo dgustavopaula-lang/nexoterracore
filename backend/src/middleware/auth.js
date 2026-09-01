@@ -11,6 +11,50 @@ function criarMiddlewaresAuth(pool) {
     }
 
     try {
+      const token = correspondencia[1];
+
+      if (token.startsWith("ntc_live_")) {
+        const resultadoApiKey = await pool.query(
+          `
+            SELECT
+              k.id AS api_key_id,
+              k.organizacao_id,
+              k.nome,
+              k.scopes
+            FROM api_keys k
+            JOIN organizacoes o
+              ON o.id = k.organizacao_id
+             AND o.ativo = TRUE
+            WHERE k.chave_hash = $1
+              AND k.ativo = TRUE
+              AND k.revogado_em IS NULL
+              AND (k.expira_em IS NULL OR k.expira_em > NOW())
+          `,
+          [hashToken(token)]
+        );
+
+        if (!resultadoApiKey.rowCount) {
+          return res.status(401).json({ erro: "API Key inválida ou expirada." });
+        }
+
+        const apiKey = resultadoApiKey.rows[0];
+
+        req.auth = {
+          tipo: "api_key",
+          apiKeyId: Number(apiKey.api_key_id),
+          organizacaoId: Number(apiKey.organizacao_id),
+          apiKeyNome: apiKey.nome,
+          scopes: apiKey.scopes || []
+        };
+
+        await pool.query(
+          "UPDATE api_keys SET ultimo_uso_em = NOW() WHERE id = $1",
+          [req.auth.apiKeyId]
+        );
+
+        return next();
+      }
+
       const resultado = await pool.query(
         `
           SELECT
@@ -80,6 +124,19 @@ function criarMiddlewaresAuth(pool) {
 
   function autorizar(recurso, metodo) {
     return (req, res, next) => {
+      if (req.auth.tipo === "api_key") {
+        const permitido =
+          recurso === "imoveis" &&
+          metodo === "GET" &&
+          req.auth.scopes.includes("assets.read");
+
+        if (!permitido) {
+          return res.status(403).json({ erro: "Scope insuficiente." });
+        }
+
+        return next();
+      }
+
       if (!temPermissao(req.auth.perfis, recurso, metodo)) {
         return res.status(403).json({ erro: "Permissão insuficiente." });
       }
