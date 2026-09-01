@@ -10,6 +10,7 @@ const {
 } = require("./security/credentials");
 const { criarMiddlewaresAuth } = require("./middleware/auth");
 const { criarRateLimitApiKey } = require("./middleware/rate-limit");
+const { criarMeteringApiKey } = require("./middleware/metering");
 const {
   ErroAssistente,
   responderPergunta
@@ -66,6 +67,7 @@ const pool = new Pool({
 });
 const { autenticar, autorizar } = criarMiddlewaresAuth(pool);
 const rateLimitApiKey = criarRateLimitApiKey({ janelaMs: 60_000, max: 60 });
+const meteringApiKey = criarMeteringApiKey(pool);
 
 app.use(helmet());
 
@@ -1431,7 +1433,7 @@ app.delete("/api/financeiro/:id", autenticar, autorizar("financeiro", "DELETE"),
 });
 
 
-app.get("/api/imoveis", autenticar, rateLimitApiKey, autorizar("imoveis", "GET"), async (req, res) => {
+app.get("/api/imoveis", autenticar, rateLimitApiKey, meteringApiKey, autorizar("imoveis", "GET"), async (req, res) => {
   try {
     const resultado = await pool.query(`
       SELECT

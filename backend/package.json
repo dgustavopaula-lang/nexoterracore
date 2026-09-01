@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node src/database/migrate.js up && node src/server.js",
     "dev": "node --watch src/server.js",
-    "check": "node --check src/server.js && node --check src/database/migrate.js && node --check src/database/verify-multitenancy.js && node --check src/security/credentials.js && node --check src/security/permissions.js && node --check src/middleware/auth.js && node --check src/middleware/rate-limit.js && node --check src/services/assistente.js",
+    "check": "node --check src/server.js && node --check src/database/migrate.js && node --check src/database/verify-multitenancy.js && node --check src/security/credentials.js && node --check src/security/permissions.js && node --check src/middleware/auth.js && node --check src/middleware/rate-limit.js && node --check src/middleware/metering.js && node --check src/services/assistente.js",
     "db:migrate": "node src/database/migrate.js up",
     "db:rollback": "node src/database/migrate.js down",
     "db:verify-multitenancy": "node src/database/verify-multitenancy.js"
