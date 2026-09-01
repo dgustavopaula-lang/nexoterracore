@@ -9,6 +9,7 @@ const {
   hashToken
 } = require("./security/credentials");
 const { criarMiddlewaresAuth } = require("./middleware/auth");
+const { criarRateLimitApiKey } = require("./middleware/rate-limit");
 const {
   ErroAssistente,
   responderPergunta
@@ -64,6 +65,7 @@ const pool = new Pool({
       : false
 });
 const { autenticar, autorizar } = criarMiddlewaresAuth(pool);
+const rateLimitApiKey = criarRateLimitApiKey({ janelaMs: 60_000, max: 60 });
 
 app.use(helmet());
 
@@ -1429,7 +1431,7 @@ app.delete("/api/financeiro/:id", autenticar, autorizar("financeiro", "DELETE"),
 });
 
 
-app.get("/api/imoveis", autenticar, autorizar("imoveis", "GET"), async (req, res) => {
+app.get("/api/imoveis", autenticar, rateLimitApiKey, autorizar("imoveis", "GET"), async (req, res) => {
   try {
     const resultado = await pool.query(`
       SELECT
