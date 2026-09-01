@@ -3,13 +3,15 @@ const PERMISSOES = {
     maquinas: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     financeiro: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     imoveis: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    sessoes: ["DELETE"]
+    sessoes: ["DELETE"],
+    control_plane: ["GET"]
   },
   administrador: {
     maquinas: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     financeiro: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     imoveis: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    sessoes: ["DELETE"]
+    sessoes: ["DELETE"],
+    control_plane: ["GET"]
   },
   gerente: {
     maquinas: ["GET", "POST", "PUT", "PATCH"],

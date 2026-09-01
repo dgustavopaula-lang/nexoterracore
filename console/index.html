@@ -842,10 +842,12 @@ npm run check</pre>
             <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
               <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Control Plane operacional</div>
               <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">Organização, API Keys, scopes, rate limit e consumo passam a ser governados pelo NexoTerraCore.</div>
-              <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">Tenant: NexoTenant
-Scope: assets.read
-Rate limit: 60 req/min
-Metering: ativo</pre>
+              <pre style="margin:0; font-family:'JetBrains Mono', monospace; font-size:12.5px; line-height:1.85; color:#9A948C; background:#0A0B0C; border:1px solid #1A1B1D; border-radius:8px; padding:14px 16px; overflow-x:auto;">Organização: {{ cpOrganizacao }}
+API Keys: {{ cpApiKeys }}
+Scopes: {{ cpScopes }}
+Rate limit: {{ cpRateLimit }}
+Consumo total: {{ cpConsumo }}
+Consumo 24h: {{ cpConsumo24h }}</pre>
             </div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
@@ -1314,7 +1316,8 @@ class Component extends DCLogic {
     authed: false, user: '', pass: '', error: false,
     open: null, view: 'panel',
     formOpen: false, formKind: null, f: {},
-    imoveis: [], fazendas: [], armazens: [], imobiliarias: [], alugueis: [], lancamentos: []
+    imoveis: [], fazendas: [], armazens: [], imobiliarias: [], alugueis: [], lancamentos: [],
+    controlPlane: null
   };
 
   defaults = {
@@ -1438,7 +1441,10 @@ class Component extends DCLogic {
         usuarioSessao:dados.usuario || null,
         organizacaoSessao:dados.organizacao || null,
         fazendaSessao:dados.fazenda || null
-      }, () => this.carregarImoveisAPI());
+      }, () => {
+      this.carregarImoveisAPI();
+      this.carregarControlPlaneAPI();
+    });
 
     } catch (erro) {
       console.error('Erro no login:', erro);
@@ -1490,6 +1496,31 @@ class Component extends DCLogic {
   openForm = () => {
     const kind = this.formForView[this.state.view] || 'imovel';
     this.setState({ formOpen:true, formKind:kind, f: Object.assign({}, this.defaults[kind]) });
+  };
+
+  carregarControlPlaneAPI = async () => {
+    if (!this.token) return;
+
+    try {
+      const resposta = await fetch(
+        'https://nexoterracore-api.onrender.com/api/control-plane',
+        {
+          headers: {
+            'Authorization': 'Bearer ' + this.token
+          }
+        }
+      );
+
+      if (!resposta.ok) {
+        console.error('Erro ao carregar Control Plane:', resposta.status);
+        return;
+      }
+
+      const dados = await resposta.json();
+      this.setState({ controlPlane: dados });
+    } catch (erro) {
+      console.error('Erro API Control Plane:', erro);
+    }
   };
 
   carregarImoveisAPI = async () => {
@@ -1628,6 +1659,16 @@ class Component extends DCLogic {
 
     return {
       accent, org,
+      cpOrganizacao: s.controlPlane?.organizacao?.nome || 'Carregando...',
+      cpApiKeys: Array.isArray(s.controlPlane?.apiKeys) ? s.controlPlane.apiKeys.length : 0,
+      cpScopes: Array.isArray(s.controlPlane?.apiKeys)
+        ? ([...new Set(s.controlPlane.apiKeys.flatMap(k => k.scopes || []))].join(', ') || '—')
+        : '—',
+      cpRateLimit: s.controlPlane?.rateLimit
+        ? s.controlPlane.rateLimit.limite + ' req/' + s.controlPlane.rateLimit.janelaSegundos + 's'
+        : '—',
+      cpConsumo: s.controlPlane?.consumo?.total_requisicoes ?? 0,
+      cpConsumo24h: s.controlPlane?.consumo?.requisicoes_24h ?? 0,
       accentSoft: 'rgba(255,107,26,0.12)',
       showEngineering: this.props.showEngineering !== false,
       mainPad: pads[this.props.density] || pads['Padrão'],

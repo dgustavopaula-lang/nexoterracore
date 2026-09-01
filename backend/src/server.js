@@ -664,6 +664,60 @@ app.get("/api/auth/me", autenticar, (req, res) => {
   });
 });
 
+app.get("/api/control-plane", autenticar, autorizar("control_plane", "GET"), async (req, res, next) => {
+  try {
+    const organizacaoId = req.auth.organizacaoId;
+
+    const [organizacao, apiKeys, consumo] = await Promise.all([
+      pool.query(
+        `SELECT id, nome, slug, ativo
+         FROM organizacoes
+         WHERE id = $1`,
+        [organizacaoId]
+      ),
+      pool.query(
+        `SELECT
+           id,
+           nome,
+           prefixo,
+           scopes,
+           ativo,
+           expira_em,
+           ultimo_uso_em,
+           revogado_em,
+           criado_em
+         FROM api_keys
+         WHERE organizacao_id = $1
+         ORDER BY id DESC`,
+        [organizacaoId]
+      ),
+      pool.query(
+        `SELECT
+           COUNT(*)::int AS total_requisicoes,
+           COUNT(*) FILTER (
+             WHERE criado_em >= NOW() - INTERVAL '24 hours'
+           )::int AS requisicoes_24h,
+           MAX(criado_em) AS ultimo_consumo_em
+         FROM api_usage
+         WHERE organizacao_id = $1`,
+        [organizacaoId]
+      )
+    ]);
+
+    res.json({
+      organizacao: organizacao.rows[0] || null,
+      apiKeys: apiKeys.rows,
+      consumo: consumo.rows[0],
+      rateLimit: {
+        limite: 60,
+        janelaSegundos: 60
+      }
+    });
+  } catch (erro) {
+    next(erro);
+  }
+});
+
 app.get("/api/auth/fazendas", autenticar, async (req, res, next) => {
   try {
     const vinculos = await buscarVinculosUsuario(pool, req.auth.usuarioId);
