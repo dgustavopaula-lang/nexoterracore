@@ -1538,14 +1538,43 @@ app.post("/api/imoveis", autenticar, autorizar("imoveis", "POST"), async (req, r
   const titulo = typeof b.titulo === "string" ? b.titulo.trim() : "";
   const tipo = typeof b.tipo === "string" ? b.tipo.trim() : "Imóvel";
   const matricula = typeof b.matricula === "string" ? b.matricula.trim() : "";
-  const area = b.area == null || b.area === "" ? null : Number(b.area);
+
+  const numeroOpcional = (valor) =>
+    valor == null || valor === "" ? null : Number(valor);
+
+  const terreno = numeroOpcional(b.terreno);
+  const frente = numeroOpcional(b.frente);
+  const fundo = numeroOpcional(b.fundo);
+  const area = numeroOpcional(b.area);
+  const quartos = numeroOpcional(b.quartos);
+  const vagas = numeroOpcional(b.vagas);
+  const valorImovel = numeroOpcional(b.valor);
 
   if (!titulo || !matricula) {
-    return res.status(400).json({ erro: "Título e matrícula são obrigatórios." });
+    return res.status(400).json({
+      erro: "Título e matrícula são obrigatórios."
+    });
   }
 
-  if (area !== null && (!Number.isFinite(area) || area < 0)) {
-    return res.status(400).json({ erro: "Área inválida." });
+  const medidas = { terreno, frente, fundo, area, valor: valorImovel };
+
+  for (const [campo, numero] of Object.entries(medidas)) {
+    if (numero !== null && (!Number.isFinite(numero) || numero < 0)) {
+      return res.status(400).json({
+        erro: `Valor inválido para ${campo}.`
+      });
+    }
+  }
+
+  for (const [campo, numero] of Object.entries({ quartos, vagas })) {
+    if (
+      numero !== null &&
+      (!Number.isInteger(numero) || numero < 0)
+    ) {
+      return res.status(400).json({
+        erro: `Valor inválido para ${campo}.`
+      });
+    }
   }
 
   try {
@@ -1571,51 +1600,69 @@ app.post("/api/imoveis", autenticar, autorizar("imoveis", "POST"), async (req, r
       const r = await cliente.query(`
         INSERT INTO imoveis (
           organizacao_id,
-          titulo,tipo,status,
-          endereco,numero,bairro,cidade,uf,cep,
-          quadra,lote,
-          area_construida_m2,
-          matricula,cartorio,
-          valor,titular,
-          observacao,dados_extras,ativo,
+          titulo, tipo, status,
+          endereco, numero, complemento, bairro, cidade, uf, cep,
+          loteamento, quadra, lote, mapa,
+          terreno_m2, frente_m, fundo_m, area_construida_m2,
+          quartos, vagas,
+          matricula, cartorio,
+          valor, titular,
+          observacao, dados_extras, ativo,
           criado_por_usuario_id,
           atualizado_por_usuario_id
         )
         VALUES (
-          $1,$2,$3,$4,
-          $5,$6,$7,$8,$9,$10,
-          $11,$12,
-          $13,
-          $14,$15,
-          $16,$17,
-          $18,$19::jsonb,TRUE,
-          $20,$20
+          $1,
+          $2, $3, $4,
+          $5, $6, $7, $8, $9, $10, $11,
+          $12, $13, $14, $15,
+          $16, $17, $18, $19,
+          $20, $21,
+          $22, $23,
+          $24, $25,
+          $26, $27::jsonb, TRUE,
+          $28, $28
         )
         RETURNING *
       `, [
         req.auth.organizacaoId,
         titulo,
         tipo,
-        b.status || "Venda",
+        b.status || "Ativo",
         b.endereco || null,
         b.numero || null,
+        b.complemento || null,
         b.bairro || null,
         b.cidade || null,
         b.uf || null,
         b.cep || null,
+        b.loteamento || null,
         b.quadra || null,
         b.lote || null,
+        b.mapa || null,
+        terreno,
+        frente,
+        fundo,
         area,
+        quartos,
+        vagas,
         matricula,
         b.cartorio || null,
-        b.valor == null || b.valor === "" ? null : Number(b.valor),
+        valorImovel,
         b.titular || null,
         b.observacao || null,
         JSON.stringify(b.dados_extras || {}),
         req.auth.usuarioId
       ]);
 
-      await registrarAuditoria(cliente, req, "CREATE", "imoveis", r.rows[0].id);
+      await registrarAuditoria(
+        cliente,
+        req,
+        "CREATE",
+        "imoveis",
+        r.rows[0].id
+      );
+
       return r.rows[0];
     });
 

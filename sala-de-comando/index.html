@@ -99,9 +99,15 @@
             <p>Registros patrimoniais conectados ao banco de dados.</p>
           </div>
 
-          <button id="btnAtualizarImoveis" class="btn-primary">
-            Atualizar
-          </button>
+          <div class="section-actions">
+            <button id="btnNovoImovel" class="btn-secondary">
+              Novo imóvel
+            </button>
+
+            <button id="btnAtualizarImoveis" class="btn-primary">
+              Atualizar
+            </button>
+          </div>
         </div>
 
         <div id="imoveisResumo" class="overview-grid">
@@ -130,6 +136,7 @@
                 <th>Área</th>
                 <th>Valor</th>
                 <th>Status</th>
+                <th>Ações</th>
               </tr>
             </thead>
 
@@ -165,6 +172,140 @@
 
     </main>
 
+  </div>
+
+  <div id="modalImovel" class="modal oculto">
+    <div class="modal-card modal-card-wide">
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">PATRIMÔNIO</span>
+          <h2 id="tituloModalImovel">Novo imóvel</h2>
+        </div>
+
+        <button id="fecharImovel" class="btn-icon" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <p class="modal-description">
+        Cadastre ou atualize o imóvel conectado à API do NexoTerraCore.
+      </p>
+
+      <form id="formImovel">
+        <input id="imovelId" type="hidden">
+
+        <div class="form-grid">
+          <label>
+            Título
+            <input id="imovelTitulo" name="titulo" required>
+          </label>
+
+          <label>
+            Matrícula
+            <input id="imovelMatricula" name="matricula" required>
+          </label>
+
+          <label>
+            Tipo
+            <input id="imovelTipo" name="tipo" value="Imóvel urbano">
+          </label>
+
+          <label>
+            Situação
+            <select id="imovelStatus" name="status">
+              <option value="Patrimônio">Patrimônio</option>
+              <option value="Venda">Venda</option>
+              <option value="Locado">Locado</option>
+              <option value="Inativo">Inativo</option>
+            </select>
+          </label>
+
+          <label class="form-span-2">
+            Endereço
+            <input id="imovelEndereco" name="endereco">
+          </label>
+
+          <label>
+            Número
+            <input id="imovelNumero" name="numero">
+          </label>
+
+          <label>
+            Bairro
+            <input id="imovelBairro" name="bairro">
+          </label>
+
+          <label>
+            Cidade
+            <input id="imovelCidade" name="cidade">
+          </label>
+
+          <label>
+            UF
+            <input id="imovelUf" name="uf" maxlength="2">
+          </label>
+
+          <label>
+            CEP
+            <input id="imovelCep" name="cep">
+          </label>
+
+          <label>
+            Loteamento
+            <input id="imovelLoteamento" name="loteamento">
+          </label>
+
+          <label>
+            Quadra
+            <input id="imovelQuadra" name="quadra">
+          </label>
+
+          <label>
+            Lote
+            <input id="imovelLote" name="lote">
+          </label>
+
+          <label>
+            Terreno (m²)
+            <input id="imovelTerreno" name="terreno" type="number" min="0" step="0.01">
+          </label>
+
+          <label>
+            Área construída (m²)
+            <input id="imovelArea" name="area" type="number" min="0" step="0.01">
+          </label>
+
+          <label>
+            Frente (m)
+            <input id="imovelFrente" name="frente" type="number" min="0" step="0.01">
+          </label>
+
+          <label>
+            Fundo (m)
+            <input id="imovelFundo" name="fundo" type="number" min="0" step="0.01">
+          </label>
+
+          <label>
+            Valor (R$)
+            <input id="imovelValor" name="valor" type="number" min="0" step="0.01">
+          </label>
+
+          <label>
+            Cartório
+            <input id="imovelCartorio" name="cartorio">
+          </label>
+
+          <label class="form-span-2">
+            Observações e confrontações
+            <textarea id="imovelObservacao" name="observacao" rows="5"></textarea>
+          </label>
+        </div>
+
+        <div id="erroImovel" class="form-error"></div>
+
+        <button id="btnSalvarImovel" type="submit" class="btn-primary btn-full">
+          Salvar imóvel
+        </button>
+      </form>
+    </div>
   </div>
 
   <div id="modalLogin" class="modal oculto">

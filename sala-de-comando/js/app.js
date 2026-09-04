@@ -286,6 +286,101 @@ const SalaDeComando = {
     }
   },
 
+  abrirFormularioImovel() {
+    const form = document.querySelector("#formImovel");
+    form.reset();
+
+    document.querySelector("#imovelId").value = "";
+    document.querySelector("#tituloModalImovel").textContent = "Novo imóvel";
+    document.querySelector("#imovelTipo").value = "Imóvel urbano";
+    document.querySelector("#imovelStatus").value = "Patrimônio";
+    document.querySelector("#erroImovel").textContent = "";
+    document.querySelector("#modalImovel").classList.remove("oculto");
+    document.querySelector("#imovelTitulo").focus();
+  },
+
+  fecharFormularioImovel() {
+    document.querySelector("#modalImovel").classList.add("oculto");
+  },
+
+  lerCampo(seletor) {
+    const valor = document.querySelector(seletor).value.trim();
+    return valor === "" ? null : valor;
+  },
+
+  lerNumero(seletor) {
+    const valor = document.querySelector(seletor).value;
+
+    if (valor === "") {
+      return null;
+    }
+
+    const numero = Number(valor);
+    return Number.isFinite(numero) ? numero : null;
+  },
+
+  async salvarImovel(evento) {
+    evento.preventDefault();
+
+    const erro = document.querySelector("#erroImovel");
+    const botao = document.querySelector("#btnSalvarImovel");
+
+    erro.textContent = "";
+    botao.disabled = true;
+    botao.textContent = "Salvando...";
+
+    const payload = {
+      titulo: this.lerCampo("#imovelTitulo"),
+      matricula: this.lerCampo("#imovelMatricula"),
+      tipo: this.lerCampo("#imovelTipo"),
+      status: this.lerCampo("#imovelStatus"),
+      endereco: this.lerCampo("#imovelEndereco"),
+      numero: this.lerCampo("#imovelNumero"),
+      bairro: this.lerCampo("#imovelBairro"),
+      cidade: this.lerCampo("#imovelCidade"),
+      uf: (this.lerCampo("#imovelUf") || "").toUpperCase() || null,
+      cep: this.lerCampo("#imovelCep"),
+      loteamento: this.lerCampo("#imovelLoteamento"),
+      quadra: this.lerCampo("#imovelQuadra"),
+      lote: this.lerCampo("#imovelLote"),
+      terreno: this.lerNumero("#imovelTerreno"),
+      area: this.lerNumero("#imovelArea"),
+      frente: this.lerNumero("#imovelFrente"),
+      fundo: this.lerNumero("#imovelFundo"),
+      valor: this.lerNumero("#imovelValor"),
+      cartorio: this.lerCampo("#imovelCartorio"),
+      observacao: this.lerCampo("#imovelObservacao")
+    };
+
+    try {
+      const resposta = await fetch(`${this.apiBase}/api/imoveis`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${this.token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const dados = await resposta.json();
+
+      if (!resposta.ok) {
+        throw new Error(
+          dados.erro || "Não foi possível cadastrar o imóvel."
+        );
+      }
+
+      this.fecharFormularioImovel();
+      await this.carregarImoveis();
+    } catch (falha) {
+      console.error("Erro ao cadastrar imóvel:", falha);
+      erro.textContent = falha.message;
+    } finally {
+      botao.disabled = false;
+      botao.textContent = "Salvar imóvel";
+    }
+  },
+
   configurarAcoes() {
     document
       .querySelector("#btnAtualizarImoveis")
@@ -333,12 +428,38 @@ const SalaDeComando = {
     }).format(numero);
   },
 
+  configurarCadastroImovel() {
+    document
+      .querySelector("#btnNovoImovel")
+      .addEventListener("click", () => {
+        if (!this.token) {
+          document.querySelector("#modalLogin").classList.remove("oculto");
+          return;
+        }
+
+        this.abrirFormularioImovel();
+      });
+
+    document
+      .querySelector("#fecharImovel")
+      .addEventListener("click", () => {
+        this.fecharFormularioImovel();
+      });
+
+    document
+      .querySelector("#formImovel")
+      .addEventListener("submit", (evento) => {
+        this.salvarImovel(evento);
+      });
+  },
+
   iniciar() {
     console.log("NexoTerraCore — Sala de Comando iniciada");
     this.verificarAPI();
     this.configurarNavegacao();
     this.configurarLogin();
     this.configurarAcoes();
+    this.configurarCadastroImovel();
   }
 };
 
