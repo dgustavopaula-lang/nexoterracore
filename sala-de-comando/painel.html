@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NexoTerraCore — Sala de Comando</title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <aside class="sidebar">
+      <div class="brand">
+        <strong>NexoTerraCore</strong>
+        <span>Sala de Comando</span>
+      </div>
+
+      <nav class="menu">
+        <button class="menu-item ativo" data-view="visao-geral">Visão Geral</button>
+        <button class="menu-item" data-view="patrimonio">Patrimônio</button>
+        <button class="menu-item" data-view="imoveis">Imóveis</button>
+        <button class="menu-item" data-view="agro">Agro</button>
+        <button class="menu-item" data-view="financeiro">Financeiro</button>
+        <button class="menu-item" data-view="mapas">Mapas</button>
+        <button class="menu-item" data-view="api">API / Control Plane</button>
+        <button class="menu-item" data-view="administracao">Administração</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <strong>Gustavo Admin</strong>
+        <span id="statusSessao">Sessão não iniciada</span>
+      </div>
+    </aside>
+
+    <main class="workspace">
+
+      <header class="topbar">
+        <div>
+          <h1>Sala de Comando</h1>
+          <p>NexoTerraCore</p>
+        </div>
+
+        <div class="topbar-actions">
+          <button id="btnEntrar" class="btn-secondary">Entrar</button>
+          <button id="btnSair" class="btn-secondary oculto">Sair</button>
+
+          <div class="system-status">
+            <span>API</span>
+            <strong>Aguardando conexão</strong>
+          </div>
+        </div>
+      </header>
+
+      <section id="view-visao-geral" class="content view ativa">
+        <div class="section-header">
+          <div>
+            <h2>Visão Geral</h2>
+            <p>Ambiente administrativo privado do NexoTerraCore.</p>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <article class="info-card">
+            <span>Sistema</span>
+            <strong>NexoTerraCore</strong>
+          </article>
+
+          <article class="info-card">
+            <span>Operação</span>
+            <strong>Sala de Comando</strong>
+          </article>
+
+          <article class="info-card">
+            <span>Acesso</span>
+            <strong>Proprietário</strong>
+          </article>
+        </div>
+      </section>
+
+      <section id="view-patrimonio" class="content view">
+        <div class="section-header">
+          <div>
+            <h2>Patrimônio</h2>
+            <p>Visão consolidada dos ativos patrimoniais.</p>
+          </div>
+        </div>
+
+        <div class="empty-state">
+          Selecione Imóveis para consultar os registros patrimoniais.
+        </div>
+      </section>
+
+      <section id="view-imoveis" class="content view">
+        <div class="section-header">
+          <div>
+            <h2>Imóveis</h2>
+            <p>Registros patrimoniais conectados ao banco de dados.</p>
+          </div>
+
+          <div class="section-actions">
+            <button id="btnNovoImovel" class="btn-secondary">
+              Novo imóvel
+            </button>
+
+            <button id="btnAtualizarImoveis" class="btn-primary">
+              Atualizar
+            </button>
+          </div>
+        </div>
+
+        <div id="imoveisResumo" class="overview-grid">
+          <article class="info-card">
+            <span>Registros</span>
+            <strong id="totalImoveis">—</strong>
+          </article>
+
+          <article class="info-card">
+            <span>Situação</span>
+            <strong id="statusImoveis">Aguardando acesso</strong>
+          </article>
+        </div>
+
+        <div id="mensagemImoveis" class="notice">
+          Entre na Sala de Comando para carregar os imóveis.
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Matrícula</th>
+                <th>Imóvel</th>
+                <th>Localização</th>
+                <th>Área</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+
+            <tbody id="listaImoveis"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="view-agro" class="content view">
+        <h2>Agro</h2>
+        <p>Módulo preparado para a próxima etapa.</p>
+      </section>
+
+      <section id="view-financeiro" class="content view">
+        <h2>Financeiro</h2>
+        <p>Módulo preparado para a próxima etapa.</p>
+      </section>
+
+      <section id="view-mapas" class="content view">
+        <h2>Mapas</h2>
+        <p>Módulo preparado para integração geoespacial.</p>
+      </section>
+
+      <section id="view-api" class="content view">
+        <h2>API / Control Plane</h2>
+        <p>Área administrativa da infraestrutura e integrações.</p>
+      </section>
+
+      <section id="view-administracao" class="content view">
+        <h2>Administração</h2>
+        <p>Configurações privadas do proprietário da Sala de Comando.</p>
+      </section>
+
+    </main>
+
+  </div>
+
+  <div id="modalImovel" class="modal oculto">
+    <div class="modal-card modal-card-wide">
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">PATRIMÔNIO</span>
+          <h2 id="tituloModalImovel">Novo imóvel</h2>
+        </div>
+
+        <button id="fecharImovel" class="btn-icon" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <p class="modal-description">
+        Cadastre ou atualize o imóvel conectado à API do NexoTerraCore.
+      </p>
+
+      <form id="formImovel">
+        <input id="imovelId" type="hidden">
+
+        <div class="form-grid">
+          <label>
+            Título
+            <input id="imovelTitulo" name="titulo" required>
+          </label>
+
+          <label>
+            Matrícula
+            <input id="imovelMatricula" name="matricula" required>
+          </label>
+
+          <label>
+            Tipo
+            <input id="imovelTipo" name="tipo" value="Imóvel urbano">
+          </label>
+
+          <label>
+            Situação
+            <select id="imovelStatus" name="status">
+              <option value="Patrimônio">Patrimônio</option>
+              <option value="Venda">Venda</option>
+              <option value="Locado">Locado</option>
+              <option value="Inativo">Inativo</option>
+            </select>
+          </label>
+
+          <label class="form-span-2">
+            Endereço
+            <input id="imovelEndereco" name="endereco">
+          </label>
+
+          <label>
+            Número
+            <input id="imovelNumero" name="numero">
+          </label>
+
+          <label>
+            Bairro
+            <input id="imovelBairro" name="bairro">
+          </label>
+
+          <label>
+            Cidade
+            <input id="imovelCidade" name="cidade">
+          </label>
+
+          <label>
+            UF
+            <input id="imovelUf" name="uf" maxlength="2">
+          </label>
+
+          <label>
+            CEP
+            <input id="imovelCep" name="cep">
+          </label>
+
+          <label>
+            Loteamento
+            <input id="imovelLoteamento" name="loteamento">
+          </label>
+
+          <label>
+            Quadra
+            <input id="imovelQuadra" name="quadra">
+          </label>
+
+          <label>
+            Lote
+            <input id="imovelLote" name="lote">
+          </label>
+
+          <label>
+            Terreno (m²)
+            <input id="imovelTerreno" name="terreno" type="number" min="0" step="0.01">
+          </label>
+
+          <label>
+            Área construída (m²)
+            <input id="imovelArea" name="area" type="number" min="0" step="0.01">
+          </label>
+
+          <label>
+            Frente (m)
+            <input id="imovelFrente" name="frente" type="number" min="0" step="0.01">
+          </label>
+
+          <label>
+            Fundo (m)
+            <input id="imovelFundo" name="fundo" type="number" min="0" step="0.01">
+          </label>
+
+          <label>
+            Valor (R$)
+            <input id="imovelValor" name="valor" type="number" min="0" step="0.01">
+          </label>
+
+          <label>
+            Cartório
+            <input id="imovelCartorio" name="cartorio">
+          </label>
+
+          <label class="form-span-2">
+            Observações e confrontações
+            <textarea id="imovelObservacao" name="observacao" rows="5"></textarea>
+          </label>
+        </div>
+
+        <div id="erroImovel" class="form-error"></div>
+
+        <button id="btnSalvarImovel" type="submit" class="btn-primary btn-full">
+          Salvar imóvel
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalLogin" class="modal oculto">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">ACESSO PRIVADO</span>
+          <h2>Entrar na Sala de Comando</h2>
+        </div>
+
+        <button id="fecharLogin" class="btn-icon" aria-label="Fechar">×</button>
+      </div>
+
+      <form id="formLogin">
+        <label>
+          Usuário
+          <input
+            id="loginUsuario"
+            name="usuario"
+            type="text"
+            autocomplete="username"
+            required
+          >
+        </label>
+
+        <label>
+          Senha
+          <input
+            id="loginSenha"
+            name="senha"
+            type="password"
+            autocomplete="current-password"
+            required
+          >
+        </label>
+
+        <div id="erroLogin" class="form-error"></div>
+
+        <button type="submit" class="btn-primary btn-full">
+          Entrar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalFazenda" class="modal oculto">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">CONTEXTO DE OPERAÇÃO</span>
+          <h2>Selecionar unidade</h2>
+        </div>
+      </div>
+
+      <p class="modal-description">
+        Escolha a unidade que deseja abrir nesta sessão.
+      </p>
+
+      <div id="listaFazendas" class="farm-list"></div>
+    </div>
+  </div>
+
+  <script src="./js/app.js"></script>
+</body>
+</html>
