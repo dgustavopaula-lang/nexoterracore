@@ -3,371 +3,367 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NexoTerraCore — Sala de Comando</title>
-  <link rel="stylesheet" href="./css/style.css">
+  <meta name="description" content="NexoTerraCore — infraestrutura de APIs e dados para operações empresariais, territoriais e patrimoniais.">
+  <title>NexoTerraCore — API & Infraestrutura</title>
+  <style>
+    :root {
+      --bg: #08090b;
+      --panel: #101216;
+      --line: #20242b;
+      --text: #f4f5f7;
+      --muted: #9aa1ab;
+      --accent: #ff8a2a;
+      --accent-soft: rgba(255,138,42,.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 78% 18%, rgba(255,138,42,.08), transparent 27rem),
+        linear-gradient(180deg, #090a0c 0%, #07080a 100%);
+      color: var(--text);
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 28px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+
+    .mark {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(255,138,42,.35);
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    .restricted {
+      font-size: 13px;
+      color: #858c95;
+      padding: 9px 13px;
+      border: 1px solid #252932;
+      border-radius: 9px;
+      transition: .2s ease;
+    }
+
+    .restricted:hover {
+      color: #fff;
+      border-color: #3a404b;
+      background: #111319;
+    }
+
+    .hero {
+      min-height: 70vh;
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      align-items: center;
+      gap: 68px;
+      padding: 92px 0 74px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 760px;
+      font-size: clamp(48px, 7vw, 86px);
+      line-height: .98;
+      letter-spacing: -.055em;
+      font-weight: 750;
+    }
+
+    .lead {
+      max-width: 680px;
+      margin: 28px 0 0;
+      color: var(--muted);
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.6;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 34px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 19px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #131313;
+    }
+
+    .btn-secondary {
+      border: 1px solid #2b3039;
+      color: #d9dde3;
+      background: rgba(255,255,255,.02);
+    }
+
+    .api-card {
+      position: relative;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(18,20,24,.96), rgba(12,14,17,.96));
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 28px 80px rgba(0,0,0,.28);
+      overflow: hidden;
+    }
+
+    .api-card::after {
+      content: "";
+      position: absolute;
+      right: -70px;
+      top: -70px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255,138,42,.08);
+      filter: blur(4px);
+    }
+
+    .api-label {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      color: #777f8a;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+    }
+
+    .api-card h2 {
+      margin: 14px 0 12px;
+      font-size: 28px;
+      letter-spacing: -.03em;
+    }
+
+    .api-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .status-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 13px 0;
+      border-top: 1px solid rgba(255,255,255,.06);
+      color: #b5bbc4;
+      font-size: 14px;
+    }
+
+    .status-item strong {
+      color: #eceff3;
+      font-weight: 650;
+    }
+
+    section.solutions {
+      padding: 18px 0 86px;
+    }
+
+    .section-kicker {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 18px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .card {
+      min-height: 210px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: rgba(15,17,21,.72);
+    }
+
+    .card span {
+      color: var(--accent);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      letter-spacing: .08em;
+    }
+
+    .card h3 {
+      margin: 42px 0 10px;
+      font-size: 20px;
+      letter-spacing: -.02em;
+    }
+
+    .card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 28px 0 36px;
+      border-top: 1px solid rgba(255,255,255,.06);
+      color: #707781;
+      font-size: 13px;
+    }
+
+    @media (max-width: 860px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 42px;
+        padding-top: 70px;
+      }
+
+      .grid { grid-template-columns: 1fr; }
+      .api-card { max-width: 620px; }
+    }
+
+    @media (max-width: 560px) {
+      .shell { width: min(100% - 26px, 1180px); }
+      header { padding: 20px 0; }
+      .brand span { font-size: 15px; }
+      .restricted { font-size: 12px; padding: 8px 10px; }
+      .hero { padding: 56px 0 58px; }
+      footer { flex-direction: column; }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="shell">
+    <header>
+      <a class="brand" href="./" aria-label="NexoTerraCore">
+        <span class="mark">NX</span>
+        <span>NexoTerraCore</span>
+      </a>
 
-  <div class="app-shell">
+      <a class="restricted" href="./painel.html">Acesso restrito</a>
+    </header>
 
-    <aside class="sidebar">
-      <div class="brand">
-        <strong>NexoTerraCore</strong>
-        <span>Sala de Comando</span>
-      </div>
-
-      <nav class="menu">
-        <button class="menu-item ativo" data-view="visao-geral">Visão Geral</button>
-        <button class="menu-item" data-view="patrimonio">Patrimônio</button>
-        <button class="menu-item" data-view="imoveis">Imóveis</button>
-        <button class="menu-item" data-view="agro">Agro</button>
-        <button class="menu-item" data-view="financeiro">Financeiro</button>
-        <button class="menu-item" data-view="mapas">Mapas</button>
-        <button class="menu-item" data-view="api">API / Control Plane</button>
-        <button class="menu-item" data-view="administracao">Administração</button>
-      </nav>
-
-      <div class="sidebar-footer">
-        <strong>Gustavo Admin</strong>
-        <span id="statusSessao">Sessão não iniciada</span>
-      </div>
-    </aside>
-
-    <main class="workspace">
-
-      <header class="topbar">
+    <main>
+      <section class="hero">
         <div>
-          <h1>Sala de Comando</h1>
-          <p>NexoTerraCore</p>
-        </div>
+          <div class="eyebrow">API & infraestrutura digital</div>
+          <h1>Dados conectados. Operações integradas.</h1>
+          <p class="lead">
+            O NexoTerraCore fornece uma base de APIs para integrar dados, ativos e operações em ambientes empresariais e multiempresa.
+          </p>
 
-        <div class="topbar-actions">
-          <button id="btnEntrar" class="btn-secondary">Entrar</button>
-          <button id="btnSair" class="btn-secondary oculto">Sair</button>
-
-          <div class="system-status">
-            <span>API</span>
-            <strong>Aguardando conexão</strong>
-          </div>
-        </div>
-      </header>
-
-      <section id="view-visao-geral" class="content view ativa">
-        <div class="section-header">
-          <div>
-            <h2>Visão Geral</h2>
-            <p>Ambiente administrativo privado do NexoTerraCore.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="#solucoes">Conhecer a API</a>
+            <a class="btn btn-secondary" href="https://gustavopaulasantos.com.br">Site institucional</a>
           </div>
         </div>
 
-        <div class="overview-grid">
-          <article class="info-card">
-            <span>Sistema</span>
-            <strong>NexoTerraCore</strong>
-          </article>
+        <aside class="api-card" aria-label="Resumo da plataforma">
+          <div class="api-label">NexoTerraCore API</div>
+          <h2>Infraestrutura para integrações reais</h2>
+          <p>
+            Uma camada central para produtos próprios e integrações contratadas, com autenticação, isolamento multiempresa e controle de acesso.
+          </p>
 
-          <article class="info-card">
-            <span>Operação</span>
-            <strong>Sala de Comando</strong>
-          </article>
-
-          <article class="info-card">
-            <span>Acesso</span>
-            <strong>Proprietário</strong>
-          </article>
-        </div>
-      </section>
-
-      <section id="view-patrimonio" class="content view">
-        <div class="section-header">
-          <div>
-            <h2>Patrimônio</h2>
-            <p>Visão consolidada dos ativos patrimoniais.</p>
+          <div class="status-list">
+            <div class="status-item"><span>Arquitetura</span><strong>API-first</strong></div>
+            <div class="status-item"><span>Modelo</span><strong>Multiempresa</strong></div>
+            <div class="status-item"><span>Integração</span><strong>REST / JSON</strong></div>
           </div>
-        </div>
-
-        <div class="empty-state">
-          Selecione Imóveis para consultar os registros patrimoniais.
-        </div>
+        </aside>
       </section>
 
-      <section id="view-imoveis" class="content view">
-        <div class="section-header">
-          <div>
-            <h2>Imóveis</h2>
-            <p>Registros patrimoniais conectados ao banco de dados.</p>
-          </div>
+      <section class="solutions" id="solucoes">
+        <div class="section-kicker">Aplicações possíveis</div>
 
-          <div class="section-actions">
-            <button id="btnNovoImovel" class="btn-secondary">
-              Novo imóvel
-            </button>
-
-            <button id="btnAtualizarImoveis" class="btn-primary">
-              Atualizar
-            </button>
-          </div>
-        </div>
-
-        <div id="imoveisResumo" class="overview-grid">
-          <article class="info-card">
-            <span>Registros</span>
-            <strong id="totalImoveis">—</strong>
+        <div class="grid">
+          <article class="card">
+            <span>01 / INTEGRAÇÃO</span>
+            <h3>APIs sob contrato</h3>
+            <p>Conecte sistemas externos a recursos autorizados por escopo, plano e política de acesso.</p>
           </article>
 
-          <article class="info-card">
-            <span>Situação</span>
-            <strong id="statusImoveis">Aguardando acesso</strong>
+          <article class="card">
+            <span>02 / DADOS</span>
+            <h3>Ativos e operações</h3>
+            <p>Estruture fluxos para patrimônio, território, agro e outras verticais sem duplicar o núcleo tecnológico.</p>
+          </article>
+
+          <article class="card">
+            <span>03 / ESCALA</span>
+            <h3>Base multiempresa</h3>
+            <p>Uma infraestrutura central preparada para atender organizações distintas com isolamento lógico de dados.</p>
           </article>
         </div>
-
-        <div id="mensagemImoveis" class="notice">
-          Entre na Sala de Comando para carregar os imóveis.
-        </div>
-
-        <div class="table-wrap">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Matrícula</th>
-                <th>Imóvel</th>
-                <th>Localização</th>
-                <th>Área</th>
-                <th>Valor</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-
-            <tbody id="listaImoveis"></tbody>
-          </table>
-        </div>
       </section>
-
-      <section id="view-agro" class="content view">
-        <h2>Agro</h2>
-        <p>Módulo preparado para a próxima etapa.</p>
-      </section>
-
-      <section id="view-financeiro" class="content view">
-        <h2>Financeiro</h2>
-        <p>Módulo preparado para a próxima etapa.</p>
-      </section>
-
-      <section id="view-mapas" class="content view">
-        <h2>Mapas</h2>
-        <p>Módulo preparado para integração geoespacial.</p>
-      </section>
-
-      <section id="view-api" class="content view">
-        <h2>API / Control Plane</h2>
-        <p>Área administrativa da infraestrutura e integrações.</p>
-      </section>
-
-      <section id="view-administracao" class="content view">
-        <h2>Administração</h2>
-        <p>Configurações privadas do proprietário da Sala de Comando.</p>
-      </section>
-
     </main>
 
+    <footer>
+      <span>© 2026 NexoTerraCore</span>
+      <span>Infraestrutura de APIs e dados</span>
+    </footer>
   </div>
-
-  <div id="modalImovel" class="modal oculto">
-    <div class="modal-card modal-card-wide">
-      <div class="modal-header">
-        <div>
-          <span class="eyebrow">PATRIMÔNIO</span>
-          <h2 id="tituloModalImovel">Novo imóvel</h2>
-        </div>
-
-        <button id="fecharImovel" class="btn-icon" type="button" aria-label="Fechar">×</button>
-      </div>
-
-      <p class="modal-description">
-        Cadastre ou atualize o imóvel conectado à API do NexoTerraCore.
-      </p>
-
-      <form id="formImovel">
-        <input id="imovelId" type="hidden">
-
-        <div class="form-grid">
-          <label>
-            Título
-            <input id="imovelTitulo" name="titulo" required>
-          </label>
-
-          <label>
-            Matrícula
-            <input id="imovelMatricula" name="matricula" required>
-          </label>
-
-          <label>
-            Tipo
-            <input id="imovelTipo" name="tipo" value="Imóvel urbano">
-          </label>
-
-          <label>
-            Situação
-            <select id="imovelStatus" name="status">
-              <option value="Patrimônio">Patrimônio</option>
-              <option value="Venda">Venda</option>
-              <option value="Locado">Locado</option>
-              <option value="Inativo">Inativo</option>
-            </select>
-          </label>
-
-          <label class="form-span-2">
-            Endereço
-            <input id="imovelEndereco" name="endereco">
-          </label>
-
-          <label>
-            Número
-            <input id="imovelNumero" name="numero">
-          </label>
-
-          <label>
-            Bairro
-            <input id="imovelBairro" name="bairro">
-          </label>
-
-          <label>
-            Cidade
-            <input id="imovelCidade" name="cidade">
-          </label>
-
-          <label>
-            UF
-            <input id="imovelUf" name="uf" maxlength="2">
-          </label>
-
-          <label>
-            CEP
-            <input id="imovelCep" name="cep">
-          </label>
-
-          <label>
-            Loteamento
-            <input id="imovelLoteamento" name="loteamento">
-          </label>
-
-          <label>
-            Quadra
-            <input id="imovelQuadra" name="quadra">
-          </label>
-
-          <label>
-            Lote
-            <input id="imovelLote" name="lote">
-          </label>
-
-          <label>
-            Terreno (m²)
-            <input id="imovelTerreno" name="terreno" type="number" min="0" step="0.01">
-          </label>
-
-          <label>
-            Área construída (m²)
-            <input id="imovelArea" name="area" type="number" min="0" step="0.01">
-          </label>
-
-          <label>
-            Frente (m)
-            <input id="imovelFrente" name="frente" type="number" min="0" step="0.01">
-          </label>
-
-          <label>
-            Fundo (m)
-            <input id="imovelFundo" name="fundo" type="number" min="0" step="0.01">
-          </label>
-
-          <label>
-            Valor (R$)
-            <input id="imovelValor" name="valor" type="number" min="0" step="0.01">
-          </label>
-
-          <label>
-            Cartório
-            <input id="imovelCartorio" name="cartorio">
-          </label>
-
-          <label class="form-span-2">
-            Observações e confrontações
-            <textarea id="imovelObservacao" name="observacao" rows="5"></textarea>
-          </label>
-        </div>
-
-        <div id="erroImovel" class="form-error"></div>
-
-        <button id="btnSalvarImovel" type="submit" class="btn-primary btn-full">
-          Salvar imóvel
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <div id="modalLogin" class="modal oculto">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div>
-          <span class="eyebrow">ACESSO PRIVADO</span>
-          <h2>Entrar na Sala de Comando</h2>
-        </div>
-
-        <button id="fecharLogin" class="btn-icon" aria-label="Fechar">×</button>
-      </div>
-
-      <form id="formLogin">
-        <label>
-          Usuário
-          <input
-            id="loginUsuario"
-            name="usuario"
-            type="text"
-            autocomplete="username"
-            required
-          >
-        </label>
-
-        <label>
-          Senha
-          <input
-            id="loginSenha"
-            name="senha"
-            type="password"
-            autocomplete="current-password"
-            required
-          >
-        </label>
-
-        <div id="erroLogin" class="form-error"></div>
-
-        <button type="submit" class="btn-primary btn-full">
-          Entrar
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <div id="modalFazenda" class="modal oculto">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div>
-          <span class="eyebrow">CONTEXTO DE OPERAÇÃO</span>
-          <h2>Selecionar unidade</h2>
-        </div>
-      </div>
-
-      <p class="modal-description">
-        Escolha a unidade que deseja abrir nesta sessão.
-      </p>
-
-      <div id="listaFazendas" class="farm-list"></div>
-    </div>
-  </div>
-
-  <script src="./js/app.js"></script>
 </body>
 </html>
