@@ -909,6 +909,293 @@ app.delete("/api/imoveis/:id", autenticar, autorizar("imoveis", "DELETE"), async
   }
 });
 
+
+// CLIENTES — CRM / livro de contatos multi-tenant
+
+app.get("/api/clientes", autenticar, autorizar("clientes", "GET"), async (req, res) => {
+  try {
+    const resultado = await pool.query(
+      `
+        SELECT
+          id,
+          fazenda_id,
+          nome,
+          empresa,
+          telefone,
+          whatsapp,
+          email,
+          cidade,
+          uf,
+          interesse,
+          status,
+          origem,
+          proximo_contato_em,
+          anotacoes,
+          dados_extras,
+          criado_em,
+          atualizado_em
+        FROM clientes
+        WHERE organizacao_id = $1
+          AND ativo = TRUE
+        ORDER BY atualizado_em DESC, nome
+      `,
+      [req.auth.organizacaoId]
+    );
+
+    res.json(resultado.rows);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível consultar os clientes." });
+  }
+});
+
+app.post("/api/clientes", autenticar, autorizar("clientes", "POST"), async (req, res) => {
+  const b = req.body || {};
+
+  const nome = typeof b.nome === "string" ? b.nome.trim() : "";
+  const empresa = typeof b.empresa === "string" ? b.empresa.trim() : "";
+  const telefone = typeof b.telefone === "string" ? b.telefone.trim() : "";
+  const whatsapp = typeof b.whatsapp === "string" ? b.whatsapp.trim() : "";
+  const email = typeof b.email === "string" ? b.email.trim().toLowerCase() : "";
+  const cidade = typeof b.cidade === "string" ? b.cidade.trim() : "";
+  const uf = typeof b.uf === "string" ? b.uf.trim().toUpperCase() : "";
+  const interesse = typeof b.interesse === "string" ? b.interesse.trim() : "";
+  const status = typeof b.status === "string" && b.status.trim()
+    ? b.status.trim()
+    : "Potencial cliente";
+  const origem = typeof b.origem === "string" ? b.origem.trim() : "";
+  const anotacoes = typeof b.anotacoes === "string" ? b.anotacoes.trim() : "";
+
+  if (!nome) {
+    return res.status(400).json({ erro: "Nome do cliente é obrigatório." });
+  }
+
+  if (
+    nome.length > 180 ||
+    empresa.length > 180 ||
+    telefone.length > 40 ||
+    whatsapp.length > 40 ||
+    email.length > 180 ||
+    cidade.length > 120 ||
+    uf.length > 2 ||
+    interesse.length > 160 ||
+    status.length > 60 ||
+    origem.length > 120
+  ) {
+    return res.status(400).json({ erro: "Um ou mais campos ultrapassam o tamanho permitido." });
+  }
+
+  let proximoContato = null;
+  if (b.proximo_contato_em) {
+    proximoContato = new Date(b.proximo_contato_em);
+    if (Number.isNaN(proximoContato.getTime())) {
+      return res.status(400).json({ erro: "Data do próximo contato inválida." });
+    }
+  }
+
+  try {
+    const criado = await comTransacao(async (cliente) => {
+      const r = await cliente.query(
+        `
+          INSERT INTO clientes (
+            organizacao_id,
+            fazenda_id,
+            nome,
+            empresa,
+            telefone,
+            whatsapp,
+            email,
+            cidade,
+            uf,
+            interesse,
+            status,
+            origem,
+            proximo_contato_em,
+            anotacoes,
+            dados_extras,
+            ativo,
+            criado_por_usuario_id,
+            atualizado_por_usuario_id
+          )
+          VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9,
+            $10, $11, $12, $13, $14, $15::jsonb,
+            TRUE, $16, $16
+          )
+          RETURNING *
+        `,
+        [
+          req.auth.organizacaoId,
+          req.auth.fazendaId || null,
+          nome,
+          empresa || null,
+          telefone || null,
+          whatsapp || null,
+          email || null,
+          cidade || null,
+          uf || null,
+          interesse || null,
+          status,
+          origem || null,
+          proximoContato,
+          anotacoes || null,
+          JSON.stringify(b.dados_extras || {}),
+          req.auth.usuarioId
+        ]
+      );
+
+      await registrarAuditoria(cliente, req, "CREATE", "clientes", r.rows[0].id);
+      return r.rows[0];
+    });
+
+    res.status(201).json(criado);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível cadastrar o cliente." });
+  }
+});
+
+app.put("/api/clientes/:id", autenticar, autorizar("clientes", "PUT"), async (req, res) => {
+  const id = lerId(req.params.id);
+
+  if (!id) {
+    return res.status(400).json({ erro: "Identificador inválido." });
+  }
+
+  try {
+    const atualResultado = await pool.query(
+      `
+        SELECT *
+        FROM clientes
+        WHERE id = $1
+          AND organizacao_id = $2
+          AND ativo = TRUE
+      `,
+      [id, req.auth.organizacaoId]
+    );
+
+    if (!atualResultado.rowCount) {
+      return res.status(404).json({ erro: "Cliente não encontrado." });
+    }
+
+    const atual = atualResultado.rows[0];
+    const b = req.body || {};
+
+    const campo = (nome, valorAtual) =>
+      Object.prototype.hasOwnProperty.call(b, nome) ? b[nome] : valorAtual;
+
+    const nome = String(campo("nome", atual.nome) || "").trim();
+
+    if (!nome) {
+      return res.status(400).json({ erro: "Nome do cliente é obrigatório." });
+    }
+
+    let proximoContato = campo("proximo_contato_em", atual.proximo_contato_em);
+
+    if (proximoContato) {
+      proximoContato = new Date(proximoContato);
+      if (Number.isNaN(proximoContato.getTime())) {
+        return res.status(400).json({ erro: "Data do próximo contato inválida." });
+      }
+    } else {
+      proximoContato = null;
+    }
+
+    const atualizado = await comTransacao(async (cliente) => {
+      const r = await cliente.query(
+        `
+          UPDATE clientes SET
+            nome = $1,
+            empresa = $2,
+            telefone = $3,
+            whatsapp = $4,
+            email = $5,
+            cidade = $6,
+            uf = $7,
+            interesse = $8,
+            status = $9,
+            origem = $10,
+            proximo_contato_em = $11,
+            anotacoes = $12,
+            dados_extras = $13::jsonb,
+            atualizado_por_usuario_id = $14,
+            atualizado_em = NOW()
+          WHERE id = $15
+            AND organizacao_id = $16
+            AND ativo = TRUE
+          RETURNING *
+        `,
+        [
+          nome,
+          campo("empresa", atual.empresa) || null,
+          campo("telefone", atual.telefone) || null,
+          campo("whatsapp", atual.whatsapp) || null,
+          campo("email", atual.email) || null,
+          campo("cidade", atual.cidade) || null,
+          String(campo("uf", atual.uf) || "").toUpperCase() || null,
+          campo("interesse", atual.interesse) || null,
+          campo("status", atual.status) || "Potencial cliente",
+          campo("origem", atual.origem) || null,
+          proximoContato,
+          campo("anotacoes", atual.anotacoes) || null,
+          JSON.stringify(campo("dados_extras", atual.dados_extras || {})),
+          req.auth.usuarioId,
+          id,
+          req.auth.organizacaoId
+        ]
+      );
+
+      await registrarAuditoria(cliente, req, "UPDATE", "clientes", id);
+      return r.rows[0];
+    });
+
+    res.json(atualizado);
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível atualizar o cliente." });
+  }
+});
+
+app.delete("/api/clientes/:id", autenticar, autorizar("clientes", "DELETE"), async (req, res) => {
+  const id = lerId(req.params.id);
+
+  if (!id) {
+    return res.status(400).json({ erro: "Identificador inválido." });
+  }
+
+  try {
+    const removido = await comTransacao(async (cliente) => {
+      const r = await cliente.query(
+        `
+          UPDATE clientes
+          SET ativo = FALSE,
+              atualizado_por_usuario_id = $1,
+              atualizado_em = NOW()
+          WHERE id = $2
+            AND organizacao_id = $3
+            AND ativo = TRUE
+          RETURNING id
+        `,
+        [req.auth.usuarioId, id, req.auth.organizacaoId]
+      );
+
+      if (!r.rowCount) return false;
+
+      await registrarAuditoria(cliente, req, "DELETE", "clientes", id);
+      return true;
+    });
+
+    if (!removido) {
+      return res.status(404).json({ erro: "Cliente não encontrado." });
+    }
+
+    res.status(204).end();
+  } catch (erro) {
+    console.error(erro);
+    res.status(500).json({ erro: "Não foi possível excluir o cliente." });
+  }
+});
+
 app.get("/api/health", async (req, res) => {
   try {
     await pool.query("SELECT 1");

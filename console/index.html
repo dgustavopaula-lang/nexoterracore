@@ -8,7 +8,7 @@
 <body>
 <x-dc>
 <helmet>
-<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#0B0B0C"/><rect x="60" y="60" width="80" height="80" rx="18" fill="#FF6B1A"/><text x="100" y="115" font-family="monospace" font-size="34" font-weight="700" fill="#0A0A0A" text-anchor="middle">NX</text></svg></template>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect width="200" height="200" fill="#0B0B0C"/><rect x="60" y="60" width="80" height="80" rx="18" fill="#00D99B"/><text x="100" y="115" font-family="monospace" font-size="34" font-weight="700" fill="#0A0A0A" text-anchor="middle">NX</text></svg></template>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -19,20 +19,20 @@
   a:hover { color:#FF9A4A; }
   input, button, select, textarea { font-family:inherit; }
   input::placeholder, textarea::placeholder { color:#4A4540; }
-  input:focus, select:focus, textarea:focus { outline:none; border-color:#FF6B1A; }
+  input:focus, select:focus, textarea:focus { outline:none; border-color:#00D99B; }
   select option { background:#101112; color:#EDE9E4; }
   ::-webkit-scrollbar { width:10px; height:10px; }
   ::-webkit-scrollbar-thumb { background:#24252A; border-radius:8px; }
   ::-webkit-scrollbar-track { background:transparent; }
 </style>
-<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B0B0C"></rect><rect x="30" y="30" width="40" height="40" rx="10" fill="#FF6B1A"></rect><text x="50" y="57" font-family="monospace" font-size="18" font-weight="700" fill="#0A0A0A" text-anchor="middle">NX</text></svg></template>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#0B0B0C"></rect><rect x="30" y="30" width="40" height="40" rx="10" fill="#00D99B"></rect><text x="50" y="57" font-family="monospace" font-size="18" font-weight="700" fill="#0A0A0A" text-anchor="middle">NX</text></svg></template>
 </helmet>
 
 <sc-if value="{{ showLogin }}" hint-placeholder-val="{{ true }}">
 <div style="min-height:100vh; display:grid; grid-template-columns:1.1fr 1fr; background:#08090A;">
   <div style="display:flex; flex-direction:column; justify-content:space-between; gap:48px; padding:56px 64px; background:#0B0B0C; border-right:1px solid #1A1B1D;">
     <div style="display:flex; align-items:center; gap:11px;">
-      <div style="width:28px; height:28px; border-radius:9px; background:rgba(255,107,26,0.14); border:1px solid rgba(255,107,26,0.3); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-weight:500; font-size:11px; letter-spacing:0.02em; color:#FF9A5A;">NX</div>
+      <div style="width:28px; height:28px; border-radius:9px; background:rgba(0,217,155,0.14); border:1px solid rgba(0,217,155,0.3); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-weight:500; font-size:11px; letter-spacing:0.02em; color:#00D99B;">NX</div>
       <div style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:#6E6862; border:1px solid #26272A; border-radius:5px; padding:3px 7px;">console</div>
     </div>
     <div style="display:flex; flex-direction:column; gap:20px; max-width:540px;">
@@ -59,9 +59,9 @@
         </label>
       </div>
       <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
-        <div style="font-size:13px; color:#FF8A5B; background:rgba(255,107,26,0.08); border:1px solid rgba(255,107,26,0.28); border-radius:8px; padding:10px 12px;">Usuário ou senha inválidos.</div>
+        <div style="font-size:13px; color:#00D99B; background:rgba(0,217,155,0.08); border:1px solid rgba(0,217,155,0.28); border-radius:8px; padding:10px 12px;">Usuário ou senha inválidos.</div>
       </sc-if>
-      <button onClick="{{ onSubmit }}" style="align-self:flex-start; height:38px; padding:0 22px; border:1px solid #2C2D31; border-radius:8px; background:#17181A; color:#EDE9E4; font-size:13.5px; font-weight:500; cursor:pointer;" style-hover="background:#FF8433">Acessar</button>
+      <button onClick="{{ onSubmit }}" style="align-self:flex-start; height:38px; padding:0 22px; border:1px solid #2C2D31; border-radius:8px; background:#17181A; color:#EDE9E4; font-size:13.5px; font-weight:500; cursor:pointer;" style-hover="background:#00C896">Acessar</button>
       <div style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:#5A554F;">
         
         <span>·</span>
@@ -87,7 +87,7 @@
           <div style="font-size:12.5px; line-height:1.6; color:#B4AFA8;">{{ senhaMsg }}</div>
         </sc-if>
         <div style="display:flex; gap:10px;">
-          <button onClick="{{ salvarSenha }}" style="height:34px; padding:0 16px; font-size:13px; font-weight:600; color:#0A0A0A; background:#FF6B1A; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Salvar senha</button>
+          <button onClick="{{ salvarSenha }}" style="height:34px; padding:0 16px; font-size:13px; font-weight:600; color:#0A0A0A; background:#00D99B; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#00C896">Salvar senha</button>
           <button onClick="{{ fecharTroca }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:500; color:#B4AFA8; background:transparent; border:1px solid #26272A; border-radius:8px; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#EDE9E4">Fechar</button>
         </div>
       </div>
@@ -98,7 +98,7 @@
         <div style="font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.1em; text-transform:uppercase; color:#5A554F;">Recuperar acesso</div>
         <div style="font-size:13px; line-height:1.7; color:#8C867F;">A senha fica gravada apenas neste navegador. Se você a esqueceu, restaure o acesso padrão e cadastre uma nova em seguida.</div>
         <div style="display:flex; gap:10px;">
-          <button onClick="{{ restaurarSenha }}" style="height:34px; padding:0 16px; font-size:13px; font-weight:600; color:#0A0A0A; background:#FF6B1A; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Restaurar padrão</button>
+          <button onClick="{{ restaurarSenha }}" style="height:34px; padding:0 16px; font-size:13px; font-weight:600; color:#0A0A0A; background:#00D99B; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#00C896">Restaurar padrão</button>
           <button onClick="{{ fecharRecuperar }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:500; color:#B4AFA8; background:transparent; border:1px solid #26272A; border-radius:8px; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#EDE9E4">Fechar</button>
         </div>
       </div>
@@ -141,31 +141,31 @@
     </a>
 
     <button onClick="{{ goPanel }}" title="Painel" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atPanel }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atPanel }}" hint-placeholder-val="{{ true }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Painel</span></sc-if>
     </button>
 
     <button onClick="{{ goImoveis }}" title="Imóveis" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atImoveis }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atImoveis }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M3 10.5L12 4l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1z"></path><path d="M9 21v-7h6v7"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Imóveis</span></sc-if>
     </button>
 
     <button onClick="{{ goFazendas }}" title="Fazendas" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atFazendas }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atFazendas }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M3 20h18"></path><path d="M4 20V9l8-5 8 5v11"></path><path d="M9 20v-6h6v6"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Fazendas</span></sc-if>
     </button>
 
     <button onClick="{{ goArmazens }}" title="Armazéns e silos" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atArmazens }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atArmazens }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M3 21V8l9-4 9 4v13"></path><path d="M7 21v-8h10v8"></path><path d="M7 17h10"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Armazéns e silos</span></sc-if>
     </button>
 
     <button onClick="{{ goImobiliarias }}" title="Proprietários" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atImobiliarias }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atImobiliarias }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M4 21V6a1 1 0 011-1h8a1 1 0 011 1v15"></path><path d="M14 10h5a1 1 0 011 1v10"></path><path d="M8 9h2M8 13h2M8 17h2"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Proprietários</span></sc-if>
     </button>
@@ -176,25 +176,25 @@
     <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}"><div style="height:1px; background:#1A1B1D; margin:10px 6px;"></div></sc-if>
 
     <button onClick="{{ goAlugueis }}" title="Aluguéis" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atAlugueis }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atAlugueis }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Aluguéis</span></sc-if>
     </button>
 
     <button onClick="{{ goMatriculas }}" title="Matrículas" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atMatriculas }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atMatriculas }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h4"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Matrículas</span></sc-if>
     </button>
 
     <button onClick="{{ goFinanceiro }}" title="Financeiro" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atFinanceiro }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atFinanceiro }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M12 2v20"></path><path d="M17 6H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Financeiro</span></sc-if>
     </button>
 
     <button onClick="{{ goPatrimonio }}" title="Patrimônio" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atPatrimonio }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atPatrimonio }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M3 21h18M5 21V10l7-5 7 5v11"></path><path d="M10 21v-5h4v5"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Patrimônio</span></sc-if>
     </button>
@@ -205,31 +205,31 @@
     <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}"><div style="height:1px; background:#1A1B1D; margin:10px 6px;"></div></sc-if>
 
     <button onClick="{{ goClientes }}" title="Clientes" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;display:none;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atClientes }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atClientes }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><circle cx="9" cy="8" r="3.4"></circle><path d="M3 20a6 6 0 0112 0"></path><path d="M16 7.5a3 3 0 010 5.5M18 20a5.6 5.6 0 00-2-4"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Clientes</span></sc-if>
     </button>
 
     <button onClick="{{ goLigacoes }}" title="Ligações" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;display:none;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atLigacoes }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atLigacoes }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M4 4h4l2 5-2.5 1.5a12 12 0 006 6L15 14l5 2v4a16 16 0 01-16-16z"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Ligações</span></sc-if>
     </button>
 
     <button onClick="{{ goPropostas }}" title="Propostas e visitas" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;display:none;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atPropostas }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atPropostas }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M9 12l2 2 4-4"></path><rect x="4" y="4" width="16" height="16" rx="2"></rect></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Propostas</span></sc-if>
     </button>
 
     <button onClick="{{ goComissoes }}" title="Comissões" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;display:none;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atComissoes }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atComissoes }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M19 5L5 19"></path><circle cx="7.5" cy="7.5" r="2.5"></circle><circle cx="16.5" cy="16.5" r="2.5"></circle></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Comissões</span></sc-if>
     </button>
 
     <button onClick="{{ goEmail }}" title="Modelo de e-mail" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;display:none;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atEmail }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atEmail }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3.5 6.5L12 13l8.5-6.5"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Modelo de e-mail</span></sc-if>
     </button>
@@ -240,13 +240,13 @@
     <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}"><div style="height:1px; background:#1A1B1D; margin:10px 6px;"></div></sc-if>
 
     <button onClick="{{ goGeo }}" title="Geo-referência" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atGeo }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atGeo }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a15 15 0 010 18a15 15 0 010-18z"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Geo-referência</span></sc-if>
     </button>
 
     <button onClick="{{ goMercado }}" title="PicPay" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atMercado }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atMercado }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><rect x="2" y="6" width="20" height="13" rx="2"></rect><path d="M2 10h20"></path><path d="M16 15h3"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">PicPay</span></sc-if>
     </button>
@@ -258,19 +258,19 @@
     <sc-if value="{{ closed }}" hint-placeholder-val="{{ false }}"><div style="height:1px; background:#1A1B1D; margin:10px 6px;"></div></sc-if>
 
     <button onClick="{{ goArquitetura }}" title="Arquitetura" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atArquitetura }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atArquitetura }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><rect x="3" y="3" width="18" height="6" rx="1"></rect><rect x="3" y="15" width="18" height="6" rx="1"></rect><path d="M8 9v6M16 9v6"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Arquitetura</span></sc-if>
     </button>
 
     <button onClick="{{ goSchema }}" title="Banco de dados" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atSchema }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atSchema }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><ellipse cx="12" cy="5.5" rx="8" ry="3"></ellipse><path d="M4 5.5v13c0 1.7 3.6 3 8 3s8-1.3 8-3v-13"></path><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"></path></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Banco de dados</span></sc-if>
     </button>
 
     <button onClick="{{ goVscode }}" title="Rodar no VSCode" style="position:relative; display:flex; align-items:center; gap:11px; height:34px; padding:0 8px; background:transparent; border:none; border-radius:8px; color:#B4AFA8; font-size:13.5px; font-weight:500; cursor:pointer; text-align:left;" style-hover="background:#141517; color:#EDE9E4">
-      <sc-if value="{{ atVscode }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(255,107,26,0.12); border:1px solid rgba(255,107,26,0.22);"></span></sc-if>
+      <sc-if value="{{ atVscode }}" hint-placeholder-val="{{ false }}"><span style="position:absolute; inset:0; border-radius:8px; background:rgba(0,217,155,0.12); border:1px solid rgba(0,217,155,0.22);"></span></sc-if>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none; position:relative;"><path d="M8 9l-4 3 4 3"></path><path d="M14 7l-3 10"></path><rect x="2" y="3" width="20" height="18" rx="2"></rect></svg>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}"><span style="white-space:nowrap; position:relative;">Rodar no VSCode</span></sc-if>
     </button>
@@ -287,7 +287,7 @@
         </div>
       </sc-if>
       <sc-if value="{{ open }}" hint-placeholder-val="{{ true }}">
-        <button onClick="{{ logout }}" title="Sair" style="width:26px; height:26px; flex:none; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid #232427; border-radius:6px; color:#8C867F; cursor:pointer;" style-hover="border-color:#FF6B1A; color:#FF8433">
+        <button onClick="{{ logout }}" title="Sair" style="width:26px; height:26px; flex:none; display:flex; align-items:center; justify-content:center; background:transparent; border:1px solid #232427; border-radius:6px; color:#8C867F; cursor:pointer;" style-hover="border-color:#00D99B; color:#00C896">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 17l5-5-5-5"></path><path d="M20 12H9"></path><path d="M9 3H5v18h4"></path></svg>
         </button>
       </sc-if>
@@ -303,7 +303,7 @@
         <div style="display:flex; align-items:center; gap:7px; font-family:'JetBrains Mono', monospace; font-size:11px; color:#7C766F; background:#0F1011; border:1px solid #1E1F22; border-radius:7px; padding:6px 10px;">
           <span style="width:6px; height:6px; border-radius:50%; background:#4ADE80;"></span>db: PostgreSQL · online
         </div>
-        <button onClick="{{ newRecord }}" style="height:31px; padding:0 13px; display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:7px; cursor:pointer;" style-hover="background:#FF8433">
+        <button onClick="{{ newRecord }}" style="height:31px; padding:0 13px; display:flex; align-items:center; gap:7px; font-size:12.5px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:7px; cursor:pointer;" style-hover="background:#00C896">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>
           {{ newLabel }}
         </button>
@@ -316,7 +316,7 @@
       <div style="display:flex; flex-direction:column; gap:22px;">
         <div style="display:flex; align-items:baseline; justify-content:space-between; gap:20px;">
           <div style="display:flex; align-items:baseline; gap:12px;">
-            <div style="font-size:26px; font-weight:600; letter-spacing:-0.03em; color:#FF8433; line-height:1;">{{ totalPatrimonio }}</div>
+            <div style="font-size:26px; font-weight:600; letter-spacing:-0.03em; color:#00C896; line-height:1;">{{ totalPatrimonio }}</div>
             <div style="font-size:13px; color:#7C766F;">patrimônio declarado · {{ totalRegistros }} bens</div>
           </div>
           <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:#4E4943;">{{ receitaMensal }} / mês</div>
@@ -346,12 +346,12 @@
           <sc-if value="{{ semRegistros }}" hint-placeholder-val="{{ true }}">
             <div style="padding:30px 18px; display:flex; align-items:center; gap:16px;">
               <div style="font-size:13.5px; color:#6E6862;">Nenhum bem registrado.</div>
-              <button onClick="{{ newRecord }}" style="height:30px; padding:0 12px; font-size:12.5px; font-weight:600; color:#FF8433; background:transparent; border:1px solid rgba(255,107,26,0.35); border-radius:7px; cursor:pointer;" style-hover="background:rgba(255,107,26,0.1)">Registrar</button>
+              <button onClick="{{ newRecord }}" style="height:30px; padding:0 12px; font-size:12.5px; font-weight:600; color:#00C896; background:transparent; border:1px solid rgba(0,217,155,0.35); border-radius:7px; cursor:pointer;" style-hover="background:rgba(0,217,155,0.10)">Registrar</button>
             </div>
           </sc-if>
           <sc-for list="{{ recentes }}" as="r" hint-placeholder-count="0">
             <div style="display:flex; align-items:center; gap:14px; padding:12px 18px; border-bottom:1px solid #17181A;">
-              <span style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:#FF8433; width:88px; flex:none;">{{ r.kind }}</span>
+              <span style="font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:0.06em; text-transform:uppercase; color:#00C896; width:88px; flex:none;">{{ r.kind }}</span>
               <span style="flex:1; font-size:13.5px; color:#D6D1CA;">{{ r.nome }}</span>
               <span style="font-size:13px; color:#7C766F;">{{ r.local }}</span>
             </div>
@@ -367,7 +367,7 @@
             <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Imóveis</h1>
             <p style="margin:0; font-size:14.5px; color:#7C766F;">Urbanos, comerciais e lotes, com matrícula e imobiliária responsável.</p>
           </div>
-          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Cadastrar imóvel</button>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#00C896">Cadastrar imóvel</button>
         </div>
         <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
           <div style="display:grid; grid-template-columns:1.7fr 0.9fr 1.1fr 1fr 0.9fr 0.8fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
@@ -383,7 +383,7 @@
               <div>{{ i.local }}</div>
               <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">{{ i.matricula }}</div>
               <div>{{ i.valorFmt }}</div>
-              <div style="font-size:12px; color:#FF8433;">{{ i.status }}</div>
+              <div style="font-size:12px; color:#00C896;">{{ i.status }}</div>
             </div>
           </sc-for>
         </div>
@@ -397,7 +397,7 @@
             <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Fazendas</h1>
             <p style="margin:0; font-size:14.5px; color:#7C766F;">Área, matrícula, CAR, cultura e coordenada do sede.</p>
           </div>
-          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Cadastrar fazenda</button>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#00C896">Cadastrar fazenda</button>
         </div>
         <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
           <div style="display:grid; grid-template-columns:1.6fr 1.1fr 0.8fr 1fr 1.1fr 0.8fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
@@ -413,7 +413,7 @@
               <div>{{ f.hectares }}</div>
               <div style="color:#8C867F;">{{ f.cultura }}</div>
               <div style="font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#8C867F;">{{ f.coord }}</div>
-              <div style="font-size:12px; color:#FF8433;">{{ f.status }}</div>
+              <div style="font-size:12px; color:#00C896;">{{ f.status }}</div>
             </div>
           </sc-for>
         </div>
@@ -427,7 +427,7 @@
             <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Armazéns e silos</h1>
             <p style="margin:0; font-size:14.5px; color:#7C766F;">Capacidade estática, tipo de estrutura e ocupação.</p>
           </div>
-          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Cadastrar unidade</button>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#00C896">Cadastrar unidade</button>
         </div>
         <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
           <div style="display:grid; grid-template-columns:1.6fr 1fr 1.1fr 1fr 0.9fr 0.8fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
@@ -443,7 +443,7 @@
               <div>{{ a.local }}</div>
               <div>{{ a.capacidade }} t</div>
               <div>{{ a.ocupacao }}</div>
-              <div style="font-size:12px; color:#FF8433;">{{ a.status }}</div>
+              <div style="font-size:12px; color:#00C896;">{{ a.status }}</div>
             </div>
           </sc-for>
         </div>
@@ -457,7 +457,7 @@
             <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Proprietários</h1>
             <p style="margin:0; font-size:14.5px; color:#7C766F;">Titulares dos bens sob minha gestão, com taxa de administração e contato.</p>
           </div>
-          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Cadastrar imobiliária</button>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#00C896">Cadastrar imobiliária</button>
         </div>
         <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
           <div style="display:grid; grid-template-columns:1.7fr 1.1fr 0.9fr 1.1fr 1fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
@@ -486,7 +486,7 @@
             <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Aluguéis</h1>
             <p style="margin:0; font-size:14.5px; color:#7C766F;">Contratos, inquilinos, vencimento e reajuste.</p>
           </div>
-          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Novo contrato</button>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#00C896">Novo contrato</button>
         </div>
         <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
           <div style="display:grid; grid-template-columns:1.6fr 1.3fr 1fr 0.9fr 1fr 0.8fr; gap:14px; padding:13px 20px; min-width:840px; border-bottom:1px solid #1C1D20; font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:#5A554F;">
@@ -502,7 +502,7 @@
               <div>{{ l.valorFmt }}</div>
               <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">dia {{ l.vencimento }}</div>
               <div style="font-size:12.5px; color:#8C867F;">{{ l.vigencia }}</div>
-              <div style="font-size:12px; color:#FF8433;">{{ l.status }}</div>
+              <div style="font-size:12px; color:#00C896;">{{ l.status }}</div>
             </div>
           </sc-for>
         </div>
@@ -528,7 +528,7 @@
               <div>{{ t.ativo }}</div>
               <div style="color:#8C867F;">{{ t.cartorio }}</div>
               <div style="color:#8C867F;">{{ t.comarca }}</div>
-              <div style="font-size:12px; color:#FF8433;">{{ t.onus }}</div>
+              <div style="font-size:12px; color:#00C896;">{{ t.onus }}</div>
             </div>
           </sc-for>
         </div>
@@ -542,7 +542,7 @@
             <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Financeiro</h1>
             <p style="margin:0; font-size:14.5px; color:#7C766F;">Receitas, despesas e comissões por ativo.</p>
           </div>
-          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Novo lançamento</button>
+          <button onClick="{{ newRecord }}" style="height:34px; padding:0 14px; font-size:13px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#00C896">Novo lançamento</button>
         </div>
         <div style="display:grid; grid-template-columns:repeat(3, 1fr); border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; overflow-x:auto;">
           <div style="padding:20px 24px; border-right:1px solid #1C1D20; display:flex; flex-direction:column; gap:9px;">
@@ -583,10 +583,14 @@
         <div style="display:flex; flex-direction:column; gap:6px;">
           <h1 style="margin:0; font-size:21px; font-weight:600; letter-spacing:-0.02em;">Patrimônio</h1>
           <p style="margin:0; font-size:14.5px; color:#7C766F;">Composição do portfólio por classe de ativo.</p>
+          <a href="https://patrimonio.gustavopaulasantos.com.br/" target="_blank"
+             style="margin-top:10px; width:max-content; display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:8px; background:#17181A; border:1px solid #2C2D31; color:#EDE9E4; font-size:13px; font-weight:600; text-decoration:none;">
+            Abrir Portal Patrimonial ↗
+          </a>
         </div>
         <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:26px; display:flex; flex-direction:column; gap:22px;">
           <div style="display:flex; align-items:baseline; gap:12px;">
-            <div style="font-size:38px; font-weight:600; letter-spacing:-0.04em; color:#FF8433; line-height:1;">{{ totalPatrimonio }}</div>
+            <div style="font-size:38px; font-weight:600; letter-spacing:-0.04em; color:#00C896; line-height:1;">{{ totalPatrimonio }}</div>
             <div style="font-size:13.5px; color:#7C766F;">valor declarado, {{ totalRegistros }} ativos</div>
           </div>
           <div style="display:flex; flex-direction:column; gap:0;">
@@ -627,7 +631,7 @@
               <div style="color:#EDE9E4; font-weight:500;">{{ g.nome }}</div>
               <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">{{ g.coord }}</div>
               <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:#8C867F;">EPSG:4674</div>
-              <div style="font-size:12px; color:#FF8433;">{{ g.tipo }}</div>
+              <div style="font-size:12px; color:#00C896;">{{ g.tipo }}</div>
             </div>
           </sc-for>
         </div>
@@ -689,17 +693,17 @@
         </div>
         <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;">
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:14px;">
-            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#FF8433;">apps/web</div>
+            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#00C896;">apps/web</div>
             <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Front-end</div>
             <div style="font-size:13.5px; line-height:1.75; color:#7C766F;">Next.js 14 (App Router), TypeScript, Tailwind. Sidebar recolhível com estado em cookie. Server Components nas listagens, client nos formulários.</div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:14px;">
-            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#FF8433;">apps/api</div>
+            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#00C896;">apps/api</div>
             <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Back-end</div>
             <div style="font-size:13.5px; line-height:1.75; color:#7C766F;">Node.js com Express, autenticação por sessão para humanos e API Keys para sistemas. PostgreSQL como núcleo de dados, autorização por perfis e scopes, rate limiting e metering no backend.</div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:24px; display:flex; flex-direction:column; gap:14px;">
-            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#FF8433;">packages/db</div>
+            <div style="font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.06em; color:#00C896;">packages/db</div>
             <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Dados</div>
             <div style="font-size:13.5px; line-height:1.75; color:#7C766F;">PostgreSQL como núcleo de dados. Migrações SQL versionadas controlam a evolução do schema e o isolamento multi-tenant é aplicado por organização.</div>
           </div>
@@ -809,7 +813,7 @@ create table market_quotes (
         </div>
         <div style="display:flex; flex-direction:column; gap:12px;">
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
-            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">1</div>
+            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#00C896;">1</div>
             <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
               <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Abrir a pasta e instalar</div>
               <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">No VSCode: <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">File → Open Folder</span>. Terminal integrado com <span style="font-family:'JetBrains Mono', monospace; color:#B4AFA8;">Ctrl+`</span>.</div>
@@ -819,7 +823,7 @@ npm install</pre>
             </div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
-            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">2</div>
+            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#00C896;">2</div>
             <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
               <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Subir o PostgreSQL</div>
               <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">Postgres 16 com PostGIS na porta 5432.</div>
@@ -828,7 +832,7 @@ cp .env.example .env</pre>
             </div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
-            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">3</div>
+            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#00C896;">3</div>
             <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
               <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Aplicar migrações do Core</div>
               <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">As migrações SQL versionadas atualizam PostgreSQL sem expor credenciais no Console.</div>
@@ -838,7 +842,7 @@ npm run check</pre>
             </div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
-            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">4</div>
+            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#00C896;">4</div>
             <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
               <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Control Plane operacional</div>
               <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">Organização, API Keys, scopes, rate limit e consumo passam a ser governados pelo NexoTerraCore.</div>
@@ -851,7 +855,7 @@ Consumo 24h: {{ cpConsumo24h }}</pre>
             </div>
           </div>
           <div style="border:1px solid #1C1D20; border-radius:12px; background:#0C0D0E; padding:22px; display:flex; gap:18px;">
-            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#FF8433;">5</div>
+            <div style="width:26px; height:26px; flex:none; border-radius:7px; background:#17181A; border:1px solid #26272A; display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono', monospace; font-size:12px; color:#00C896;">5</div>
             <div style="flex:1; display:flex; flex-direction:column; gap:12px;">
               <div style="font-size:15px; font-weight:600; letter-spacing:-0.015em;">Entrar e trocar a senha</div>
               <div style="font-size:13.5px; line-height:1.7; color:#7C766F;">A autenticação administrativa utiliza credenciais protegidas no backend e sessão autenticada. Nenhuma senha é exibida ou armazenada no Console.</div>
@@ -1300,7 +1304,7 @@ API Keys: hash no banco</pre>
         <div style="font-family:'JetBrains Mono', monospace; font-size:11px; color:#4E4943;">{{ formEndpoint }}</div>
         <div style="display:flex; gap:10px;">
           <button onClick="{{ closeForm }}" style="height:38px; padding:0 16px; font-size:13.5px; font-weight:500; color:#B4AFA8; background:transparent; border:1px solid #26272A; border-radius:8px; cursor:pointer;" style-hover="border-color:#3A3B3F; color:#EDE9E4">Cancelar</button>
-          <button onClick="{{ save }}" style="height:38px; padding:0 20px; font-size:13.5px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#FF8433">Salvar</button>
+          <button onClick="{{ save }}" style="height:38px; padding:0 20px; font-size:13.5px; font-weight:600; color:#0A0A0A; background:{{ accent }}; border:none; border-radius:8px; cursor:pointer;" style-hover="background:#00C896">Salvar</button>
         </div>
       </div>
     </div>
@@ -1310,7 +1314,7 @@ API Keys: hash no banco</pre>
 </sc-if>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;orgName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;NexoTerraCore&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FF6B1A&quot;,&quot;options&quot;:[&quot;#FF6B1A&quot;,&quot;#F59E0B&quot;,&quot;#E8590C&quot;,&quot;#22C55E&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca&quot;},&quot;sidebarCollapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Interface&quot;},&quot;showEngineering&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Interface&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Compacta&quot;,&quot;Padrão&quot;,&quot;Confortável&quot;],&quot;default&quot;:&quot;Padrão&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Interface&quot;},&quot;requireAuth&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Acesso&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900},&quot;orgName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;NexoTerraCore&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca&quot;},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#00D99B&quot;,&quot;options&quot;:[&quot;#00D99B&quot;,&quot;#F59E0B&quot;,&quot;#E8590C&quot;,&quot;#22C55E&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Marca&quot;},&quot;sidebarCollapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Interface&quot;},&quot;showEngineering&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Interface&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Compacta&quot;,&quot;Padrão&quot;,&quot;Confortável&quot;],&quot;default&quot;:&quot;Padrão&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Interface&quot;},&quot;requireAuth&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Acesso&quot;}}">
 class Component extends DCLogic {
   state = {
     authed: false, user: '', pass: '', error: false,
@@ -1651,7 +1655,7 @@ class Component extends DCLogic {
 
     const totalRegistros = s.imoveis.length + s.fazendas.length + s.armazens.length;
 
-    const accent = this.props.accent || '#FF6B1A';
+    const accent = this.props.accent || '#00D99B';
     const org = this.props.orgName || 'NexoTerraCore';
     const requireAuth = this.props.requireAuth !== false;
     const openState = s.open === null ? !this.props.sidebarCollapsed : s.open;
@@ -1669,7 +1673,7 @@ class Component extends DCLogic {
         : '—',
       cpConsumo: s.controlPlane?.consumo?.total_requisicoes ?? 0,
       cpConsumo24h: s.controlPlane?.consumo?.requisicoes_24h ?? 0,
-      accentSoft: 'rgba(255,107,26,0.12)',
+      accentSoft: 'rgba(0,217,155,0.12)',
       showEngineering: this.props.showEngineering !== false,
       mainPad: pads[this.props.density] || pads['Padrão'],
       showLogin: requireAuth && !s.authed, showConsole: !requireAuth || s.authed,
@@ -1689,7 +1693,7 @@ class Component extends DCLogic {
       fecharRecuperar: () => this.setState({ recuperarAberta:false }),
       salvarSenha: this.salvarSenha, restaurarSenha: this.restaurarSenha,
       logout: () => this.setState({ authed:false, user:'', pass:'', view:'panel', formOpen:false }),
-      open: openState, closed: !openState, sbWidth: openState ? '238px' : '62px',
+      open: openState, closed: !openState, sbWidth: openState ? '260px' : '62px',
       toggle: () => this.setState({ open: !openState }),
       crumb: crumbs[s.view] || s.view,
       goPanel: this.go('panel'), goImoveis: this.go('imoveis'), goFazendas: this.go('fazendas'),

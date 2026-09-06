@@ -21,6 +21,7 @@
         <button class="menu-item ativo" data-view="visao-geral">Visão Geral</button>
         <button class="menu-item" data-view="patrimonio">Patrimônio</button>
         <button class="menu-item" data-view="imoveis">Imóveis</button>
+        <button class="menu-item" data-view="clientes">Clientes</button>
         <button class="menu-item" data-view="agro">Agro</button>
         <button class="menu-item" data-view="financeiro">Financeiro</button>
         <button class="menu-item" data-view="mapas">Mapas</button>
@@ -145,6 +146,55 @@
         </div>
       </section>
 
+
+      <section id="view-clientes" class="content view">
+        <div class="section-header">
+          <div>
+            <h2>Clientes</h2>
+            <p>CRM privado de contatos, oportunidades e acompanhamento.</p>
+          </div>
+
+          <div class="section-actions">
+            <button id="btnNovoCliente" class="btn-secondary">Novo cliente</button>
+            <button id="btnAtualizarClientes" class="btn-primary">Atualizar</button>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <article class="info-card">
+            <span>Clientes ativos</span>
+            <strong id="totalClientes">—</strong>
+          </article>
+
+          <article class="info-card">
+            <span>Situação</span>
+            <strong id="statusClientes">Aguardando acesso</strong>
+          </article>
+        </div>
+
+        <div id="mensagemClientes" class="notice">
+          Entre na Sala de Comando para carregar os clientes.
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Empresa / Propriedade</th>
+                <th>Contato</th>
+                <th>Localização</th>
+                <th>Interesse</th>
+                <th>Status</th>
+                <th>Próximo contato</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="listaClientes"></tbody>
+          </table>
+        </div>
+      </section>
+
       <section id="view-agro" class="content view">
         <h2>Agro</h2>
         <p>Módulo preparado para a próxima etapa.</p>
@@ -172,6 +222,110 @@
 
     </main>
 
+  </div>
+
+
+  <div id="modalCliente" class="modal oculto">
+    <div class="modal-card modal-card-wide">
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">CRM</span>
+          <h2 id="tituloModalCliente">Novo cliente</h2>
+        </div>
+        <button id="fecharCliente" class="btn-icon" type="button">×</button>
+      </div>
+
+      <p class="modal-description">
+        Cadastro privado de clientes, contatos e oportunidades.
+      </p>
+
+      <form id="formCliente">
+        <input id="clienteId" type="hidden">
+
+        <div class="form-grid">
+          <label>
+            Nome
+            <input id="clienteNome" required>
+          </label>
+
+          <label>
+            Empresa / Propriedade
+            <input id="clienteEmpresa">
+          </label>
+
+          <label>
+            Telefone
+            <input id="clienteTelefone">
+          </label>
+
+          <label>
+            WhatsApp
+            <input id="clienteWhatsapp">
+          </label>
+
+          <label>
+            E-mail
+            <input id="clienteEmail" type="email">
+          </label>
+
+          <label>
+            Cidade
+            <input id="clienteCidade">
+          </label>
+
+          <label>
+            UF
+            <input id="clienteUf" maxlength="2">
+          </label>
+
+          <label>
+            Interesse
+            <select id="clienteInteresse">
+              <option value="">Selecione</option>
+              <option>Imóveis</option>
+              <option>Agro</option>
+              <option>API</option>
+              <option>Patrimônio</option>
+              <option>Paranagel</option>
+              <option>Outro</option>
+            </select>
+          </label>
+
+          <label>
+            Status
+            <select id="clienteStatus">
+              <option>Potencial cliente</option>
+              <option>Contatado</option>
+              <option>Reunião</option>
+              <option>Proposta</option>
+              <option>Cliente</option>
+            </select>
+          </label>
+
+          <label>
+            Origem
+            <input id="clienteOrigem" placeholder="Indicação, site, telefone...">
+          </label>
+
+          <label>
+            Próximo contato
+            <input id="clienteProximoContato" type="datetime-local">
+          </label>
+
+          <label class="form-span-2">
+            Anotações
+            <textarea id="clienteAnotacoes" rows="5"
+              placeholder="Ex.: liguei hoje; interessado na API; retornar segunda-feira."></textarea>
+          </label>
+        </div>
+
+        <div id="erroCliente" class="form-error"></div>
+
+        <button id="btnSalvarCliente" type="submit" class="btn-primary btn-full">
+          Salvar cliente
+        </button>
+      </form>
+    </div>
   </div>
 
   <div id="modalImovel" class="modal oculto">
@@ -369,5 +523,7 @@
   </div>
 
   <script src="./js/app.js"></script>
+  <script src="./js/clientes.js"></script>
+  <script src="./js/mapas.js"></script>
 </body>
 </html>

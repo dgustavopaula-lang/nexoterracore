@@ -3,6 +3,7 @@ const PERMISSOES = {
     maquinas: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     financeiro: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     imoveis: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    clientes: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     fazendas: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     geo: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     sessoes: ["DELETE"],
@@ -13,6 +14,7 @@ const PERMISSOES = {
     maquinas: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     financeiro: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     imoveis: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    clientes: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     fazendas: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     geo: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     sessoes: ["DELETE"],
@@ -23,6 +25,7 @@ const PERMISSOES = {
     maquinas: ["GET", "POST", "PUT", "PATCH"],
     financeiro: ["GET", "POST", "PUT", "PATCH"],
     imoveis: ["GET", "POST", "PUT", "PATCH"],
+    clientes: ["GET", "POST", "PUT", "PATCH"],
     fazendas: ["GET", "POST", "PUT", "PATCH"],
     geo: ["GET", "POST", "PUT", "PATCH"]
   },
