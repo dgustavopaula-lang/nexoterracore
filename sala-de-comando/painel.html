@@ -9,9 +9,10 @@
 
 <body>
 
-  <div class="app-shell">
+  <div class="app-shell app-locked" id="appShellMain">
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
+      <button id="btnSidebar" class="sidebar-toggle" type="button" title="Recolher menu">☰</button>
       <div class="brand">
         <strong>NexoTerraCore</strong>
         <span>Sala de Comando</span>
@@ -84,12 +85,27 @@
         <div class="section-header">
           <div>
             <h2>Patrimônio</h2>
-            <p>Visão consolidada dos ativos patrimoniais.</p>
+            <p>Visão consolidada dos ativos patrimoniais do NexoTerraCore.</p>
           </div>
         </div>
 
-        <div class="empty-state">
-          Selecione Imóveis para consultar os registros patrimoniais.
+        <div class="overview-grid">
+          <article class="info-card">
+            <span>Valor patrimonial</span>
+            <strong id="patrimonioValor">R$ 4.234.720,00</strong>
+          </article>
+          <article class="info-card">
+            <span>Imóveis cadastrados</span>
+            <strong id="patrimonioImoveis">5</strong>
+          </article>
+          <article class="info-card">
+            <span>Localização principal</span>
+            <strong>Uberlândia · MG</strong>
+          </article>
+        </div>
+
+        <div class="notice">
+          Consolidação patrimonial conectada ao módulo Imóveis.
         </div>
       </section>
 
@@ -196,13 +212,100 @@
       </section>
 
       <section id="view-agro" class="content view">
-        <h2>Agro</h2>
-        <p>Módulo preparado para a próxima etapa.</p>
+        <div class="section-header">
+          <div>
+            <h2>Agro</h2>
+            <p>Operação agrícola, produção, máquinas e safra.</p>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <article class="info-card">
+            <span>Planejamento agrícola</span>
+            <strong>—</strong>
+          </article>
+          <article class="info-card">
+            <span>Área em atividade</span>
+            <strong>—</strong>
+          </article>
+          <article class="info-card">
+            <span>Operação</span>
+            <strong>Operação agrícola</strong>
+          </article>
+        </div>
+
+        <div class="operational-grid">
+          <article class="operation-panel">
+            <h3>Safra</h3>
+            <p>Produção realizada</p>
+            <strong>— t</strong>
+            <p>Produtividade média</p>
+            <strong>— kg/ha</strong>
+          </article>
+
+          <article class="operation-panel">
+            <h3>Máquinas</h3>
+            <p>Máquinas em operação</p>
+            <strong>—</strong>
+            <p>Alertas de manutenção</p>
+            <strong>—</strong>
+          </article>
+
+          <article class="operation-panel">
+            <h3>Operação</h3>
+            <p>Talhões ativos</p>
+            <strong>—</strong>
+            <p>Sincronização</p>
+            <strong>Online</strong>
+          </article>
+        </div>
       </section>
 
       <section id="view-financeiro" class="content view">
-        <h2>Financeiro</h2>
-        <p>Módulo preparado para a próxima etapa.</p>
+        <div class="section-header">
+          <div>
+            <h2>Financeiro / Contabilidade</h2>
+            <p>Centro financeiro, custos, orçamento e resultado operacional.</p>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+          <article class="info-card">
+            <span>Receitas</span>
+            <strong id="finReceitas">R$ 0,00</strong>
+          </article>
+          <article class="info-card">
+            <span>Despesas</span>
+            <strong id="finDespesas">R$ 0,00</strong>
+          </article>
+          <article class="info-card">
+            <span>Saldo</span>
+            <strong id="finSaldo">R$ 0,00</strong>
+          </article>
+        </div>
+
+        <div class="operational-grid">
+          <article class="operation-panel">
+            <h3>Custos agrícolas</h3>
+            <p>Custo por hectare</p><strong>—</strong>
+            <p>Custo por tonelada</p><strong>—</strong>
+            <p>Custo por saca 60 kg</p><strong>—</strong>
+          </article>
+
+          <article class="operation-panel">
+            <h3>Contabilidade</h3>
+            <p>Contas a pagar</p><strong>R$ 0,00</strong>
+            <p>Contas a receber</p><strong>R$ 0,00</strong>
+            <p>Fluxo de caixa</p><strong>R$ 0,00</strong>
+          </article>
+
+          <article class="operation-panel">
+            <h3>Planejamento</h3>
+            <p>Meta</p><strong>—</strong>
+            <p>Orçamento x realizado</p><strong>—</strong>
+            <p>Margem operacional</p><strong>—</strong>
+          </article>
+        </div>
       </section>
 
       <section id="view-mapas" class="content view">
@@ -211,13 +314,254 @@
       </section>
 
       <section id="view-api" class="content view">
-        <h2>API / Control Plane</h2>
-        <p>Área administrativa da infraestrutura e integrações.</p>
+
+        <div class="section-header">
+          <div>
+            <h2>API / Control Plane</h2>
+            <p>Monitoramento em tempo real do núcleo NexoTerraCore.</p>
+          </div>
+
+          <div class="section-actions">
+            <button id="btnAtualizarControlPlane"
+                    class="btn-primary"
+                    type="button">
+              Atualizar status
+            </button>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+
+          <article class="info-card control-live">
+            <span>Core API</span>
+            <strong id="cpApi">Verificando...</strong>
+          </article>
+
+          <article class="info-card control-live">
+            <span>PostgreSQL</span>
+            <strong id="cpBanco">Verificando...</strong>
+          </article>
+
+          <article class="info-card control-live">
+            <span>Latência</span>
+            <strong id="cpLatencia">— ms</strong>
+          </article>
+
+        </div>
+
+        <div class="operational-grid">
+
+          <article class="operation-panel">
+            <h3>Estado do núcleo</h3>
+
+            <p>Última verificação</p>
+            <strong id="cpUltimoCheck">—</strong>
+
+            <p>Sessão</p>
+            <strong id="cpSessao">Ativa</strong>
+
+            <p>Ambiente</p>
+            <strong>Local / Core</strong>
+          </article>
+
+          <article class="operation-panel">
+            <h3>Segurança</h3>
+
+            <p>Autenticação</p>
+            <strong>Ativa</strong>
+
+            <p>Rate limit</p>
+            <strong>60 req/min</strong>
+
+            <p>Isolamento</p>
+            <strong>Multi-tenant</strong>
+          </article>
+
+          <article class="operation-panel">
+            <h3>Integrações</h3>
+
+            <p>Google Maps / Earth</p>
+            <strong>Ativo</strong>
+
+            <p>Satélite</p>
+            <strong>Preparado</strong>
+
+            <p>Telemetria</p>
+            <strong>Preparado</strong>
+          </article>
+
+        </div>
+
+        <div class="control-console">
+          <div class="control-console-header">
+            <div>
+              <span class="eyebrow">EVENTOS</span>
+              <h3>Atividade do sistema</h3>
+            </div>
+
+            <button id="btnLimparEventos"
+                    class="btn-secondary"
+                    type="button">
+              Limpar
+            </button>
+          </div>
+
+          <div id="controlEventos" class="control-events">
+            <div class="control-event">
+              Control Plane iniciado.
+            </div>
+          </div>
+        </div>
+
       </section>
 
       <section id="view-administracao" class="content view">
-        <h2>Administração</h2>
-        <p>Configurações privadas do proprietário da Sala de Comando.</p>
+
+        <div class="section-header">
+          <div>
+            <span class="eyebrow">CENTRAL ADMINISTRATIVA</span>
+            <h2>Administração</h2>
+            <p>
+              Controle de dados, segurança, análises,
+              infraestrutura e governança do NexoTerraCore.
+            </p>
+          </div>
+        </div>
+
+        <div class="overview-grid">
+
+          <article class="info-card admin-click"
+                   data-admin="perfil">
+            <span>Proprietário</span>
+            <strong>Gustavo Admin</strong>
+            <small>Editar dados</small>
+          </article>
+
+          <article class="info-card admin-click"
+                   data-admin="python">
+            <span>Python Analytics</span>
+            <strong>Motor disponível</strong>
+            <small>Executar análise</small>
+          </article>
+
+          <article class="info-card admin-click"
+                   data-admin="mercado">
+            <span>Análise de Mercado</span>
+            <strong>Central estratégica</strong>
+            <small>Abrir módulo</small>
+          </article>
+
+        </div>
+
+        <div class="admin-grid">
+
+          <button class="admin-module"
+                  data-admin="dados"
+                  type="button">
+            <span>01</span>
+            <div>
+              <strong>Editar dados</strong>
+              <p>Cadastros, organizações, unidades e parâmetros.</p>
+            </div>
+          </button>
+
+          <button class="admin-module"
+                  data-admin="usuarios"
+                  type="button">
+            <span>02</span>
+            <div>
+              <strong>Usuários e permissões</strong>
+              <p>Acessos, perfis, sessões e autorização.</p>
+            </div>
+          </button>
+
+          <button class="admin-module"
+                  data-admin="python"
+                  type="button">
+            <span>03</span>
+            <div>
+              <strong>Python Analytics</strong>
+              <p>Análises patrimoniais e operacionais.</p>
+            </div>
+          </button>
+
+          <button class="admin-module"
+                  data-admin="mercado"
+                  type="button">
+            <span>04</span>
+            <div>
+              <strong>Análise de mercado</strong>
+              <p>Preços, cenários, oportunidades e inteligência.</p>
+            </div>
+          </button>
+
+          <button class="admin-module"
+                  data-admin="integracoes"
+                  type="button">
+            <span>05</span>
+            <div>
+              <strong>Integrações</strong>
+              <p>APIs, mapas, satélite, máquinas e serviços externos.</p>
+            </div>
+          </button>
+
+          <button class="admin-module"
+                  data-admin="auditoria"
+                  type="button">
+            <span>06</span>
+            <div>
+              <strong>Auditoria</strong>
+              <p>Histórico de operações e eventos do sistema.</p>
+            </div>
+          </button>
+
+          <button class="admin-module"
+                  data-admin="backup"
+                  type="button">
+            <span>07</span>
+            <div>
+              <strong>Backup</strong>
+              <p>Estado, cópias, recuperação e sincronização.</p>
+            </div>
+          </button>
+
+          <button class="admin-module"
+                  data-admin="control-plane"
+                  type="button">
+            <span>08</span>
+            <div>
+              <strong>Control Plane</strong>
+              <p>Núcleo técnico, status e infraestrutura.</p>
+            </div>
+          </button>
+
+        </div>
+
+        <div id="adminWorkspace"
+             class="admin-workspace oculto">
+
+          <div class="admin-workspace-header">
+
+            <div>
+              <span class="eyebrow">ADMINISTRAÇÃO</span>
+              <h3 id="adminTitulo">Módulo</h3>
+            </div>
+
+            <button id="btnFecharAdmin"
+                    class="btn-secondary"
+                    type="button">
+              Fechar
+            </button>
+
+          </div>
+
+          <div id="adminConteudo"
+               class="admin-workspace-content">
+
+          </div>
+
+        </div>
+
       </section>
 
     </main>
@@ -462,48 +806,109 @@
     </div>
   </div>
 
-  <div id="modalLogin" class="modal oculto">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div>
-          <span class="eyebrow">ACESSO PRIVADO</span>
-          <h2>Entrar na Sala de Comando</h2>
+  
+  <div id="modalLogin" class="modal login-modal">
+    <div class="login-shell">
+
+      <section class="login-brand-panel">
+        <div class="login-brand-top">
+          <div class="login-logo">N</div>
+          <div>
+            <strong>NexoTerraCore</strong>
+            <span>Sala de Comando</span>
+          </div>
         </div>
 
-        <button id="fecharLogin" class="btn-icon" aria-label="Fechar">×</button>
-      </div>
+        <div class="login-brand-content">
+          <span class="login-kicker">AMBIENTE OPERACIONAL PRIVADO</span>
+          <h1>Centro de Operações</h1>
+          <p>
+            Gestão integrada de patrimônio, finanças,
+            operações, dados e infraestrutura.
+          </p>
 
-      <form id="formLogin">
-        <label>
-          Usuário
-          <input
-            id="loginUsuario"
-            name="usuario"
-            type="text"
-            autocomplete="username"
-            required
-          >
-        </label>
+          <div class="login-status-grid">
+            <article>
+              <span>CORE</span>
+              <strong>API operacional</strong>
+            </article>
 
-        <label>
-          Senha
-          <input
-            id="loginSenha"
-            name="senha"
-            type="password"
-            autocomplete="current-password"
-            required
-          >
-        </label>
+            <article>
+              <span>DADOS</span>
+              <strong>PostgreSQL</strong>
+            </article>
 
-        <div id="erroLogin" class="form-error"></div>
+            <article>
+              <span>SEGURANÇA</span>
+              <strong>Acesso protegido</strong>
+            </article>
+          </div>
+        </div>
 
-        <button type="submit" class="btn-primary btn-full">
-          Entrar
+        <div class="login-brand-footer">
+          NexoTerraCore · Control Plane
+        </div>
+      </section>
+
+      <section class="login-form-panel">
+        <button id="fecharLogin" class="login-close" type="button" aria-label="Fechar">
+          ×
         </button>
-      </form>
+
+        <div class="login-form-header">
+          <span class="login-kicker">ACESSO AUTORIZADO</span>
+          <h2>Acesso ao NexoTerraCore</h2>
+          <div class="access-badge">AMBIENTE PRIVADO</div>
+          <p>Use suas credenciais para acessar o ambiente operacional.</p>
+        </div>
+
+        <form id="formLogin" class="login-form">
+          <label>
+            E-mail
+            <input
+              id="loginUsuario"
+              name="usuario"
+              type="text"
+              autocomplete="username"
+              placeholder="seu e-mail de acesso"
+              required
+            >
+          </label>
+
+          <label>
+            Senha
+            <input
+              id="loginSenha"
+              name="senha"
+              type="password"
+              autocomplete="current-password"
+              placeholder="••••••••"
+              required
+            >
+          </label>
+
+          <div class="login-security-note">
+            <span></span>
+            Sessão protegida pelo NexoTerraCore
+          </div>
+
+          <div id="erroLogin" class="form-error"></div>
+
+          <button type="submit" class="btn-primary login-submit">
+            Acessar Sala de Comando
+          </button>
+        </form>
+
+        <div class="login-footer-info">
+          <span>API</span>
+          <strong>localhost:3000</strong>
+          <span>Ambiente privado</span>
+        </div>
+      </section>
+
     </div>
   </div>
+
 
   <div id="modalFazenda" class="modal oculto">
     <div class="modal-card">
@@ -525,5 +930,43 @@
   <script src="./js/app.js"></script>
   <script src="./js/clientes.js"></script>
   <script src="./js/mapas.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("btnSidebar");
+  const sidebar = document.getElementById("sidebar");
+  if (btn && sidebar) {
+    btn.addEventListener("click", () => {
+      document.body.classList.toggle("sidebar-collapsed");
+    });
+  }
+});
+</script>
+  <script src="./js/admin-control.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const app = document.getElementById("appShellMain");
+  const modal = document.getElementById("modalLogin");
+
+  function liberarConsole() {
+    if (!app) return;
+    app.classList.remove("app-locked");
+  }
+
+  const observer = new MutationObserver(() => {
+    if (modal && modal.classList.contains("oculto")) {
+      liberarConsole();
+    }
+  });
+
+  if (modal) {
+    observer.observe(modal, {
+      attributes: true,
+      attributeFilter: ["class"]
+    });
+  }
+});
+</script>
+
 </body>
 </html>

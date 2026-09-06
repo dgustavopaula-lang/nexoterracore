@@ -730,3 +730,766 @@ button:active {
     flex: 1;
   }
 }
+
+
+/* NexoTerraCore Console — expansão operacional */
+.sidebar-toggle {
+  width: 42px;
+  height: 42px;
+  margin: 12px 18px 8px;
+  border: 1px solid rgba(120,180,180,.18);
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.sidebar,
+.workspace {
+  transition: all .22s ease;
+}
+
+body.sidebar-collapsed .sidebar {
+  width: 86px;
+}
+
+body.sidebar-collapsed .workspace {
+  margin-left: 86px;
+}
+
+body.sidebar-collapsed .brand span,
+body.sidebar-collapsed .brand strong,
+body.sidebar-collapsed .sidebar-footer,
+body.sidebar-collapsed .menu-item {
+  font-size: 0;
+}
+
+body.sidebar-collapsed .menu-item::first-letter {
+  font-size: 18px;
+}
+
+.operational-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.operation-panel {
+  border: 1px solid rgba(120,180,180,.15);
+  border-radius: 14px;
+  padding: 22px;
+  background: rgba(13,34,40,.72);
+}
+
+.operation-panel h3 {
+  margin: 0 0 18px;
+  font-size: 20px;
+}
+
+.operation-panel p {
+  margin: 14px 0 4px;
+  opacity: .7;
+}
+
+.operation-panel strong {
+  display: block;
+  font-size: 18px;
+}
+
+.operation-panel button {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 900px) {
+  .operational-grid {
+    grid-template-columns: 1fr;
+  }
+
+  body.sidebar-collapsed .sidebar {
+    width: 0;
+    overflow: hidden;
+  }
+
+  body.sidebar-collapsed .workspace {
+    margin-left: 0;
+  }
+}
+
+
+/* =========================================================
+   NEXOTERRACORE — LOGIN PROFISSIONAL
+   ========================================================= */
+
+.login-modal {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(0,217,155,.08), transparent 34%),
+    radial-gradient(circle at 85% 80%, rgba(0,217,155,.05), transparent 30%),
+    rgba(1,10,13,.94);
+  backdrop-filter: blur(12px);
+  padding: 30px;
+}
+
+.login-shell {
+  width: min(1120px, 96vw);
+  min-height: 650px;
+  display: grid;
+  grid-template-columns: 1.08fr .92fr;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(120,180,180,.18);
+  background: #061217;
+  box-shadow: 0 34px 90px rgba(0,0,0,.55);
+}
+
+.login-brand-panel {
+  position: relative;
+  padding: 52px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(120,180,180,.14);
+  background:
+    linear-gradient(145deg, rgba(0,217,155,.08), transparent 45%),
+    #07171c;
+}
+
+.login-brand-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.login-logo {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  border: 1px solid rgba(0,217,155,.4);
+  background: rgba(0,217,155,.10);
+  color: #00d99b;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.login-brand-top strong {
+  display: block;
+  font-size: 22px;
+}
+
+.login-brand-top span {
+  display: block;
+  margin-top: 3px;
+  color: #81959b;
+  font-size: 13px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.login-brand-content {
+  max-width: 530px;
+}
+
+.login-kicker {
+  color: #00d99b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.login-brand-content h1 {
+  margin: 14px 0 16px;
+  font-size: clamp(40px, 4vw, 62px);
+  line-height: 1.02;
+  letter-spacing: -.035em;
+}
+
+.login-brand-content > p {
+  max-width: 500px;
+  margin: 0;
+  color: #a7b6bb;
+  font-size: 19px;
+  line-height: 1.6;
+}
+
+.login-status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 38px;
+}
+
+.login-status-grid article {
+  padding: 17px;
+  border: 1px solid rgba(120,180,180,.15);
+  border-radius: 14px;
+  background: rgba(10,31,37,.72);
+}
+
+.login-status-grid span {
+  display: block;
+  margin-bottom: 8px;
+  color: #71878e;
+  font-size: 11px;
+  letter-spacing: .12em;
+}
+
+.login-status-grid strong {
+  font-size: 14px;
+}
+
+.login-brand-footer {
+  color: #657b82;
+  font-size: 13px;
+}
+
+.login-form-panel {
+  position: relative;
+  padding: 58px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #09191f;
+}
+
+.login-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(120,180,180,.16);
+  border-radius: 12px;
+  background: transparent;
+  color: #a9b7bc;
+  font-size: 25px;
+  cursor: pointer;
+}
+
+.login-close:hover {
+  color: #fff;
+  border-color: rgba(0,217,155,.4);
+}
+
+.login-form-header {
+  margin-bottom: 32px;
+}
+
+.login-form-header h2 {
+  margin: 10px 0 9px;
+  font-size: 34px;
+  letter-spacing: -.025em;
+}
+
+.login-form-header p {
+  margin: 0;
+  color: #81959b;
+  line-height: 1.5;
+}
+
+.login-form {
+  display: grid;
+  gap: 20px;
+}
+
+.login-form label {
+  display: grid;
+  gap: 9px;
+  color: #c4d0d4;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-form input {
+  width: 100%;
+  height: 58px;
+  box-sizing: border-box;
+  padding: 0 17px;
+  border: 1px solid #19343d;
+  border-radius: 13px;
+  background: #061318;
+  color: #eef5f5;
+  font-size: 16px;
+}
+
+.login-form input:focus {
+  border-color: #00d99b;
+  box-shadow: 0 0 0 3px rgba(0,217,155,.08);
+}
+
+.login-security-note {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #71878e;
+  font-size: 13px;
+}
+
+.login-security-note span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00d99b;
+  box-shadow: 0 0 12px rgba(0,217,155,.7);
+}
+
+.login-submit {
+  min-height: 58px;
+  margin-top: 4px;
+  border-radius: 13px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.login-footer-info {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(120,180,180,.12);
+  color: #637980;
+  font-size: 12px;
+}
+
+.login-footer-info strong {
+  color: #8ea2a8;
+  font-weight: 500;
+}
+
+@media (max-width: 850px) {
+  .login-modal {
+    padding: 12px;
+  }
+
+  .login-shell {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    max-height: 94vh;
+    overflow-y: auto;
+  }
+
+  .login-brand-panel {
+    display: none;
+  }
+
+  .login-form-panel {
+    min-height: 620px;
+    padding: 42px 28px;
+  }
+}
+
+/* =========================================================
+   NEXOTERRACORE — CORES DA CENTRAL ADMINISTRATIVA
+   ========================================================= */
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.admin-module {
+  width: 100%;
+  min-height: 112px;
+  padding: 22px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+
+  border: 1px solid rgba(120,180,180,.16);
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0,217,155,.035),
+      rgba(7,24,29,.92)
+    );
+
+  color: #eef5f5;
+  text-align: left;
+  cursor: pointer;
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    background .18s ease,
+    box-shadow .18s ease;
+}
+
+.admin-module:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0,217,155,.42);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0,217,155,.09),
+      rgba(7,24,29,.96)
+    );
+
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.18);
+}
+
+.admin-module > span {
+  flex: 0 0 auto;
+
+  width: 38px;
+  height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  border: 1px solid rgba(0,217,155,.26);
+  border-radius: 10px;
+
+  background: rgba(0,217,155,.08);
+
+  color: #00d99b;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-module strong {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #f0f6f7;
+
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.admin-module p {
+  margin: 0;
+
+  color: #83989f;
+
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+/* cards superiores */
+.admin-click {
+  cursor: pointer;
+
+  transition:
+    transform .18s ease,
+    border-color .18s ease,
+    background .18s ease;
+}
+
+.admin-click:hover {
+  transform: translateY(-2px);
+  border-color: rgba(0,217,155,.38);
+  background: rgba(0,217,155,.045);
+}
+
+.admin-click small {
+  display: block;
+
+  margin-top: 10px;
+
+  color: #00d99b;
+
+  font-size: 12px;
+}
+
+/* workspace administrativo */
+.admin-workspace {
+  margin-top: 24px;
+  padding: 26px;
+
+  border: 1px solid rgba(0,217,155,.22);
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0,217,155,.035),
+      rgba(6,20,25,.92)
+    );
+}
+
+.admin-workspace-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+
+  margin-bottom: 22px;
+}
+
+.admin-workspace-header h3 {
+  margin: 5px 0 0;
+
+  color: #f2f7f7;
+
+  font-size: 26px;
+}
+
+.admin-workspace-content {
+  color: #b7c5c9;
+}
+
+/* listas internas */
+.admin-actions-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-actions-list button {
+  width: 100%;
+
+  padding: 16px 18px;
+
+  border: 1px solid rgba(120,180,180,.15);
+  border-radius: 12px;
+
+  background: #0a1b21;
+  color: #dfe8ea;
+
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-actions-list button:hover {
+  border-color: rgba(0,217,155,.38);
+  background: rgba(0,217,155,.05);
+}
+
+/* métricas */
+.admin-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-metrics article {
+  padding: 18px;
+
+  border: 1px solid rgba(120,180,180,.14);
+  border-radius: 14px;
+
+  background: #0a1b21;
+}
+
+.admin-metrics span {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #71878e;
+
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.admin-metrics strong {
+  color: #eef5f5;
+  font-size: 18px;
+}
+
+@media (max-width: 900px) {
+  .admin-grid,
+  .admin-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   NEXOTERRACORE — PÁGINA DE ACESSO
+   ========================================================= */
+
+body {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(0,217,155,.06), transparent 32%),
+    radial-gradient(circle at 80% 80%, rgba(0,217,155,.04), transparent 30%),
+    #020b0e;
+}
+
+.app-locked {
+  filter: blur(6px);
+  opacity: .18;
+  pointer-events: none;
+  user-select: none;
+}
+
+.login-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: grid;
+  place-items: center;
+
+  background:
+    radial-gradient(circle at 18% 18%, rgba(0,217,155,.10), transparent 28%),
+    linear-gradient(145deg, #02090c, #07161b 58%, #041014);
+
+  padding: 28px;
+}
+
+.login-modal.oculto {
+  display: none;
+}
+
+.login-shell {
+  width: min(1180px, 96vw);
+  min-height: 680px;
+
+  display: grid;
+  grid-template-columns: 1.1fr .9fr;
+
+  border: 1px solid rgba(120,180,180,.16);
+  border-radius: 26px;
+
+  overflow: hidden;
+
+  background: #061217;
+
+  box-shadow:
+    0 40px 100px rgba(0,0,0,.52);
+}
+
+.login-brand-panel {
+  padding: 56px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(0,217,155,.08),
+      transparent 46%
+    ),
+    #07171c;
+
+  border-right:
+    1px solid rgba(120,180,180,.12);
+}
+
+.login-brand-content h1 {
+  max-width: 520px;
+
+  margin: 14px 0;
+
+  font-size: clamp(42px, 4.4vw, 68px);
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.login-brand-content > p {
+  max-width: 510px;
+
+  color: #9aadb3;
+  font-size: 19px;
+  line-height: 1.6;
+}
+
+.login-form-panel {
+  position: relative;
+
+  padding: 64px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(12,31,37,.96),
+      rgba(7,21,26,.98)
+    );
+}
+
+.login-form-header {
+  margin-bottom: 32px;
+}
+
+.login-form-header h2 {
+  margin: 10px 0 12px;
+
+  font-size: 36px;
+  letter-spacing: -.025em;
+}
+
+.access-badge {
+  display: inline-flex;
+
+  margin-top: 4px;
+  padding: 7px 10px;
+
+  border: 1px solid rgba(0,217,155,.28);
+  border-radius: 999px;
+
+  background: rgba(0,217,155,.06);
+  color: #00d99b;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .13em;
+}
+
+.login-form input {
+  height: 60px;
+
+  border-radius: 14px;
+
+  background: #051318;
+}
+
+.login-submit {
+  min-height: 60px;
+
+  border-radius: 14px;
+
+  background: #00d99b;
+  color: #02100d;
+
+  font-weight: 800;
+}
+
+.login-submit:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+}
+
+.login-security-note {
+  padding: 12px 0;
+}
+
+.login-footer-info {
+  margin-top: 30px;
+}
+
+@media (max-width: 900px) {
+
+  .login-shell {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    max-height: 96vh;
+  }
+
+  .login-brand-panel {
+    display: none;
+  }
+
+  .login-form-panel {
+    min-height: 650px;
+    padding: 38px 26px;
+  }
+}
