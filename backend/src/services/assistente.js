@@ -1,4 +1,5 @@
 const { temPermissao } = require("../security/permissions");
+const { consultarConhecimentoInterno } = require("./turing-knowledge");
 
 const dinheiro = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -220,6 +221,54 @@ async function consultarUltimosLancamentos(pool, auth, periodo) {
   };
 }
 
+
+async function consultarOllama(pergunta) {
+  const url = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
+  const modelo = process.env.OLLAMA_MODEL || "qwen2.5:0.5b";
+
+  try {
+    const resposta = await fetch(`${url}/api/generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: modelo,
+        stream: false,
+        prompt: [
+          "Você é o assistente local do NexoTerraCore.",
+          "Responda em português de forma curta e objetiva.",
+          "Não execute comandos.",
+          "Não altere permissões, organização ou fazenda.",
+          "Não invente dados da operação.",
+          `Pergunta: ${pergunta}`
+        ].join("\n")
+      })
+    });
+
+    if (!resposta.ok) {
+      throw new Error(`Ollama HTTP ${resposta.status}`);
+    }
+
+    const dados = await resposta.json();
+    const texto = typeof dados.response === "string" ? dados.response.trim() : "";
+
+    if (!texto) {
+      throw new Error("Resposta vazia do Ollama");
+    }
+
+    return {
+      resposta: texto,
+      fontes: ["turing:nucleo-local"],
+      dados: null
+    };
+  } catch (erro) {
+    return {
+      resposta: "Não existem dados suficientes ou uma consulta segura disponível para responder a essa pergunta.",
+      fontes: [],
+      dados: null
+    };
+  }
+}
+
 async function responderPergunta(pool, auth, perguntaOriginal) {
   const pergunta = normalizar(perguntaOriginal);
 
@@ -266,11 +315,13 @@ async function responderPergunta(pool, auth, perguntaOriginal) {
     return consultarResumoFinanceiro(pool, auth, "resumo", periodo);
   }
 
-  return {
-    resposta: "Não existem dados suficientes ou uma consulta segura disponível para responder a essa pergunta. Nesta versão, posso consultar máquinas, status cadastrados, receitas, despesas, saldo e últimos lançamentos da fazenda ativa.",
-    fontes: [],
-    dados: null
-  };
+  const conhecimentoInterno = consultarConhecimentoInterno(pergunta);
+
+  if (conhecimentoInterno) {
+    return conhecimentoInterno;
+  }
+
+  return consultarOllama(perguntaOriginal);
 }
 
 module.exports = { ErroAssistente, responderPergunta };
