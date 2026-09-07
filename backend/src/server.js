@@ -2038,7 +2038,8 @@ async function garantirEstruturaNTCoins() {
     "006_ntcoins_comercial.sql",
     "007_ntcoins_orders.sql",
     "008_ntcoins_payment_integrity.sql",
-    "009_ntcoins_paypal.sql"
+    "009_ntcoins_paypal.sql",
+    "010_ntcoins_owner_gustavo.sql"
   ];
 
   for (const arquivo of arquivos) {
