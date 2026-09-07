@@ -798,7 +798,7 @@ app.delete(
 );
 
 app.post("/api/assistente/perguntar",
-  cobrarNTCoins('TURING_PERGUNTA'), autenticar, limiteTuring, async (req, res, next) => {
+  autenticar, cobrarNTCoins('TURING_PERGUNTA'), limiteTuring, async (req, res, next) => {
   const pergunta = typeof req.body?.pergunta === "string" ? req.body.pergunta.trim() : "";
 
   if (!pergunta || pergunta.length > 500) {
