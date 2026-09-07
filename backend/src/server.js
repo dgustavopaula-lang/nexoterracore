@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const fs = require("fs");
 const cors = require("cors");
 const helmet = require("helmet");
 const { Pool } = require("pg");
@@ -2029,7 +2030,43 @@ app.use((erro, req, res, next) => {
   res.status(status).json({ erro: mensagens[status] });
 });
 
+
+async function garantirEstruturaNTCoins() {
+  const arquivos = [
+    "004_ntcoins.sql",
+    "005_ntcoins_catalog.sql",
+    "006_ntcoins_comercial.sql",
+    "007_ntcoins_orders.sql",
+    "008_ntcoins_payment_integrity.sql",
+    "009_ntcoins_paypal.sql"
+  ];
+
+  for (const arquivo of arquivos) {
+    const caminho = path.join(
+      __dirname,
+      "../migrations",
+      arquivo
+    );
+
+    const sql = fs.readFileSync(
+      caminho,
+      "utf8"
+    );
+
+    await pool.query(sql);
+
+    console.log(
+      `[NTCoins] migration aplicada: ${arquivo}`
+    );
+  }
+
+  console.log(
+    "[NTCoins] estrutura 004-009 pronta."
+  );
+}
+
 async function iniciarServidor() {
+  await garantirEstruturaNTCoins();
   await garantirEstruturaFinanceira(pool);
   const migration = await pool.query(
     "SELECT 1 FROM schema_migrations WHERE versao = $1",
