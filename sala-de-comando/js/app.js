@@ -193,6 +193,19 @@ const SalaDeComando = {
     window.nexoAuthToken = sessao.token;
     this.desafioLogin = null;
 
+    // Libera visualmente o Console após autenticação concluída
+    document
+      .querySelector("#appShellMain")
+      ?.classList.remove("app-locked");
+
+    document
+      .querySelector("#modalLogin")
+      ?.classList.add("oculto");
+
+    document
+      .querySelector("#modalFazenda")
+      ?.classList.add("oculto");
+
     const nome =
       sessao.usuario?.nome ||
       "Gustavo Admin";
