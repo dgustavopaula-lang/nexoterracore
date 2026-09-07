@@ -72,6 +72,36 @@
         return data;
     }
 
+
+    async function apiPost(path, body) {
+        const response = await fetch(`${API}${path}`, {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+                ...getAuthHeaders()
+            },
+            body: JSON.stringify(body || {})
+        });
+
+        let data;
+
+        try {
+            data = await response.json();
+        } catch {
+            throw new Error("Resposta inválida da API");
+        }
+
+        if (!response.ok || data.ok === false) {
+            throw new Error(
+                data.erro ||
+                `Erro HTTP ${response.status}`
+            );
+        }
+
+        return data;
+    }
+
     function moeda(valor) {
         const n = Number(valor || 0);
 
@@ -173,6 +203,33 @@
                     <article class="ntc-card" style="margin-bottom:20px">
 
                         <div class="ntc-section-title">
+                            <div>
+                                <h2>Comprar NTCoins</h2>
+                                <div class="ntc-payment-subtitle">
+                                    Pagamento seguro via PayPal
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="ntc-payment-status"
+                            id="ntc-payment-status"
+                        ></div>
+
+                        <div
+                            class="ntc-packages"
+                            id="ntc-packages"
+                        >
+                            <div class="ntc-empty">
+                                Carregando pacotes...
+                            </div>
+                        </div>
+
+                    </article>
+
+                    <article class="ntc-card" style="margin-bottom:20px">
+
+                        <div class="ntc-section-title">
                             <h2>Serviços NTCoins</h2>
 
                             <button
@@ -246,6 +303,22 @@
         document
             .getElementById("ntc-refresh")
             .addEventListener("click", carregarTudo);
+
+        document
+            .getElementById("ntc-packages")
+            .addEventListener("click", event => {
+                const botao =
+                    event.target.closest(".ntc-buy");
+
+                if (!botao) return;
+
+                comprarPacote(
+                    botao.dataset.package,
+                    botao
+                );
+            });
+
+        processarRetornoPayPal();
     }
 
     function renderSaldo(data) {
@@ -264,6 +337,226 @@
         ).textContent = admin
             ? "Carteira administrativa • consumo isento"
             : "Carteira ativa";
+    }
+
+
+    function setPaymentStatus(message, tipo = "") {
+        const el = document.getElementById("ntc-payment-status");
+
+        if (!el) return;
+
+        el.className =
+            "ntc-payment-status" +
+            (tipo ? ` ntc-payment-${tipo}` : "");
+
+        el.textContent = message || "";
+    }
+
+    function renderPacotes(data) {
+        const el = document.getElementById("ntc-packages");
+        const pacotes = data.pacotes || [];
+
+        if (!pacotes.length) {
+            el.innerHTML = `
+                <div class="ntc-empty">
+                    Nenhum pacote disponível.
+                </div>
+            `;
+            return;
+        }
+
+        el.innerHTML = pacotes.map(p => {
+            const ntcoins = Number(p.ntcoins || 0);
+            const bonus = Number(p.bonus_ntcoins || 0);
+            const total = ntcoins + bonus;
+            const preco = Number(p.preco_brl || 0);
+
+            return `
+                <article class="ntc-package">
+                    <div class="ntc-package-name">
+                        ${escapeHtml(p.nome)}
+                    </div>
+
+                    <div class="ntc-package-coins">
+                        ${moeda(total)}
+                        <small>NTC</small>
+                    </div>
+
+                    ${
+                        bonus > 0
+                            ? `<div class="ntc-package-bonus">
+                                ${moeda(ntcoins)} NTC + ${moeda(bonus)} bônus
+                               </div>`
+                            : `<div class="ntc-package-bonus">
+                                ${moeda(ntcoins)} NTCoins
+                               </div>`
+                    }
+
+                    <p>
+                        ${escapeHtml(
+                            p.descricao ||
+                            "Créditos de utilidade NexoTerraCore"
+                        )}
+                    </p>
+
+                    <div class="ntc-package-price">
+                        ${preco.toLocaleString("pt-BR", {
+                            style: "currency",
+                            currency: "BRL"
+                        })}
+                    </div>
+
+                    <button
+                        type="button"
+                        class="ntc-buy"
+                        data-package="${escapeHtml(p.codigo)}"
+                    >
+                        Comprar com PayPal
+                    </button>
+                </article>
+            `;
+        }).join("");
+    }
+
+    async function comprarPacote(codigo, botao) {
+        try {
+            botao.disabled = true;
+            botao.textContent = "Abrindo PayPal...";
+
+            setPaymentStatus(
+                "Criando pagamento seguro no PayPal..."
+            );
+
+            const resultado = await apiPost(
+                "/paypal/criar",
+                {
+                    pacote_codigo: codigo
+                }
+            );
+
+            if (!resultado.approval_url) {
+                throw new Error(
+                    "PayPal não retornou o endereço de pagamento"
+                );
+            }
+
+            window.location.href = resultado.approval_url;
+
+        } catch (error) {
+            console.error("[NTCoins PayPal]", error);
+
+            setPaymentStatus(
+                error.message,
+                "error"
+            );
+
+            botao.disabled = false;
+            botao.textContent = "Comprar com PayPal";
+        }
+    }
+
+    function aguardarAutenticacao() {
+        return new Promise((resolve, reject) => {
+            const inicio = Date.now();
+
+            const timer = setInterval(() => {
+                const headers = getAuthHeaders();
+
+                if (headers.Authorization) {
+                    clearInterval(timer);
+                    resolve();
+                    return;
+                }
+
+                if (Date.now() - inicio > 180000) {
+                    clearInterval(timer);
+                    reject(
+                        new Error(
+                            "Faça login novamente para concluir o pagamento."
+                        )
+                    );
+                }
+            }, 500);
+        });
+    }
+
+    async function processarRetornoPayPal() {
+        const params = new URLSearchParams(
+            window.location.search
+        );
+
+        const modo = params.get("ntcoins");
+
+        if (modo === "paypal-cancel") {
+            history.replaceState(
+                {},
+                "",
+                window.location.pathname
+            );
+
+            return;
+        }
+
+        if (modo !== "paypal-return") {
+            return;
+        }
+
+        const pedidoId = params.get("pedido");
+        const paypalOrderId = params.get("token");
+
+        if (!pedidoId || !paypalOrderId) {
+            return;
+        }
+
+        try {
+            /*
+             * O token do Console fica somente em memória.
+             * Depois do retorno do PayPal o usuário pode precisar
+             * autenticar novamente. Aguardamos a sessão aparecer.
+             */
+            await aguardarAutenticacao();
+
+            const resultado = await apiPost(
+                "/paypal/capturar",
+                {
+                    pedido_id: pedidoId,
+                    paypal_order_id: paypalOrderId
+                }
+            );
+
+            history.replaceState(
+                {},
+                "",
+                window.location.pathname
+            );
+
+            open();
+
+            setPaymentStatus(
+                "Pagamento aprovado. NTCoins creditados com sucesso.",
+                "success"
+            );
+
+            await carregarTudo();
+
+            console.log(
+                "[NTCoins PayPal] pagamento concluído",
+                resultado
+            );
+
+        } catch (error) {
+            console.error(
+                "[NTCoins PayPal RETURN]",
+                error
+            );
+
+            open();
+
+            setPaymentStatus(
+                error.message,
+                "error"
+            );
+        }
     }
 
     function renderServicos(data) {
@@ -408,16 +701,18 @@
 
     async function carregarTudo() {
         try {
-            const [saldo, extrato, catalogo] =
+            const [saldo, extrato, catalogo, pacotes] =
                 await Promise.all([
                     api("/saldo"),
                     api("/extrato"),
-                    api("/catalogo")
+                    api("/catalogo"),
+                    api("/pacotes")
                 ]);
 
             renderSaldo(saldo);
             renderExtrato(extrato);
             renderServicos(catalogo);
+            renderPacotes(pacotes);
 
         } catch (error) {
             console.error("[NTCoins]", error);

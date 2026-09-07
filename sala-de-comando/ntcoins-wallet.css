@@ -440,3 +440,118 @@
 #ntcoins-sidebar-item .ntc-side-text {
     font-weight: 700;
 }
+
+
+/* =========================================================
+   NTCOINS — PACOTES E PAYPAL
+   ========================================================= */
+
+.ntc-payment-subtitle {
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.ntc-payment-status {
+    display: none;
+    margin-bottom: 15px;
+    padding: 11px 13px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+.ntc-payment-status:not(:empty) {
+    display: block;
+    background: #111827;
+    border: 1px solid #273447;
+    color: #cbd5e1;
+}
+
+.ntc-payment-success {
+    border-color: rgba(34,197,94,.45) !important;
+    color: #86efac !important;
+}
+
+.ntc-payment-error {
+    border-color: rgba(239,68,68,.45) !important;
+    color: #fca5a5 !important;
+}
+
+.ntc-packages {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(210px, 1fr));
+    gap: 14px;
+}
+
+.ntc-package {
+    background: #0b1220;
+    border: 1px solid #1e293b;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.ntc-package-name {
+    color: #ff7c32;
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.ntc-package-coins {
+    margin-top: 10px;
+    font-size: 31px;
+    font-weight: 900;
+}
+
+.ntc-package-coins small {
+    margin-left: 4px;
+    color: #94a3b8;
+    font-size: 12px;
+}
+
+.ntc-package-bonus {
+    margin-top: 4px;
+    min-height: 18px;
+    color: #94a3b8;
+    font-size: 11px;
+}
+
+.ntc-package p {
+    min-height: 38px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.ntc-package-price {
+    margin: 15px 0 12px;
+    font-size: 22px;
+    font-weight: 900;
+}
+
+.ntc-buy {
+    width: 100%;
+    border: 0;
+    border-radius: 11px;
+    padding: 12px 15px;
+    cursor: pointer;
+    background: #ff6b1a;
+    color: #fff;
+    font-weight: 900;
+}
+
+.ntc-buy:hover {
+    filter: brightness(1.08);
+}
+
+.ntc-buy:disabled {
+    cursor: wait;
+    opacity: .65;
+}
+
+@media (max-width: 850px) {
+    .ntc-packages {
+        grid-template-columns: 1fr;
+    }
+}
