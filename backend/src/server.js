@@ -1952,6 +1952,23 @@ app.post("/api/imoveis", autenticar, autorizar("imoveis", "POST"), async (req, r
   }
 });
 
+
+// =========================================================
+// NEXOTERRACORE WEB APP
+// =========================================================
+const frontendPath = path.join(__dirname, "../../frontend");
+
+app.use(
+  "/app",
+  express.static(frontendPath)
+);
+
+app.get("/app", (req, res) => {
+  res.sendFile(
+    path.join(frontendPath, "index.html")
+  );
+});
+
 app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });
 });
