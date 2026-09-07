@@ -1983,8 +1983,8 @@ app.use(
 // NTCOINS + PAYPAL
 // =========================================================
 app.use('/api/ntcoins/webhook', ntcoinsWebhookRoutes);
-app.use('/api/ntcoins/paypal', ntcoinsPaypalRoutes);
-app.use('/api/ntcoins', ntcoinsRoutes);
+app.use('/api/ntcoins/paypal', autenticar, ntcoinsPaypalRoutes);
+app.use('/api/ntcoins', autenticar, ntcoinsRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });

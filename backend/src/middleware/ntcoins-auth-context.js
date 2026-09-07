@@ -14,11 +14,13 @@ function ntcoinsAuthContext(req, res, next) {
   }
 
   const usuarioId =
+    source.usuarioId ||
     source.usuario_id ||
     source.user_id ||
     source.id;
 
   const organizacaoId =
+    source.organizacaoId ||
     source.organizacao_id ||
     source.organization_id ||
     source.tenant_id;
@@ -27,6 +29,7 @@ function ntcoinsAuthContext(req, res, next) {
     source.perfil ||
     source.role ||
     source.tipo ||
+    source.perfis?.[0] ||
     'usuario';
 
   if (!usuarioId || !organizacaoId) {
