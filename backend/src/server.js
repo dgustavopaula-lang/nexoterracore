@@ -48,11 +48,15 @@ const LOGIN_CHALLENGE_TTL_MINUTES =
   process.env.LOGIN_CHALLENGE_TTL_MINUTES === undefined
     ? 5
     : Number(process.env.LOGIN_CHALLENGE_TTL_MINUTES);
-const origensPermitidas = (
-  process.env.FRONTEND_ORIGIN ||
-  "http://127.0.0.1:5500,http://localhost:5500,http://127.0.0.1:5501,http://localhost:5501"
-)
-  .split(",")
+const origensPermitidas = [
+  "https://nexoterracore-api.onrender.com",
+  "https://gustavopaulasantos.com.br",
+  "http://127.0.0.1:5500",
+  "http://localhost:5500",
+  "http://127.0.0.1:5501",
+  "http://localhost:5501",
+  ...(process.env.FRONTEND_ORIGIN || "").split(",")
+]
   .map((origem) => origem.trim())
   .filter(Boolean);
 
