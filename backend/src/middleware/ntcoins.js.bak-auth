@@ -1,0 +1,54 @@
+const NTCoinsConsumoService = require('../services/ntcoins-consumo-service');
+
+function cobrarNTCoins(codigoServico) {
+  return async function ntcoinsMiddleware(req, res, next) {
+    try {
+      const organizacaoId =
+        req.user?.organizacao_id ||
+        req.auth?.organizacao_id ||
+        req.body?.organizacao_id;
+
+      const usuarioId =
+        req.user?.id ||
+        req.user?.usuario_id ||
+        req.auth?.usuario_id ||
+        req.body?.usuario_id;
+
+      if (!organizacaoId || !usuarioId) {
+        return res.status(401).json({
+          ok: false,
+          erro: 'Usuário ou organização não autenticados'
+        });
+      }
+
+      const resultado = await NTCoinsConsumoService.consumir({
+        organizacaoId: Number(organizacaoId),
+        usuarioId: Number(usuarioId),
+        codigo: codigoServico,
+        referencia: `${req.method} ${req.originalUrl}`
+      });
+
+      req.ntcoins = resultado;
+
+      next();
+
+    } catch (error) {
+      if (error.message === 'Saldo NTCoins insuficiente') {
+        return res.status(402).json({
+          ok: false,
+          erro: 'Saldo NTCoins insuficiente',
+          codigo: 'NTCOINS_INSUFICIENTE'
+        });
+      }
+
+      return res.status(400).json({
+        ok: false,
+        erro: error.message
+      });
+    }
+  };
+}
+
+module.exports = {
+  cobrarNTCoins
+};

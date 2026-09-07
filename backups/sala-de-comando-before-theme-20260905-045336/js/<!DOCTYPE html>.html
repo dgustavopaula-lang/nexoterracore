@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterplan & Estudo de Loteamento — Gleba 20.000 m² Paranaguá</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-serif-title { font-family: 'Cinzel', serif; }
+        .blueprint-wall {
+            border: 2px solid #0f766e;
+            background-color: #f0fdf4;
+        }
+        .blueprint-room {
+            border: 1px dashed #0d9488;
+            transition: all 0.2s ease-in-out;
+        }
+        .blueprint-room:hover {
+            background-color: #ccfbf1;
+            transform: scale(1.008);
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #0d9488; }
+        @media print {
+            header, nav, .no-print { display: none !important; }
+            body { background: #ffffff !important; color: #000000 !important; }
+            .print-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased selection:bg-teal-500 selection:text-slate-950">
+
+    <header class="bg-slate-900/95 border-b border-slate-800 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex flex-col sm:flex-row items-center justify-between gap-3 py-2">
+            <div class="flex items-center space-x-3.5">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-teal-500 via-emerald-600 to-teal-700 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-teal-500/20 border border-teal-400/40">
+                    <svg class="w-7 h-7 text-slate-950" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.53 3.22a8.25 8.25 0 11-13.06-9.56m14.06 6.34l3.47 3.47m-3.47-3.47l-3.47-3.47" />
+                    </svg>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold text-teal-400 tracking-widest uppercase">Estudo Técnico de Viabilidade Urbanística</span>
+                        <span class="bg-amber-500/10 text-amber-400 border border-amber-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full">Gleba 2,00 ha</span>
+                    </div>
+                    <h1 class="text-lg sm:text-2xl font-black tracking-tight text-white font-serif-title">
+                        PARANAGUÁ <span class="text-teal-400 font-sans font-normal text-xs sm:text-base tracking-normal">| Masterplan & Dossiê para Parceiros</span>
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Tab Buttons -->
+            <div class="flex items-center space-x-1 sm:space-x-2 no-print">
+                <button onclick="switchTab('urbanism')" id="tabBtn-urbanism" class="px-3 py-2 rounded-xl text-xs font-bold transition bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20">
+                    📐 Urbanismo & Lotes
+                </button>
+                <button onclick="switchTab('architecture')" id="tabBtn-architecture" class="px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">
+                    🏠 Plantas Arquitetônicas
+                </button>
+                <button onclick="switchTab('partner')" id="tabBtn-partner" class="px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">
+                    💼 Pitch para Parceiros & VGV
+                </button>
+                <button onclick="switchTab('gemini')" id="tabBtn-gemini" class="px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-amber-200 border border-amber-500/30 flex items-center gap-1.5 shadow-sm">
+                    <span class="inline-block animate-pulse">✨</span> Consultor IA (Gemini)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Top Announcement Banner -->
+        <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-teal-950/70 via-slate-900 to-slate-900 border border-teal-500/30 p-6 sm:p-8 shadow-2xl">
+            <div class="absolute -right-12 -bottom-12 opacity-10 pointer-events-none">
+                <svg class="w-80 h-80 text-teal-400" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            <div class="max-w-4xl space-y-3 relative z-10">
+                <div class="inline-flex items-center space-x-2 bg-teal-500/10 border border-teal-500/30 px-3 py-1 rounded-full text-xs font-semibold text-teal-300">
+                    <span>📍 Paranaguá — Região Metropolitana / Eixo de Expansão</span>
+                    <span>•</span>
+                    <span>Lei Federal nº 6.766/1979 & Código de Obras Municipal</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+                    Modelagem Urbanística para Gleba de 20.000,00 m² (2,00 Hectares)
+                </h2>
+                <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+                    Projeto desenvolvido para tomada de decisão entre <strong>Chácaras Urbanas de Alto Padrão (1.000 m²)</strong> e <strong>Loteamento Residencial Minha Casa, Minha Vida (MCMV)</strong>. Aplicação exata da dedução legal obrigatória de <strong>35% da área bruta para o poder público</strong> (sistema viário, reserva verde/ambiental e área institucional), garantindo 13.000 m² líquidos loteáveis sem risco de passivo ambiental ou rejeição de projeto na Prefeitura.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-2.5 text-xs font-semibold text-slate-200">
+                    <span class="bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5">
+                        🌳 <strong class="text-emerald-400">7.000 m²</strong> preservados em áreas públicas (35%)
+                    </span>
+                    <span class="bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5">
+                        🏡 <strong class="text-teal-300">13.000 m²</strong> de área privativa comercializável (65%)
+                    </span>
+                    <span class="bg-slate-800/90 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5">
+                        📐 <strong>13 Chácaras (1.000 m²)</strong> ou até <strong>86 Lotes MCMV (150 m²)</strong>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 1: URBANISMO, LEGISLAÇÃO E MASTERPLAN -->
+        <!-- ========================================================================= -->
+        <section id="section-urbanism" class="space-y-8">
+            
+            <!-- Cards of Balance of Areas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-slate-900 border-l-4 border-teal-500 p-4 rounded-r-xl border-y border-r border-slate-800 shadow-lg">
+                    <span class="text-[11px] text-teal-400 uppercase font-semibold tracking-wider">Área Total da Gleba</span>
+                    <p class="text-2xl font-black text-white mt-1">20.000,00 <span class="text-xs font-normal text-slate-400">m²</span></p>
+                    <p class="text-xs text-slate-400 mt-1">2,00 hectares regulares (100m × 200m)</p>
+                </div>
+                <div class="bg-slate-900 border-l-4 border-emerald-500 p-4 rounded-r-xl border-y border-r border-slate-800 shadow-lg">
+                    <span class="text-[11px] text-emerald-400 uppercase font-semibold tracking-wider">Reserva Pública Legal (35%)</span>
+                    <p class="text-2xl font-black text-white mt-1">7.000,00 <span class="text-xs font-normal text-slate-400">m²</span></p>
+                    <p class="text-xs text-slate-400 mt-1">Vias + Áreas Verdes + Institucional</p>
+                </div>
+                <div class="bg-slate-900 border-l-4 border-amber-500 p-4 rounded-r-xl border-y border-r border-slate-800 shadow-lg">
+                    <span class="text-[11px] text-amber-400 uppercase font-semibold tracking-wider">Área Líquida Loteável (65%)</span>
+                    <p class="text-2xl font-black text-white mt-1">13.000,00 <span class="text-xs font-normal text-slate-400">m²</span></p>
+                    <p class="text-xs text-slate-400 mt-1">Superfície útil destinada aos compradores</p>
+                </div>
+                <div class="bg-slate-900 border-l-4 border-sky-500 p-4 rounded-r-xl border-y border-r border-slate-800 shadow-lg">
+                    <span class="text-[11px] text-sky-400 uppercase font-semibold tracking-wider">Potencial Construtivo</span>
+                    <p class="text-2xl font-black text-white mt-1">13 a 86 <span class="text-xs font-normal text-slate-400">Unidades</span></p>
+                    <p class="text-xs text-slate-400 mt-1">De chácaras exclusivas a casas sociais</p>
+                </div>
+            </div>
+
+            <!-- Detailed Breakdown Chart & Statutory Rules -->
+            <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-6">
+                <div class="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between md:items-center gap-4">
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                            <span>⚖️</span> Balanço Legal do Solo Urbano (Lei Federal 6.766/79 e Paranaguá)
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">
+                            A legislação veda parcelamentos sem a devida destinação de vias, praças e equipamentos para evitar impugnação municipal.
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 no-print">
+                        <button onclick="window.print()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold border border-slate-700 flex items-center gap-1.5 transition">
+                            🖨️ Gerar PDF / Imprimir Dossiê
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                    <div class="h-72 relative flex items-center justify-center">
+                        <canvas id="chartUrbanism"></canvas>
+                    </div>
+
+                    <div class="space-y-3.5 text-xs">
+                        <div class="p-3.5 rounded-xl border border-teal-500/30 bg-teal-950/20 flex items-start gap-3">
+                            <span class="text-xl">🛣️</span>
+                            <div>
+                                <strong class="text-white text-sm">1. Sistema Viário: 3.600,00 m² (18,0%)</strong>
+                                <p class="text-slate-300 mt-0.5 leading-relaxed">
+                                    Vias locais com caixa de 13,00m a 14,00m: 7,00m de leito carroçável asfáltico ou paver permeável e 2 passeios públicos laterais de 3,00m com faixa de grama e calçada acessível (NBR 9050).
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-950/20 flex items-start gap-3">
+                            <span class="text-xl">🌳</span>
+                            <div>
+                                <strong class="text-white text-sm">2. Áreas Verdes e Preservação (ELUP): 2.200,00 m² (11,0%)</strong>
+                                <p class="text-slate-300 mt-0.5 leading-relaxed">
+                                    Reserva permeável para drenagem de água pluvial e praça de convivência arborizada, salvaguardando a vegetação litorânea e cumprindo a cota ecológica ambiental.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl border border-amber-500/30 bg-amber-950/20 flex items-start gap-3">
+                            <span class="text-xl">🏫</span>
+                            <div>
+                                <strong class="text-white text-sm">3. Área Institucional Pública: 1.200,00 m² (6,0%)</strong>
+                                <p class="text-slate-300 mt-0.5 leading-relaxed">
+                                    Repasse ao Município para futura implantação de equipamentos públicos comunitários (creche, posto de saúde ou guarita/apoio comunitário).
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 rounded-xl border border-sky-500/30 bg-sky-950/20 flex items-start gap-3">
+                            <span class="text-xl">🏡</span>
+                            <div>
+                                <strong class="text-white text-sm">4. Área Privativa Líquida: 13.000,00 m² (65,0%)</strong>
+                                <p class="text-slate-300 mt-0.5 leading-relaxed">
+                                    Superfície líquida comercializável subdividida nas quadras privativas, sem ônus de manutenção pública para o proprietário após a entrega das obras.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Masterplan Visualizer Canvas -->
+            <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-slate-800 pb-3">
+                    <div>
+                        <span class="text-xs font-bold text-teal-400 uppercase tracking-widest bg-teal-500/10 px-2.5 py-0.5 rounded border border-teal-500/20">
+                            Planta Urbanística Esquemática
+                        </span>
+                        <h3 class="text-lg font-bold text-white mt-1">Implantação Espacial da Gleba (100m × 200m)</h3>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="setMasterplanMode('chacara')" id="btnMpChacara" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-teal-500 text-slate-950 shadow">
+                            Ver Modo Chácaras (1.000 m²)
+                        </button>
+                        <button onclick="setMasterplanMode('mcmv')" id="btnMpMcmv" class="px-3 py-1.5 rounded-lg text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700">
+                            Ver Modo MCMV (200 m²)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="relative bg-slate-950 rounded-xl p-3 border border-slate-800 overflow-hidden flex flex-col items-center">
+                    <canvas id="masterplanCanvas" width="920" height="480" class="w-full h-auto block rounded-lg shadow-2xl"></canvas>
+                    <div class="w-full flex flex-wrap justify-between items-center mt-3 text-[11px] text-slate-400 px-2 gap-2">
+                        <div class="flex items-center gap-4">
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-600 inline-block"></span> Área Institucional</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-emerald-600 inline-block"></span> Área Verde / Praça</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-teal-800 inline-block"></span> Lotes Privativos</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-600 inline-block"></span> Vias Públicas</span>
+                        </div>
+                        <span id="mpStatusCaption" class="font-mono text-teal-400">Modo Atual: 13 Chácaras de 1.000 m² (20m × 50m)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mathematical Scenarios of Subdivision -->
+            <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-6">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <span>🧮</span> Matemática de Ocupação & Comparativo de Modelos
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Chácaras Card -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-teal-500/40 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <span class="bg-teal-500/20 text-teal-300 text-xs font-extrabold px-3 py-1 rounded-full border border-teal-500/40">
+                                CENÁRIO A: CHÁCARAS DE 1.000 m²
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Baixa Densidade</span>
+                        </div>
+                        <h4 class="text-white font-bold text-base">Condomínio Fechado de Sítios / Chácaras</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Ideal para compradores em busca de tranquilidade, pomar privativo, piscina ampla e privacidade, a poucos minutos do centro urbano de Paranaguá.
+                        </p>
+                        <div class="bg-slate-900 p-3 rounded-lg text-xs space-y-1.5 font-mono text-slate-300 border border-slate-800">
+                            <div class="flex justify-between">
+                                <span>Área Privativa Total:</span>
+                                <span class="font-bold text-white">13.000,00 m²</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Tamanho do Lote:</span>
+                                <span class="font-bold text-teal-400">1.000,00 m²</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Dimensões de Cada Lote:</span>
+                                <span class="font-bold text-white">20,00m × 50,00m</span>
+                            </div>
+                            <div class="flex justify-between pt-1 border-t border-slate-800 text-sm">
+                                <span class="text-teal-300 font-bold">Total de Lotes:</span>
+                                <span class="font-black text-emerald-400">13 UNIDADES</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-400">
+                            <strong>Vantagem para o parceiro:</strong> Custo de implantação de infraestrutura viária e drenagem até 60% menor por demandar menor extensão de redes e pavimentação ecológica.
+                        </p>
+                    </div>
+
+                    <!-- MCMV Card -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-amber-500/40 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <span class="bg-amber-500/20 text-amber-300 text-xs font-extrabold px-3 py-1 rounded-full border border-amber-500/40">
+                                CENÁRIO B: LOTES MCMV (150 a 200 m²)
+                            </span>
+                            <span class="text-xs font-mono text-slate-400">Alta Densidade</span>
+                        </div>
+                        <h4 class="text-white font-bold text-base">Loteamento Urbano de Interesse Social</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Foco no programa Minha Casa, Minha Vida (Faixas 1, 2 e 3) e financiamento bancário pela Caixa Econômica Federal. Máxima velocidade de vendas e alta captação de clientes.
+                        </p>
+                        <div class="bg-slate-900 p-3 rounded-lg text-xs space-y-1.5 font-mono text-slate-300 border border-slate-800">
+                            <div class="flex justify-between">
+                                <span>Opção B.1 (Lote Padrão 200 m²):</span>
+                                <span class="font-bold text-amber-400">65 LOTES (10m × 20m)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Opção B.2 (Lote Econômico 160 m²):</span>
+                                <span class="font-bold text-white">81 LOTES (8m × 20m)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Opção B.3 (Lote Compacto 150 m²):</span>
+                                <span class="font-bold text-white">86 LOTES (7,5m × 20m)</span>
+                            </div>
+                            <div class="flex justify-between pt-1 border-t border-slate-800 text-sm">
+                                <span class="text-amber-300 font-bold">População Estimada:</span>
+                                <span class="font-black text-emerald-400">~260 a 340 Habitantes</span>
+                            </div>
+                        </div>
+                        <p class="text-[11px] text-slate-400">
+                            <strong>Vantagem para o parceiro:</strong> Alto VGV total e facilidade de parcerias com construtoras para venda casada de "Terreno + Construção Caixa".
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 2: PROJETOS DE ARQUITETURA RESIDENCIAL -->
+        <!-- ========================================================================= -->
+        <section id="section-architecture" class="hidden space-y-8">
+            
+            <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-slate-800 pb-3">
+                    <div>
+                        <span class="text-xs font-bold text-teal-400 uppercase tracking-widest bg-teal-500/10 px-2.5 py-0.5 rounded border border-teal-500/20">
+                            Caderno Arquitetônico
+                        </span>
+                        <h3 class="text-xl font-bold text-white mt-1">Duas Tipologias Projetadas para os Perfis de Lote</h3>
+                        <p class="text-xs text-slate-400">
+                            Plantas dimensionadas com rigor construtivo, conforto bioclimático e conformidade às normas técnicas.
+                        </p>
+                    </div>
+                    
+                    <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
+                        <button id="btnArchProj1" onclick="switchArchProject(1)" class="px-4 py-2 rounded-lg text-xs font-bold transition bg-teal-500 text-slate-950 shadow">
+                            1. Casa MCMV (56,80 m²)
+                        </button>
+                        <button id="btnArchProj2" onclick="switchArchProject(2)" class="px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">
+                            2. Chácara / Casa Grande (188,50 m²)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PROJETO 1: MCMV (2 QUARTOS) -->
+                <div id="archContent1" class="space-y-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <!-- Technical Specs Card -->
+                        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
+                            <div class="border-b border-slate-800 pb-3">
+                                <span class="text-[10px] font-bold text-amber-400 uppercase tracking-widest">Habitação de Interesse Social</span>
+                                <h4 class="text-lg font-bold text-white mt-0.5">Casa Térrea MCMV</h4>
+                                <p class="text-xs text-slate-400">Otimizada para lotes de 150 m² a 200 m²</p>
+                            </div>
+
+                            <ul class="text-xs space-y-2.5 text-slate-300">
+                                <li class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Área Construída Coberta:</span>
+                                    <span class="font-bold text-white">56,80 m²</span>
+                                </li>
+                                <li class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Dimensões da Edificação:</span>
+                                    <span class="font-bold text-white">7,10m × 8,00m</span>
+                                </li>
+                                <li class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Recuo Frontal Mínimo:</span>
+                                    <span class="font-bold text-teal-400">5,00 m (2 vagas descobertas)</span>
+                                </li>
+                                <li class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Recuo Lateral:</span>
+                                    <span class="font-bold text-teal-400">1,50 m (com aberturas)</span>
+                                </li>
+                                <li class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Recuo dos Fundos:</span>
+                                    <span class="font-bold text-teal-400">3,00 m (quintal/ampliação)</span>
+                                </li>
+                                <li class="flex justify-between py-1">
+                                    <span class="text-slate-400">Acessibilidade:</span>
+                                    <span class="font-bold text-emerald-400">100% NBR 9050</span>
+                                </li>
+                            </ul>
+
+                            <div class="p-3.5 bg-teal-950/40 rounded-xl border border-teal-800/50 text-xs space-y-1">
+                                <p class="font-bold text-teal-300">💡 Diretriz Litorânea (Paranaguá):</p>
+                                <p class="text-slate-300 leading-relaxed text-[11px]">
+                                    Beirais de 0,80m com pingadeiras reforçadas para proteger paredes contra a alta pluviosidade litorânea. Pé-direito livre de 2,70m com ventilação cruzada contínua para evitar umidade excessiva.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Graphic Blueprint Floor Plan -->
+                        <div class="lg:col-span-2 bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                                <span class="text-xs font-bold text-teal-300 font-mono">PLANTA BAIXA COTADA — PROJETO MCMV (56,80 m²)</span>
+                                <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">7,10m × 8,00m</span>
+                            </div>
+
+                            <div class="p-3 bg-teal-950/20 rounded-xl border border-teal-900/60">
+                                <div class="text-center text-[10px] text-amber-300 font-mono mb-2">
+                                    ▲ FACHADA PRINCIPAL / RECUO FRONTAL: 5,00 m (2 CARROS) ▲
+                                </div>
+
+                                <div class="grid grid-cols-12 gap-2 blueprint-wall p-2.5 rounded-xl text-slate-950">
+                                    <!-- Sala e Quarto 2 -->
+                                    <div class="col-span-7 blueprint-room p-3 rounded-lg flex flex-col justify-between h-28">
+                                        <span class="text-[11px] font-bold text-teal-950">SALA DE ESTAR / JANTAR</span>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            3,80m × 3,90m<br><strong class="text-teal-900 text-xs">14,82 m²</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-5 blueprint-room p-3 rounded-lg flex flex-col justify-between h-28">
+                                        <span class="text-[11px] font-bold text-teal-950">QUARTO 02 (SOLTEIRO)</span>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            2,90m × 3,20m<br><strong class="text-teal-900 text-xs">9,28 m²</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Cozinha, Circulação e Banheiro -->
+                                    <div class="col-span-5 blueprint-room p-3 rounded-lg flex flex-col justify-between h-28">
+                                        <span class="text-[11px] font-bold text-teal-950">COZINHA INTEGRADA</span>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            2,70m × 2,80m<br><strong class="text-teal-900 text-xs">7,56 m²</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-2 bg-teal-100 border border-teal-300 rounded flex items-center justify-center text-[9px] font-mono text-teal-900 font-bold rotate-90 sm:rotate-0">
+                                        CIRC.<br>2,10m²
+                                    </div>
+                                    <div class="col-span-5 blueprint-room p-2.5 rounded-lg flex flex-col justify-between h-28">
+                                        <div>
+                                            <span class="text-[10px] font-bold text-teal-950">BWC ACESSÍVEL</span>
+                                            <p class="text-[8px] text-slate-600">Porta 0,80m • NBR 9050</p>
+                                        </div>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            1,50m × 2,40m<br><strong class="text-teal-900 text-xs">3,60 m²</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Espaço Cozinha e Quarto Casal -->
+                                    <div class="col-span-5"></div>
+                                    <div class="col-span-7 blueprint-room p-3 rounded-lg flex flex-col justify-between h-24">
+                                        <span class="text-[11px] font-bold text-teal-950">QUARTO 01 (CASAL)</span>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            3,30m × 3,50m<br><strong class="text-teal-900 text-xs">11,55 m²</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Área de Serviço Coberta -->
+                                    <div class="col-span-12 bg-amber-100 border border-amber-300 p-2.5 rounded-lg text-center text-[11px] text-amber-950 font-mono font-semibold">
+                                        ÁREA DE SERVIÇO EXTERNA COBERTA — 7,10m × 1,10m = 7,81 m²
+                                    </div>
+                                </div>
+
+                                <div class="text-center text-[10px] text-slate-400 font-mono mt-2">
+                                    ▼ RECUO DE FUNDOS / QUINTAL PRIVATIVO: 3,00 m A 5,00 m ▼
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- PROJETO 2: CHÁCARA / CASA DE CAMPO (188,50 m²) -->
+                <div id="archContent2" class="space-y-6 hidden">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        <!-- Technical Specs Card -->
+                        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-4">
+                            <div class="border-b border-slate-800 pb-3">
+                                <span class="text-[10px] font-bold text-teal-400 uppercase tracking-widest">Residência de Alto Padrão / Chácara</span>
+                                <h4 class="text-lg font-bold text-white mt-0.5">Villa Térrea Contemporânea</h4>
+                                <p class="text-xs text-slate-400">Projetada sob medida para o Lote de 1.000 m² (20m × 50m)</p>
+                            </div>
+
+                            <ul class="text-xs space-y-2.5 text-slate-300">
+                                <li class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Área Construída Coberta:</span>
+                                    <span class="font-bold text-white">188,50 m²</span>
+                                </li>
+                                <li class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Dimensões da Casa:</span>
+                                    <span class="font-bold text-white">13,00m × 14,50m</span>
+                                </li>
+                                <li class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Taxa de Ocupação no Lote:</span>
+                                    <span class="font-bold text-teal-400">18,8% (811 m² de quintal livre)</span>
+                                </li>
+                                <li class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Afastamento Frontal:</span>
+                                    <span class="font-bold text-teal-400">8,00 m (alameda de entrada)</span>
+                                </li>
+                                <li class="flex justify-between py-1 border-b border-slate-800/60">
+                                    <span class="text-slate-400">Afastamentos Laterais:</span>
+                                    <span class="font-bold text-teal-400">3,50 m em ambas as divisas</span>
+                                </li>
+                                <li class="flex justify-between py-1">
+                                    <span class="text-slate-400">Suítes / Dormitórios:</span>
+                                    <span class="font-bold text-emerald-400">3 Suítes com Closet</span>
+                                </li>
+                            </ul>
+
+                            <div class="p-3.5 bg-amber-950/40 rounded-xl border border-amber-800/50 text-xs space-y-1">
+                                <p class="font-bold text-amber-300">🌳 Lazer & Conforto no Lote de 1.000 m²:</p>
+                                <p class="text-slate-300 leading-relaxed text-[11px]">
+                                    Espaço livre nos fundos para piscina com deck molhado, pergolado rústico, pomar frutífero, horta orgânica e canil, mantendo total privacidade visual em relação aos vizinhos.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Graphic Blueprint Floor Plan -->
+                        <div class="lg:col-span-2 bg-slate-950 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
+                            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
+                                <span class="text-xs font-bold text-amber-300 font-mono">PLANTA BAIXA COTADA — VILLA CHÁCARA (188,50 m²)</span>
+                                <span class="text-[11px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded font-mono">13,00m × 14,50m</span>
+                            </div>
+
+                            <div class="p-3 bg-amber-950/20 rounded-xl border border-amber-900/60">
+                                <div class="text-center text-[10px] text-teal-300 font-mono mb-2">
+                                    ▲ FACHADA IMPONENTE / RECUO FRONTAL: 8,00 m (GARAGEM DUPLA COBERTA) ▲
+                                </div>
+
+                                <div class="grid grid-cols-12 gap-2 blueprint-wall p-2.5 rounded-xl text-slate-950">
+                                    <!-- Garagem e Living -->
+                                    <div class="col-span-5 bg-slate-200 border border-slate-400 p-2.5 rounded-lg flex flex-col justify-between h-28">
+                                        <span class="text-[11px] font-bold text-slate-900">GARAGEM COBERTA (2 VAGAS)</span>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            5,20m × 5,50m<br><strong class="text-slate-950 text-xs">28,60 m²</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-7 blueprint-room p-3 rounded-lg flex flex-col justify-between h-28">
+                                        <span class="text-[11px] font-bold text-teal-950">LIVING INTEGRADO (PÉ-DIREITO 4,20m)</span>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            6,80m × 5,50m<br><strong class="text-teal-900 text-xs">37,40 m²</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Cozinha Gourmet e Suíte 1 -->
+                                    <div class="col-span-6 blueprint-room p-3 rounded-lg flex flex-col justify-between h-28">
+                                        <span class="text-[11px] font-bold text-teal-950">COZINHA & ESPAÇO GOURMET</span>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            5,00m × 4,00m<br><strong class="text-teal-900 text-xs">20,00 m²</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-6 blueprint-room p-3 rounded-lg flex flex-col justify-between h-28">
+                                        <span class="text-[11px] font-bold text-teal-950">SUÍTE 02 (PLENA) + BWC</span>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            3,80m × 4,00m<br><strong class="text-teal-900 text-xs">15,20 m²</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Suíte 3 e Suíte Master com Closet -->
+                                    <div class="col-span-6 blueprint-room p-3 rounded-lg flex flex-col justify-between h-28">
+                                        <span class="text-[11px] font-bold text-teal-950">SUÍTE 03 (HÓSPEDES) + BWC</span>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            3,80m × 3,80m<br><strong class="text-teal-900 text-xs">14,44 m²</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-6 blueprint-room p-3 rounded-lg flex flex-col justify-between h-28">
+                                        <span class="text-[11px] font-bold text-teal-950">SUÍTE MASTER + CLOSET + BWC DUPLO</span>
+                                        <div class="text-right text-[10px] text-slate-700 font-mono">
+                                            5,40m × 4,20m<br><strong class="text-teal-900 text-xs">22,68 m²</strong>
+                                        </div>
+                                    </div>
+
+                                    <!-- Varanda Gourmet e Apoio -->
+                                    <div class="col-span-12 bg-teal-100 border border-teal-300 p-2.5 rounded-lg text-center text-[11px] text-teal-950 font-mono font-semibold">
+                                        VARANDA GOURMET CONTEMPORÂNEA COM CHURRASQUEIRA (13,00m × 2,80m = 36,40 m²)
+                                    </div>
+                                </div>
+
+                                <div class="text-center text-[10px] text-slate-400 font-mono mt-2">
+                                    ▼ RECUO DE FUNDOS AMPLO: > 25,00 m LIVRES PARA PISCINA, DECK E POMAR ▼
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 3: PITCH PARA PARCEIROS E SIMULADOR FINANCEIRO (VGV) -->
+        <!-- ========================================================================= -->
+        <section id="section-partner" class="hidden space-y-8">
+            
+            <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-6">
+                <div class="border-b border-slate-800 pb-4">
+                    <span class="text-xs font-bold text-amber-400 uppercase tracking-widest bg-amber-500/10 px-2.5 py-0.5 rounded border border-amber-500/20">
+                        Proposta de Negócio para Investidores e Construtores
+                    </span>
+                    <h3 class="text-xl font-bold text-white mt-1">Modelos de Parceria & Viabilidade Financeira (VGV)</h3>
+                    <p class="text-xs text-slate-400 mt-1">
+                        Simule a rentabilidade do empreendimento em Paranaguá sob as modalidades de Permuta Física, Permuta Financeira ou SPE (Sociedade de Propósito Específico).
+                    </p>
+                </div>
+
+                <!-- Interactive VGV Simulator -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Controls Column -->
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4 text-xs">
+                        <h4 class="font-bold text-teal-300 uppercase tracking-wider text-xs">Parâmetros de Mercado</h4>
+                        
+                        <div>
+                            <label class="block text-slate-300 mb-1">Cenário Escolhido:</label>
+                            <select id="simScenario" onchange="calculateVGV()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white font-semibold focus:border-teal-500">
+                                <option value="chacara">Chácaras de 1.000 m² (13 Lotes)</option>
+                                <option value="mcmv200">MCMV Padrão 200 m² (65 Lotes)</option>
+                                <option value="mcmv150">MCMV Econômico 150 m² (86 Lotes)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-300 mb-1">
+                                Preço Médio de Venda por Lote (R$):
+                            </label>
+                            <input type="number" id="simLotPrice" value="180000" step="5000" oninput="calculateVGV()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white font-mono font-bold focus:border-teal-500">
+                            <span id="priceHint" class="text-[10px] text-slate-500 mt-0.5 block">Sugerido para chácara: R$ 160.000 a R$ 250.000</span>
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-300 mb-1">
+                                Custo Estimado de Obras e Infraestrutura (% do VGV):
+                            </label>
+                            <input type="range" id="simCostPct" min="15" max="35" value="22" oninput="calculateVGV()" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-teal-500">
+                            <div class="flex justify-between text-[11px] text-slate-400 mt-1 font-mono">
+                                <span>15% (Chácara)</span>
+                                <span id="valCostPct" class="font-bold text-teal-400">22%</span>
+                                <span>35% (Urbano)</span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-slate-300 mb-1">
+                                % do Proprietário da Terra na Parceria:
+                            </label>
+                            <input type="range" id="simLandOwnerPct" min="30" max="60" value="45" oninput="calculateVGV()" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500">
+                            <div class="flex justify-between text-[11px] text-slate-400 mt-1 font-mono">
+                                <span>30%</span>
+                                <span id="valLandOwnerPct" class="font-bold text-amber-400">45%</span>
+                                <span>60%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Output Results Column -->
+                    <div class="lg:col-span-2 bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-col justify-between space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 text-center">
+                                <span class="text-[11px] text-slate-400 uppercase font-semibold">VGV Bruto Estimado</span>
+                                <p id="resVGV" class="text-xl sm:text-2xl font-black text-emerald-400 mt-1 font-mono">R$ 2.340.000</p>
+                                <span id="resLotsText" class="text-[10px] text-slate-500">13 Lotes</span>
+                            </div>
+                            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 text-center">
+                                <span class="text-[11px] text-slate-400 uppercase font-semibold">Custo de Infraestrutura</span>
+                                <p id="resCost" class="text-xl sm:text-2xl font-black text-rose-400 mt-1 font-mono">R$ 514.800</p>
+                                <span id="resCostSub" class="text-[10px] text-slate-500">Asfalto/Paver, Água, Luz</span>
+                            </div>
+                            <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 text-center">
+                                <span class="text-[11px] text-slate-400 uppercase font-semibold">Resultado Líquido</span>
+                                <p id="resNet" class="text-xl sm:text-2xl font-black text-teal-300 mt-1 font-mono">R$ 1.825.200</p>
+                                <span class="text-[10px] text-slate-500">Margem Líquida da Operação</span>
+                            </div>
+                        </div>
+
+                        <!-- Division of Proceeds -->
+                        <div class="p-4 bg-slate-900 rounded-xl border border-slate-800 text-xs space-y-2">
+                            <h5 class="font-bold text-white text-sm">Divisão Estimada entre Parceiros:</h5>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                                <div class="bg-slate-950 p-3 rounded-lg border border-amber-500/30">
+                                    <span class="text-amber-400 font-bold block">Proprietário do Terreno (Você):</span>
+                                    <p id="resOwnerShare" class="text-lg font-black text-white font-mono mt-1">R$ 821.340</p>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Sem desembolso de obra; terra entra como aporte de capital.</p>
+                                </div>
+                                <div class="bg-slate-950 p-3 rounded-lg border border-teal-500/30">
+                                    <span class="text-teal-400 font-bold block">Parceiro Loteador / Investidor:</span>
+                                    <p id="resPartnerShare" class="text-lg font-black text-white font-mono mt-1">R$ 1.003.860</p>
+                                    <p class="text-[10px] text-slate-400 mt-0.5">Responsável por projetos, aprovação, licenciamento ambiental e obras.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Strategic Advice -->
+                        <div class="p-3 bg-teal-950/40 rounded-xl border border-teal-800/40 text-xs text-slate-300">
+                            <strong>Diretriz para Reunião de Fechamento com Parceiros:</strong> A modalidade de <em>Permuta Financeira</em> de 40% a 50% é a mais segura para o dono da terra em Paranaguá. O loteador parceiro assume todos os custos de projeto, licenciamento ambiental no IAT (Instituto Água e Terra) e asfalto, pagando ao proprietário conforme os lotes são comercializados.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Steps for Legal Approval in Paranaguá -->
+            <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <span>📑</span> Roteiro de Aprovação e Legalização junto à Prefeitura e Órgãos
+                </h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 text-xs">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                        <span class="w-6 h-6 rounded-full bg-teal-500 text-slate-950 font-bold flex items-center justify-center text-xs">1</span>
+                        <h4 class="font-bold text-white">Consulta Prévia</h4>
+                        <p class="text-slate-400 leading-relaxed">
+                            Solicitação das diretrizes urbanísticas na Prefeitura de Paranaguá para zoneamento e traçado viário.
+                        </p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                        <span class="w-6 h-6 rounded-full bg-teal-500 text-slate-950 font-bold flex items-center justify-center text-xs">2</span>
+                        <h4 class="font-bold text-white">Licença Ambiental (IAT)</h4>
+                        <p class="text-slate-400 leading-relaxed">
+                            Emissão de Licença Prévia (LP) e Licença de Instalação (LI) garantindo que os 35% de reserva e APP estejam intactos.
+                        </p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                        <span class="w-6 h-6 rounded-full bg-teal-500 text-slate-950 font-bold flex items-center justify-center text-xs">3</span>
+                        <h4 class="font-bold text-white">Projetos de Engenharia</h4>
+                        <p class="text-slate-400 leading-relaxed">
+                            Aprovação de projetos de água e esgoto (SANEPAR), rede elétrica (COPEL) e drenagem pluvial municipal.
+                        </p>
+                    </div>
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1.5">
+                        <span class="w-6 h-6 rounded-full bg-teal-500 text-slate-950 font-bold flex items-center justify-center text-xs">4</span>
+                        <h4 class="font-bold text-white">Registro em Cartório</h4>
+                        <p class="text-slate-400 leading-relaxed">
+                            Registro do loteamento no Cartório de Registro de Imóveis (RI) sob a égide da Lei Federal nº 6.766/79 para abertura de matrículas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 4: CONSULTORIA E INTELIGÊNCIA ARTIFICIAL GEMINI -->
+        <!-- ========================================================================= -->
+        <section id="section-gemini" class="hidden space-y-8">
+            <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 shadow-xl space-y-6">
+                <div class="border-b border-slate-800 pb-4 flex flex-col md:flex-row justify-between md:items-center gap-4">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 bg-gradient-to-r from-amber-500/20 to-teal-500/20 border border-amber-500/30 px-3 py-1 rounded-full text-xs font-semibold text-amber-300">
+                            <span>✨ Powered by Google Gemini 3 Flash</span>
+                            <span>•</span>
+                            <span>Engenharia, Direito Urbanístico & Vendas</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mt-2">Núcleo de Inteligência Técnica e Negocial com IA</h3>
+                        <p class="text-xs text-slate-400 mt-1">
+                            Gere pareceres urbanísticos com pesquisa na web em tempo real (Google Search Grounding), minutas contratuais de permuta para parceiros e tire dúvidas com o assistente especializado.
+                        </p>
+                    </div>
+                    <div id="aiGlobalStatus" class="hidden text-xs bg-teal-950 border border-teal-500/40 text-teal-300 px-3 py-1.5 rounded-lg flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-teal-400 animate-ping"></span>
+                        <span>Processando solicitação com Gemini...</span>
+                    </div>
+                </div>
+
+                <!-- Sub-Navigation for AI Tools -->
+                <div class="flex flex-wrap gap-2 border-b border-slate-800/80 pb-3">
+                    <button onclick="switchAiSubTab('grounded')" id="aiSubTab-grounded" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-teal-500 text-slate-950 shadow">
+                        🌐 Parecer com Pesquisa Web (Grounding)
+                    </button>
+                    <button onclick="switchAiSubTab('contract')" id="aiSubTab-contract" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700">
+                        📑 Minuta de Permuta / Termo de Parceria
+                    </button>
+                    <button onclick="switchAiSubTab('chat')" id="aiSubTab-chat" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700">
+                        💬 Copiloto Técnico Urbanístico
+                    </button>
+                </div>
+
+                <!-- TOOL 1: Grounded Urbanist Opinion (Google Search) -->
+                <div id="aiPane-grounded" class="space-y-4">
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                            <div>
+                                <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                                    <span>🔎</span> Parecer Regulatório com Consulta Atualizada (Paranaguá / PR)
+                                </h4>
+                                <p class="text-xs text-slate-400 mt-0.5">
+                                    O modelo utilizará a ferramenta <strong>Google Search Grounding</strong> para cruzar dados da Lei Federal 6.766/79, diretrizes do Instituto Água e Terra (IAT), SANEPAR e parâmetros locais.
+                                </p>
+                            </div>
+                            <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-full self-start sm:self-auto">
+                                Conexão Web Ativa
+                            </span>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1.5">Foco da Análise Regulatória:</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                                <label class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2 cursor-pointer hover:border-teal-500">
+                                    <input type="radio" name="groundedTopic" value="ambiental" checked class="text-teal-500 bg-slate-950 border-slate-700">
+                                    <span>Licenciamento IAT & APP Litorânea</span>
+                                </label>
+                                <label class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2 cursor-pointer hover:border-teal-500">
+                                    <input type="radio" name="groundedTopic" value="infra" class="text-teal-500 bg-slate-950 border-slate-700">
+                                    <span>Diretrizes SANEPAR & COPEL</span>
+                                </label>
+                                <label class="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center gap-2 cursor-pointer hover:border-teal-500">
+                                    <input type="radio" name="groundedTopic" value="zoneamento" class="text-teal-500 bg-slate-950 border-slate-700">
+                                    <span>Zoneamento Urbano & MCMV</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">Instruções adicionais ou contexto específico (opcional):</label>
+                            <input type="text" id="groundedExtraPrompt" placeholder="Ex.: A gleba possui ligeira declividade para a divisa leste e solo arenoso..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white placeholder-slate-500 focus:border-teal-500">
+                        </div>
+
+                        <div class="flex items-center gap-3 pt-1">
+                            <button id="btnGenerateGrounded" onclick="generateGroundedOpinion()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-slate-950 text-xs font-black shadow-lg shadow-teal-500/20 transition flex items-center gap-2">
+                                <span>⚡ Gerar Parecer com Pesquisa Google</span>
+                            </button>
+                            <span id="groundedLoadingMsg" class="hidden text-xs text-slate-400 flex items-center gap-1.5">
+                                <svg class="animate-spin h-3.5 w-3.5 text-teal-400" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                                Consultando base normativa...
+                            </span>
+                        </div>
+
+                        <!-- Output Container -->
+                        <div id="groundedResultBox" class="hidden space-y-4 pt-4 border-t border-slate-800">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-teal-400 uppercase tracking-wider">Parecer Técnico Emitido</span>
+                                <button onclick="copyElementContent('groundedTextOutput', 'btnCopyGrounded')" id="btnCopyGrounded" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">
+                                    📋 Copiar Parecer
+                                </button>
+                            </div>
+                            <div id="groundedTextOutput" class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-xs text-slate-200 leading-relaxed font-sans space-y-2 select-text"></div>
+                            
+                            <!-- Grounding Citations -->
+                            <div id="groundedSourcesContainer" class="hidden p-3 rounded-lg bg-slate-900/50 border border-slate-800/80 text-[11px] text-slate-400 space-y-1.5">
+                                <strong class="text-slate-300 flex items-center gap-1.5">🔗 Fontes Consultadas via Google Search:</strong>
+                                <ul id="groundedSourcesList" class="list-disc list-inside space-y-0.5 text-teal-400"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOOL 2: Partnership Contract / MoU Generator -->
+                <div id="aiPane-contract" class="hidden space-y-4">
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+                        <div>
+                            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                                <span>📄</span> Gerador de Carta de Intenções (MoU) e Termo de Permuta
+                            </h4>
+                            <p class="text-xs text-slate-400 mt-0.5">
+                                A IA formulará automaticamente a minuta contratual inserindo os números exatos calculados no simulador de VGV desta sessão (valores, percentual do proprietário e quantidade de lotes).
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs">
+                            <div>
+                                <span class="text-slate-400 block text-[11px]">Modalidade de Parceria:</span>
+                                <select id="mouType" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-md p-1.5 text-white font-semibold focus:border-teal-500">
+                                    <option value="Permuta Financeira (% sobre Vendas)">Permuta Financeira (% de Recebimento)</option>
+                                    <option value="Permuta Física (Lotes Prontos)">Permuta Física (Recebimento em Lotes Urbanizados)</option>
+                                    <option value="Sociedade de Propósito Específico (SPE)">SPE com Aporte de Terreno</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-[11px]">Nome do Proprietário / Terrenista:</span>
+                                <input type="text" id="mouOwnerName" value="Proprietário da Gleba Paranaguá" class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-md p-1.5 text-white focus:border-teal-500">
+                            </div>
+                            <div>
+                                <span class="text-slate-400 block text-[11px]">Nome do Parceiro Loteador:</span>
+                                <input type="text" id="mouPartnerName" value="Loteadora e Incorporadora Parceira Ltda." class="mt-1 w-full bg-slate-950 border border-slate-700 rounded-md p-1.5 text-white focus:border-teal-500">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <button id="btnGenerateContract" onclick="generatePartnershipContract()" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20 transition flex items-center gap-2">
+                                <span>⚡ Redigir Minuta de Termo de Parceria com IA</span>
+                            </button>
+                            <span id="contractLoadingMsg" class="hidden text-xs text-slate-400 flex items-center gap-1.5">
+                                <svg class="animate-spin h-3.5 w-3.5 text-amber-400" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path></svg>
+                                Estruturando cláusulas jurídicas com Gemini...
+                            </span>
+                        </div>
+
+                        <!-- Output Container -->
+                        <div id="contractResultBox" class="hidden space-y-3 pt-4 border-t border-slate-800">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">Minuta Contratual Proposta</span>
+                                <button onclick="copyElementContent('contractTextOutput', 'btnCopyContract')" id="btnCopyContract" class="text-xs px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">
+                                    📋 Copiar Minuta
+                                </button>
+                            </div>
+                            <div id="contractTextOutput" class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 text-xs text-slate-200 leading-relaxed font-mono whitespace-pre-wrap select-text max-h-[500px] overflow-y-auto custom-scrollbar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOOL 3: Urbanist Copilot (Chat / Advisory) -->
+                <div id="aiPane-chat" class="hidden space-y-4">
+                    <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-4">
+                        <div>
+                            <h4 class="text-sm font-bold text-white flex items-center gap-2">
+                                <span>💬</span> Assistente Técnico & Estratégico do Loteamento
+                            </h4>
+                            <p class="text-xs text-slate-400 mt-0.5">
+                                Pergunte sobre cronograma de obras, custo de pavimentação por m², pavimentação permeável vs. asfáltica, declividade máxima e financiamento habitacional Caixa.
+                            </p>
+                        </div>
+
+                        <!-- Quick Prompts Pills -->
+                        <div class="flex flex-wrap gap-2 text-[11px]">
+                            <button onclick="setChatPrompt('Qual a diferença prática de custo de infraestrutura entre o loteamento de 13 chácaras e o loteamento MCMV de 65 lotes para 2 hectares?')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
+                                💡 Custo Chácaras vs. MCMV
+                            </button>
+                            <button onclick="setChatPrompt('Como funciona a garantia de hipoteca de lotes dada à Prefeitura de Paranaguá para início das obras?')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
+                                💡 Caução de Lotes com a Prefeitura
+                            </button>
+                            <button onclick="setChatPrompt('Quais os prazos médios de aprovação das licenças LP, LI e LO no Instituto Água e Terra (IAT) do Paraná?')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 transition">
+                                💡 Prazos do IAT no Paraná
+                            </button>
+                        </div>
+
+                        <!-- Prompt input & action -->
+                        <div class="flex gap-2">
+                            <input type="text" id="chatInputPrompt" placeholder="Digite sua dúvida técnica sobre o empreendimento de Paranaguá..." class="flex-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white placeholder-slate-500 focus:border-teal-500 focus:outline-none">
+                            <button id="btnSendChat" onclick="sendChatQuestion()" class="px-4 py-2.5 rounded-lg bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold text-xs shadow transition flex items-center gap-1.5">
+                                <span>Enviar</span>
+                                <span>➤</span>
+                            </button>
+                        </div>
+
+                        <!-- Chat Response Area -->
+                        <div id="chatResponseArea" class="hidden bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-3">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="font-bold text-teal-400">Resposta do Engenheiro Urbanista Virtual:</span>
+                                <button onclick="copyElementContent('chatOutputContent', 'btnCopyChat')" id="btnCopyChat" class="text-[11px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700">
+                                    📋 Copiar Resposta
+                                </button>
+                            </div>
+                            <div id="chatOutputContent" class="text-xs text-slate-200 leading-relaxed font-sans space-y-2 select-text"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-950 border-t border-slate-800 text-slate-500 text-xs py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left">
+            <div>
+                <p class="font-bold text-slate-300">Dossiê Técnico de Urbanismo e Arquitetura — Gleba 2,00 ha (Paranaguá)</p>
+                <p class="text-slate-500 text-[11px] mt-0.5">Elaborado sob as diretrizes da Lei Federal nº 6.766/1979, Normas ABNT (NBR 9050 e 15575) e Portaria MCID MCMV.</p>
+            </div>
+            <div class="text-[11px] text-slate-600">
+                Padrão técnico institucional • Pronto para prospecção de parceiros e investidores imobiliários
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Tab switching logic
+        function switchTab(tabName) {
+            const tabs = ['urbanism', 'architecture', 'partner', 'gemini'];
+            tabs.forEach(t => {
+                const sec = document.getElementById('section-' + t);
+                const btn = document.getElementById('tabBtn-' + t);
+                if (t === tabName) {
+                    sec.classList.remove('hidden');
+                    if (t === 'gemini') {
+                        btn.className = "px-3 py-2 rounded-xl text-xs font-bold transition bg-amber-500 text-slate-950 shadow-lg shadow-amber-500/20";
+                    } else {
+                        btn.className = "px-3 py-2 rounded-xl text-xs font-bold transition bg-teal-500 text-slate-950 shadow-lg shadow-teal-500/20";
+                    }
+                } else {
+                    sec.classList.add('hidden');
+                    if (t === 'gemini') {
+                        btn.className = "px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-amber-200 border border-amber-500/30";
+                    } else {
+                        btn.className = "px-3 py-2 rounded-xl text-xs font-bold transition bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700";
+                    }
+                }
+            });
+
+            if (tabName === 'urbanism') {
+                drawMasterplan();
+            }
+        }
+
+        // Architecture project toggle
+        function switchArchProject(num) {
+            const btn1 = document.getElementById('btnArchProj1');
+            const btn2 = document.getElementById('btnArchProj2');
+            const c1 = document.getElementById('archContent1');
+            const c2 = document.getElementById('archContent2');
+
+            if (num === 1) {
+                btn1.className = "px-4 py-2 rounded-lg text-xs font-bold transition bg-teal-500 text-slate-950 shadow";
+                btn2.className = "px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white";
+                c1.classList.remove('hidden');
+                c2.classList.add('hidden');
+            } else {
+                btn2.className = "px-4 py-2 rounded-lg text-xs font-bold transition bg-amber-500 text-slate-950 shadow";
+                btn1.className = "px-4 py-2 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white";
+                c2.classList.remove('hidden');
+                c1.classList.add('hidden');
+            }
+        }
+
+        // Masterplan state and modes
+        let currentMasterplanMode = 'chacara';
+
+        function setMasterplanMode(mode) {
+            currentMasterplanMode = mode;
+            const bChac = document.getElementById('btnMpChacara');
+            const bMcmv = document.getElementById('btnMpMcmv');
+            const cap = document.getElementById('mpStatusCaption');
+
+            if (mode === 'chacara') {
+                bChac.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition bg-teal-500 text-slate-950 shadow";
+                bMcmv.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700";
+                cap.innerText = "Modo Atual: 13 Chácaras de 1.000 m² (20m × 50m)";
+            } else {
+                bMcmv.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition bg-teal-500 text-slate-950 shadow";
+                bChac.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700";
+                cap.innerText = "Modo Atual: 65 Lotes MCMV de 200 m² (10m × 20m)";
+            }
+            drawMasterplan();
+        }
+
+        // Draw Masterplan on Canvas
+        function drawMasterplan() {
+            const canvas = document.getElementById('masterplanCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Background terrain
+            ctx.fillStyle = '#090d16';
+            ctx.fillRect(0, 0, w, h);
+
+            // Perimeter Boundary of Gleba (20.000 m²: 100m x 200m)
+            const marginX = 40;
+            const marginY = 35;
+            const gw = w - marginX * 2;
+            const gh = h - marginY * 2;
+
+            // Outer property border
+            ctx.strokeStyle = '#0d9488';
+            ctx.lineWidth = 2.5;
+            ctx.strokeRect(marginX, marginY, gw, gh);
+
+            // Top Road Connection Header (Acesso Municipal)
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(marginX, marginY - 22, gw, 22);
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = 'bold 10px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText("ESTRADA MUNICIPAL / ACESSO PRINCIPAL (TESTADA: 100,00 METROS)", w / 2, marginY - 8);
+
+            // Statutory Front Reserves (Institutional + Central Entrance + Green Area)
+            const reserveHeight = gh * 0.20;
+            
+            // 1. Institutional Area (Left Front)
+            ctx.fillStyle = '#b45309';
+            ctx.fillRect(marginX, marginY, gw * 0.35, reserveHeight);
+            ctx.strokeStyle = '#f59e0b';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(marginX, marginY, gw * 0.35, reserveHeight);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText("ÁREA INSTITUCIONAL", marginX + (gw * 0.35) / 2, marginY + reserveHeight * 0.45);
+            ctx.font = '9px sans-serif';
+            ctx.fillText("1.200 m² (Equipamento Público)", marginX + (gw * 0.35) / 2, marginY + reserveHeight * 0.70);
+
+            // 2. Green Area / Ecological Preservation (Right Front)
+            const greenX = marginX + gw * 0.65;
+            const greenW = gw * 0.35;
+            ctx.fillStyle = '#065f46';
+            ctx.fillRect(greenX, marginY, greenW, reserveHeight);
+            ctx.strokeStyle = '#10b981';
+            ctx.lineWidth = 1.5;
+            ctx.strokeRect(greenX, marginY, greenW, reserveHeight);
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.fillText("ÁREA VERDE / PRAÇA (ELUP)", greenX + greenW / 2, marginY + reserveHeight * 0.45);
+            ctx.font = '9px sans-serif';
+            ctx.fillText("2.200 m² (Preservação & Lazer)", greenX + greenW / 2, marginY + reserveHeight * 0.70);
+
+            // 3. Central Access Road (14m wide scaled)
+            const roadX = marginX + gw * 0.35;
+            const roadW = gw * 0.30;
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(roadX, marginY, roadW, gh);
+
+            // Road markings (yellow dashed centerline)
+            ctx.strokeStyle = '#eab308';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([8, 8]);
+            ctx.beginPath();
+            ctx.moveTo(w / 2, marginY);
+            ctx.lineTo(w / 2, marginY + gh - 45);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Cul-de-sac / Praça de Retorno at the bottom
+            const culCenterY = marginY + gh - 40;
+            ctx.fillStyle = '#334155';
+            ctx.beginPath();
+            ctx.arc(w / 2, culCenterY, 35, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Label for cul-de-sac
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '8px sans-serif';
+            ctx.fillText("RETORNO (Raio 9m)", w / 2, culCenterY + 3);
+
+            // Road Entry text
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = 'bold 9px sans-serif';
+            ctx.fillText("AVENIDA CENTRAL (14m)", w / 2, marginY + 22);
+
+            // 4. Lots (Left and Right Wings)
+            const lotsStartY = marginY + reserveHeight + 8;
+            const lotsAreaHeight = gh - (reserveHeight + 8);
+            const lotBlockW = gw * 0.35;
+
+            if (currentMasterplanMode === 'chacara') {
+                // CHÁCARAS MODE (13 lotes grandes de ~1.000m²: 6 na esquerda, 7 na direita)
+                const numLeft = 6;
+                const numRight = 7;
+                const leftLotH = lotsAreaHeight / numLeft;
+                const rightLotH = lotsAreaHeight / numRight;
+
+                // Left wing chácaras
+                for (let i = 0; i < numLeft; i++) {
+                    const ly = lotsStartY + i * leftLotH;
+                    ctx.fillStyle = '#134e4a';
+                    ctx.fillRect(marginX + 2, ly + 2, lotBlockW - 4, leftLotH - 4);
+                    ctx.strokeStyle = '#14b8a6';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(marginX + 2, ly + 2, lotBlockW - 4, leftLotH - 4);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 9px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`CHÁCARA 0${i + 1}`, marginX + lotBlockW / 2, ly + leftLotH * 0.45);
+                    ctx.fillStyle = '#99f6e4';
+                    ctx.font = '8px sans-serif';
+                    ctx.fillText("1.000 m² (20m × 50m)", marginX + lotBlockW / 2, ly + leftLotH * 0.75);
+                }
+
+                // Right wing chácaras
+                for (let i = 0; i < numRight; i++) {
+                    const ly = lotsStartY + i * rightLotH;
+                    ctx.fillStyle = '#134e4a';
+                    ctx.fillRect(greenX + 2, ly + 2, lotBlockW - 4, rightLotH - 4);
+                    ctx.strokeStyle = '#14b8a6';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(greenX + 2, ly + 2, lotBlockW - 4, rightLotH - 4);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 9px sans-serif';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`CHÁCARA ${i + 7 < 10 ? '0' : ''}${i + 7}`, greenX + lotBlockW / 2, ly + rightLotH * 0.45);
+                    ctx.fillStyle = '#99f6e4';
+                    ctx.font = '8px sans-serif';
+                    ctx.fillText("1.000 m² (20m × 50m)", greenX + lotBlockW / 2, ly + rightLotH * 0.75);
+                }
+
+            } else {
+                // MCMV MODE (65 lotes de 200m² dispostos em 2 fileiras por quadra)
+                const rows = 16;
+                const lotH = lotsAreaHeight / rows;
+                const subLotW = (lotBlockW - 6) / 2;
+
+                // Left Quadras
+                for (let r = 0; r < rows; r++) {
+                    const ly = lotsStartY + r * lotH;
+                    for (let c = 0; c < 2; c++) {
+                        const lx = marginX + 2 + c * (subLotW + 2);
+                        ctx.fillStyle = '#1e3a8a';
+                        ctx.fillRect(lx, ly + 1, subLotW, lotH - 2);
+                        ctx.strokeStyle = '#60a5fa';
+                        ctx.lineWidth = 0.8;
+                        ctx.strokeRect(lx, ly + 1, subLotW, lotH - 2);
+
+                        if (r % 3 === 0) {
+                            ctx.fillStyle = '#e0e7ff';
+                            ctx.font = '7px sans-serif';
+                            ctx.fillText("200m²", lx + subLotW / 2, ly + lotH * 0.65);
+                        }
+                    }
+                }
+
+                // Right Quadras
+                for (let r = 0; r < rows; r++) {
+                    const ly = lotsStartY + r * lotH;
+                    for (let c = 0; c < 2; c++) {
+                        const lx = greenX + 2 + c * (subLotW + 2);
+                        ctx.fillStyle = '#1e3a8a';
+                        ctx.fillRect(lx, ly + 1, subLotW, lotH - 2);
+                        ctx.strokeStyle = '#60a5fa';
+                        ctx.lineWidth = 0.8;
+                        ctx.strokeRect(lx, ly + 1, subLotW, lotH - 2);
+
+                        if (r % 3 === 0) {
+                            ctx.fillStyle = '#e0e7ff';
+                            ctx.font = '7px sans-serif';
+                            ctx.fillText("200m²", lx + subLotW / 2, ly + lotH * 0.65);
+                        }
+                    }
+                }
+
+                // Quadra Labels
+                ctx.fillStyle = '#fbbf24';
+                ctx.font = 'bold 10px sans-serif';
+                ctx.fillText("QUADRA RESIDENCIAL A (MCMV)", marginX + lotBlockW / 2, marginY + reserveHeight + 18);
+                ctx.fillText("QUADRA RESIDENCIAL B (MCMV)", greenX + lotBlockW / 2, marginY + reserveHeight + 18);
+            }
+
+            // Outer Dimensions Labels
+            ctx.fillStyle = '#64748b';
+            ctx.font = '10px monospace';
+            ctx.fillText("PROFUNDIDADE DA GLEBA: 200,00 METROS", w / 2, h - 8);
+        }
+
+        // Initialize Urbanism Doughnut Chart
+        function initUrbanismChart() {
+            const ctxChart = document.getElementById('chartUrbanism').getContext('2d');
+            new Chart(ctxChart, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        ['Área Privativa', 'Loteável (65%)'],
+                        ['Sistema Viário', 'Público (18%)'],
+                        ['Áreas Verdes', '& Praça (11%)'],
+                        ['Área Institucional', 'Prefeitura (6%)']
+                    ],
+                    datasets: [{
+                        data: [13000, 3600, 2200, 1200],
+                        backgroundColor: ['#0d9488', '#475569', '#10b981', '#f59e0b'],
+                        borderWidth: 2,
+                        borderColor: '#020617'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#cbd5e1',
+                                boxWidth: 12,
+                                font: { size: 11 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.raw;
+                                    const pct = ((val / 20000) * 100).toFixed(1);
+                                    return ` ${val.toLocaleString('pt-BR')} m² (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Calculate VGV and Financial Breakdown for Partners
+        function calculateVGV() {
+            const scenario = document.getElementById('simScenario').value;
+            const priceInput = document.getElementById('simLotPrice');
+            const costPct = parseInt(document.getElementById('simCostPct').value);
+            const landOwnerPct = parseInt(document.getElementById('simLandOwnerPct').value);
+
+            let lotsCount = 13;
+            let defaultPrice = 180000;
+
+            if (scenario === 'chacara') {
+                lotsCount = 13;
+                defaultPrice = 180000;
+                document.getElementById('priceHint').innerText = "Sugerido para chácara (1.000m²): R$ 160.000 a R$ 250.000";
+            } else if (scenario === 'mcmv200') {
+                lotsCount = 65;
+                defaultPrice = 65000;
+                document.getElementById('priceHint').innerText = "Sugerido para lote MCMV (200m²): R$ 55.000 a R$ 85.000";
+            } else {
+                lotsCount = 86;
+                defaultPrice = 52000;
+                document.getElementById('priceHint').innerText = "Sugerido para lote econômico (150m²): R$ 45.000 a R$ 65.000";
+            }
+
+            // Sync price if user switched scenario and didn't touch
+            let lotPrice = parseFloat(priceInput.value);
+            if (isNaN(lotPrice) || lotPrice <= 0) lotPrice = defaultPrice;
+
+            document.getElementById('valCostPct').innerText = costPct + '%';
+            document.getElementById('valLandOwnerPct').innerText = landOwnerPct + '%';
+
+            const totalVGV = lotsCount * lotPrice;
+            const infraCost = totalVGV * (costPct / 100);
+            const netProceeds = totalVGV - infraCost;
+
+            const ownerShare = netProceeds * (landOwnerPct / 100);
+            const partnerShare = netProceeds * ((100 - landOwnerPct) / 100);
+
+            const fmt = (v) => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
+
+            document.getElementById('resVGV').innerText = fmt(totalVGV);
+            document.getElementById('resLotsText').innerText = `${lotsCount} Lotes comercializados`;
+            document.getElementById('resCost').innerText = fmt(infraCost);
+            document.getElementById('resCostSub').innerText = `${costPct}% para pavimentação e redes`;
+            document.getElementById('resNet').innerText = fmt(netProceeds);
+
+            document.getElementById('resOwnerShare').innerText = fmt(ownerShare);
+            document.getElementById('resPartnerShare').innerText = fmt(partnerShare);
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            initUrbanismChart();
+            drawMasterplan();
+            calculateVGV();
+        };
+
+        // Resize redraw for canvas
+        window.onresize = function() {
+            drawMasterplan();
+        };
+
+        // =========================================================================
+        // GEMINI AI INTEGRATION ENGINE
+        // =========================================================================
+        
+        function switchAiSubTab(tab) {
+            const subTabs = ['grounded', 'contract', 'chat'];
+            subTabs.forEach(st => {
+                const pane = document.getElementById('aiPane-' + st);
+                const btn = document.getElementById('aiSubTab-' + st);
+                if (st === tab) {
+                    pane.classList.remove('hidden');
+                    btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-teal-500 text-slate-950 shadow";
+                } else {
+                    pane.classList.add('hidden');
+                    btn.className = "px-3.5 py-1.5 rounded-lg text-xs font-bold transition bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700";
+                }
+            });
+        }
+
+        /**
+         * Call Gemini API with Exponential Backoff
+         */
+        async function callGemini(payload, retries = 3, initialDelay = 1000) {
+            const apiKey = ""; // Provided at runtime by canvas
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            for (let attempt = 0; attempt < retries; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        if (response.status === 429 || response.status >= 500) {
+                            await new Promise(r => setTimeout(r, initialDelay * Math.pow(2, attempt)));
+                            continue;
+                        }
+                        throw new Error(`Erro na API (${response.status}): ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    return data;
+                } catch (err) {
+                    if (attempt === retries - 1) throw err;
+                    await new Promise(r => setTimeout(r, initialDelay * Math.pow(2, attempt)));
+                }
+            }
+        }
+
+        /**
+         * Generate Grounded Opinion with Google Search Tool
+         */
+        async function generateGroundedOpinion() {
+            const topicEl = document.querySelector('input[name="groundedTopic"]:checked');
+            const topic = topicEl ? topicEl.value : 'ambiental';
+            const extra = document.getElementById('groundedExtraPrompt').value.trim();
+            const btn = document.getElementById('btnGenerateGrounded');
+            const loading = document.getElementById('groundedLoadingMsg');
+            const globalStatus = document.getElementById('aiGlobalStatus');
+            const resultBox = document.getElementById('groundedResultBox');
+            const textOutput = document.getElementById('groundedTextOutput');
+            const sourcesContainer = document.getElementById('groundedSourcesContainer');
+            const sourcesList = document.getElementById('groundedSourcesList');
+
+            let topicText = "";
+            if (topic === 'ambiental') {
+                topicText = "Exigências de Licença Prévia (LP) e Licença de Instalação (LI) no Instituto Água e Terra (IAT) para loteamento em Paranaguá, considerações sobre vegetação costeira, drenagem e respeito aos 35% de áreas públicas.";
+            } else if (topic === 'infra') {
+                topicText = "Diretrizes de abastecimento de água e esgoto junto à SANEPAR e infraestrutura elétrica na COPEL para loteamentos residenciais em Paranaguá (PR).";
+            } else {
+                topicText = "Parâmetros do Plano Diretor de Paranaguá, viabilidade para lotes econômicos MCMV (150m² a 200m²) e chácaras de 1.000m² com base na Lei 6.766/79.";
+            }
+
+            const prompt = `Realize uma pesquisa aprofundada e forneça um parecer técnico urbanístico e regulatório sobre a seguinte situação:
+Gleba: 20.000 m² (2,00 hectares) situada nas imediações do município de Paranaguá - PR.
+Reserva pública estipulada no projeto: 35% (7.000 m²) para sistema viário, áreas verdes/ELUP e institucional.
+Foco da consulta: ${topicText}
+Contexto complementar do proprietário: ${extra || "Nenhum contexto adicional fornecido."}
+
+Estruture o parecer em:
+1. Síntese do Enquadramento Normativo (Lei Federal 6.766/79 e Órgãos Estaduais/Municipais de Paranaguá).
+2. Procedimentos e Cuidados Críticos para Aprovação.
+3. Recomendações Estratégicas para o Proprietário da Terra e Parceiro Loteador.
+Mantenha tom técnico de engenharia e urbanismo, direto e fundamentado.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                tools: [{ "google_search": {} }],
+                systemInstruction: {
+                    parts: [{ text: "Você é um renomado Engenheiro Civil e Urbanista especializado em loteamento do solo urbano no Paraná, com amplo conhecimento das diretrizes do IAT, Sanepar e legislação de Paranaguá." }]
+                }
+            };
+
+            btn.disabled = true;
+            loading.classList.remove('hidden');
+            globalStatus.classList.remove('hidden');
+
+            try {
+                const result = await callGemini(payload);
+                const candidate = result.candidates?.[0];
+                const text = candidate?.content?.parts?.[0]?.text;
+
+                if (text) {
+                    textOutput.innerHTML = formatMarkdownToHtml(text);
+                    resultBox.classList.remove('hidden');
+
+                    // Extract Grounding Citations
+                    sourcesList.innerHTML = '';
+                    let sources = [];
+                    const groundingMetadata = candidate.groundingMetadata;
+                    if (groundingMetadata && groundingMetadata.groundingAttributions) {
+                        sources = groundingMetadata.groundingAttributions
+                            .map(attr => ({
+                                uri: attr.web?.uri,
+                                title: attr.web?.title || attr.web?.uri
+                            }))
+                            .filter(s => s.uri && s.title);
+                    }
+
+                    if (sources.length > 0) {
+                        sourcesContainer.classList.remove('hidden');
+                        sources.forEach(src => {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<a href="${src.uri}" target="_blank" rel="noopener noreferrer" class="hover:underline">${escapeHtml(src.title)}</a>`;
+                            sourcesList.appendChild(li);
+                        });
+                    } else {
+                        sourcesContainer.classList.add('hidden');
+                    }
+                } else {
+                    textOutput.innerHTML = `<p class="text-rose-400">Não foi possível processar o parecer no momento. Tente novamente.</p>`;
+                    resultBox.classList.remove('hidden');
+                }
+            } catch (err) {
+                textOutput.innerHTML = `<p class="text-rose-400">Erro na consulta: ${escapeHtml(err.message || 'Falha na conexão com a IA')}</p>`;
+                resultBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                loading.classList.add('hidden');
+                globalStatus.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Generate MoU / Partnership Agreement from live simulator parameters
+         */
+        async function generatePartnershipContract() {
+            const mouType = document.getElementById('mouType').value;
+            const ownerName = document.getElementById('mouOwnerName').value.trim() || "PROPRIETÁRIO DA TERRA";
+            const partnerName = document.getElementById('mouPartnerName').value.trim() || "LOTEADORA PARCEIRA";
+            
+            // Read live values from VGV simulator
+            const scenario = document.getElementById('simScenario').value;
+            const lotPrice = document.getElementById('simLotPrice').value;
+            const costPct = document.getElementById('valCostPct').innerText;
+            const landOwnerPct = document.getElementById('valLandOwnerPct').innerText;
+            const resVGV = document.getElementById('resVGV').innerText;
+            const resLotsText = document.getElementById('resLotsText').innerText;
+            const resOwnerShare = document.getElementById('resOwnerShare').innerText;
+
+            const btn = document.getElementById('btnGenerateContract');
+            const loading = document.getElementById('contractLoadingMsg');
+            const globalStatus = document.getElementById('aiGlobalStatus');
+            const resultBox = document.getElementById('contractResultBox');
+            const textOutput = document.getElementById('contractTextOutput');
+
+            const prompt = `Redija uma Minuta Preliminar de Acordo de Parceria / Memorando de Entendimento (MoU) formal e juridicamente estruturada com base nas seguintes definições de projeto:
+- Objeto: Loteamento e parcelamento de gleba de 20.000,00 m² (2,00 ha) em Paranaguá - PR.
+- Modalidade acordada: ${mouType}.
+- Proprietário da Gleba (Terrenista): ${ownerName}.
+- Parceiro Loteador / Empreendedor: ${partnerName}.
+- Cenário de produto: ${scenario === 'chacara' ? 'Chácaras Urbanas de 1.000 m²' : 'Lotes Econômicos / MCMV'}.
+- Quantidade prevista de lotes: ${resLotsText}.
+- VGV Total Estimado: ${resVGV}.
+- Preço médio unitário de venda: R$ ${parseFloat(lotPrice).toLocaleString('pt-BR')}.
+- Custo estimado de obras assumido pelo Parceiro Loteador: ${costPct} do VGV.
+- Participação líquida do Terrenista: ${landOwnerPct} do resultado (Estimativa atual: ${resOwnerShare}).
+- Reserva pública legal: Dedução expressa de 35% (7.000 m²) para o domínio público municipal conforme Lei 6.766/79.
+
+A minuta deve conter:
+Cláusula 1 - Do Objeto e Identificação da Gleba;
+Cláusula 2 - Das Obrigações do Terrenista (Aporte do Imóvel livre de ônus);
+Cláusula 3 - Das Obrigações do Parceiro Loteador (Projetos, IAT, Sanepar, Copel, Obras e Vendas);
+Cláusula 4 - Do Rateio Econômico e Modalidade de Pagamento;
+Cláusula 5 - Da Prazo de Aprovação, Carência e Condições Resolutivas;
+Cláusula 6 - Do Foro de Paranaguá - PR.
+Mantenha linguagem jurídica clara, equilibrada e proteja o proprietário da terra.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: {
+                    parts: [{ text: "Você é um advogado imobiliário sênior e consultor de loteamentos urbanos com experiência em contratos de permuta e parcerias no estado do Paraná." }]
+                }
+            };
+
+            btn.disabled = true;
+            loading.classList.remove('hidden');
+            globalStatus.classList.remove('hidden');
+
+            try {
+                const result = await callGemini(payload);
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                    textOutput.textContent = text;
+                    resultBox.classList.remove('hidden');
+                } else {
+                    textOutput.textContent = "Não foi possível gerar a minuta contratual. Tente novamente.";
+                    resultBox.classList.remove('hidden');
+                }
+            } catch (err) {
+                textOutput.textContent = "Erro ao estruturar o contrato: " + err.message;
+                resultBox.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                loading.classList.add('hidden');
+                globalStatus.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Send question to Copilot
+         */
+        function setChatPrompt(promptText) {
+            document.getElementById('chatInputPrompt').value = promptText;
+            sendChatQuestion();
+        }
+
+        async function sendChatQuestion() {
+            const input = document.getElementById('chatInputPrompt');
+            const question = input.value.trim();
+            if (!question) return;
+
+            const btn = document.getElementById('btnSendChat');
+            const globalStatus = document.getElementById('aiGlobalStatus');
+            const respArea = document.getElementById('chatResponseArea');
+            const output = document.getElementById('chatOutputContent');
+
+            const prompt = `Contexto do Projeto:
+- Imóvel: Gleba de 20.000,00 m² (2,00 ha) na região de Paranaguá - PR.
+- Balanço legal: 35% pública (7.000m² divididos em 3.600m² sistema viário, 2.200m² verde/ELUP, 1.200m² institucional) e 65% privativa (13.000m²).
+- Tipologias estudadas: Chácaras de 1.000m² (13 lotes) e Casas MCMV de 56,80m² em lotes de 150-200m² (65-86 lotes).
+
+Pergunta técnica do usuário:
+"${question}"
+
+Responda como um engenheiro urbanista consultor especialista em parcelamento do solo, fornecendo números práticos, embasamento legal e dicas construtivas para o proprietário.`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: {
+                    parts: [{ text: "Você é o Copiloto Técnico Urbanístico da Gleba Paranaguá. Seja prático, objetivo e forneça cálculos e orientações claras de engenharia e viabilidade imobiliária." }]
+                }
+            };
+
+            btn.disabled = true;
+            globalStatus.classList.remove('hidden');
+            output.innerHTML = `<p class="text-slate-400 italic">Consultando diretrizes técnicas...</p>`;
+            respArea.classList.remove('hidden');
+
+            try {
+                const result = await callGemini(payload);
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (text) {
+                    output.innerHTML = formatMarkdownToHtml(text);
+                } else {
+                    output.innerHTML = `<p class="text-rose-400">Sem resposta do modelo. Tente reformular a pergunta.</p>`;
+                }
+            } catch (err) {
+                output.innerHTML = `<p class="text-rose-400">Erro: ${escapeHtml(err.message)}</p>`;
+            } finally {
+                btn.disabled = false;
+                globalStatus.classList.add('hidden');
+            }
+        }
+
+        /**
+         * Copy element text to clipboard using document.execCommand('copy')
+         */
+        function copyElementContent(elementId, btnId) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+
+            const textToCopy = el.innerText || el.textContent;
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = textToCopy;
+            tempTextArea.style.position = 'fixed';
+            tempTextArea.style.left = '-999999px';
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+
+            try {
+                document.execCommand('copy');
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    const original = btn.innerText;
+                    btn.innerText = "✓ Copiado!";
+                    setTimeout(() => { btn.innerText = original; }, 2000);
+                }
+            } catch (e) {
+                console.error("Erro ao copiar texto:", e);
+            } finally {
+                document.body.removeChild(tempTextArea);
+            }
+        }
+
+        /**
+         * Basic Markdown to HTML converter for formatted presentation
+         */
+        function formatMarkdownToHtml(md) {
+            if (!md) return '';
+            let html = md
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+
+            // Headers
+            html = html.replace(/^### (.*$)/gim, '<h4 class="font-bold text-teal-300 text-sm mt-3 mb-1">$1</h4>');
+            html = html.replace(/^## (.*$)/gim, '<h3 class="font-bold text-white text-base mt-4 mb-1.5 border-b border-slate-800 pb-1">$1</h3>');
+            html = html.replace(/^# (.*$)/gim, '<h2 class="font-extrabold text-white text-lg mt-4 mb-2">$1</h2>');
+
+            // Bold & Italic
+            html = html.replace(/\*\*(.*?)\*\*/gim, '<strong class="text-amber-300 font-bold">$1</strong>');
+            html = html.replace(/\*(.*?)\*/gim, '<em>$1</em>');
+
+            // Lists
+            html = html.replace(/^\s*[-*]\s+(.*$)/gim, '<li class="ml-4 list-disc text-slate-300 my-0.5">$1</li>');
+            html = html.replace(/^\s*(\d+)\.\s+(.*$)/gim, '<li class="ml-4 list-decimal text-slate-300 my-0.5"><strong class="text-white">$1.</strong> $2</li>');
+
+            // Paragraphs
+            html = html.split('\n\n').map(p => {
+                if (p.startsWith('<h') || p.startsWith('<li')) return p;
+                return `<p class="my-1.5 text-slate-300 leading-relaxed">${p}</p>`;
+            }).join('');
+
+            return html;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+    </script>
+</body>
+</html>

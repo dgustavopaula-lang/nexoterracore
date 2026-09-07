@@ -1,0 +1,268 @@
+const express = require('express');
+const router = express.Router();
+
+const pool = require('../db');
+const NTCoinsService = require('../services/ntcoins-service');
+const NTCoinsConsumoService = require('../services/ntcoins-consumo-service');
+
+/* =========================================================
+   CONTEXTO AUTENTICADO
+   ========================================================= */
+function getContext(req) {
+  const organizacaoId =
+    req.user?.organizacao_id ||
+    req.auth?.organizacao_id;
+
+  const usuarioId =
+    req.user?.id ||
+    req.user?.usuario_id ||
+    req.auth?.usuario_id;
+
+  if (!organizacaoId || !usuarioId) {
+    const err = new Error('Autenticação necessária');
+    err.status = 401;
+    throw err;
+  }
+
+  return {
+    organizacaoId: Number(organizacaoId),
+    usuarioId: Number(usuarioId)
+  };
+}
+
+function requireAdmin(req, res, next) {
+  const perfil = String(
+    req.user?.perfil ||
+    req.user?.role ||
+    req.auth?.perfil ||
+    req.auth?.role ||
+    ''
+  ).toLowerCase();
+
+  const permitido = [
+    'admin',
+    'administrador',
+    'owner',
+    'proprietario',
+    'proprietário',
+    'superadmin'
+  ].includes(perfil);
+
+  if (!permitido) {
+    return res.status(403).json({
+      ok: false,
+      erro: 'Operação restrita à administração'
+    });
+  }
+
+  next();
+}
+
+/* =========================================================
+   GET /api/ntcoins/saldo
+   ========================================================= */
+router.get('/saldo', async (req, res) => {
+  try {
+    const { organizacaoId, usuarioId } = getContext(req);
+
+    const saldo = await NTCoinsService.getSaldo(
+      organizacaoId,
+      usuarioId
+    );
+
+    res.json({
+      ok: true,
+      moeda: 'NTCoins',
+      ...saldo
+    });
+  } catch (error) {
+    res.status(error.status || 400).json({
+      ok: false,
+      erro: error.message
+    });
+  }
+});
+
+/* =========================================================
+   GET /api/ntcoins/extrato
+   ========================================================= */
+router.get('/extrato', async (req, res) => {
+  try {
+    const { organizacaoId, usuarioId } = getContext(req);
+
+    const wallet = await NTCoinsService.getOrCreateWallet(
+      organizacaoId,
+      usuarioId
+    );
+
+    const { rows } = await pool.query(
+      `
+      SELECT
+        id,
+        tipo,
+        quantidade,
+        saldo_anterior,
+        saldo_posterior,
+        descricao,
+        referencia,
+        criado_em
+      FROM ntcoin_transactions
+      WHERE wallet_id = $1
+        AND organizacao_id = $2
+        AND usuario_id = $3
+      ORDER BY criado_em DESC
+      LIMIT 100
+      `,
+      [wallet.id, organizacaoId, usuarioId]
+    );
+
+    res.json({
+      ok: true,
+      moeda: 'NTCoins',
+      saldo: Number(wallet.saldo),
+      admin_isento: wallet.admin_isento,
+      transacoes: rows
+    });
+  } catch (error) {
+    res.status(error.status || 400).json({
+      ok: false,
+      erro: error.message
+    });
+  }
+});
+
+/* =========================================================
+   GET /api/ntcoins/catalogo
+   ========================================================= */
+router.get('/catalogo', async (req, res) => {
+  try {
+    getContext(req);
+
+    const { rows } = await pool.query(
+      `
+      SELECT codigo, nome, descricao, custo, categoria
+      FROM ntcoin_catalog
+      WHERE ativo = TRUE
+      ORDER BY categoria, custo, nome
+      `
+    );
+
+    res.json({
+      ok: true,
+      moeda: 'NTCoins',
+      servicos: rows
+    });
+  } catch (error) {
+    res.status(error.status || 400).json({
+      ok: false,
+      erro: error.message
+    });
+  }
+});
+
+/* =========================================================
+   POST /api/ntcoins/consumir
+   ========================================================= */
+router.post('/consumir', async (req, res) => {
+  try {
+    const { organizacaoId, usuarioId } = getContext(req);
+
+    const { codigo, referencia } = req.body;
+
+    if (!codigo) {
+      return res.status(400).json({
+        ok: false,
+        erro: 'Código do serviço é obrigatório'
+      });
+    }
+
+    const resultado = await NTCoinsConsumoService.consumir({
+      organizacaoId,
+      usuarioId,
+      codigo,
+      referencia
+    });
+
+    res.json(resultado);
+  } catch (error) {
+    res.status(
+      error.message === 'Saldo NTCoins insuficiente'
+        ? 402
+        : (error.status || 400)
+    ).json({
+      ok: false,
+      erro: error.message
+    });
+  }
+});
+
+/* =========================================================
+   POST /api/ntcoins/creditar
+   SOMENTE ADMINISTRAÇÃO
+   ========================================================= */
+router.post('/creditar', requireAdmin, async (req, res) => {
+  try {
+    const { organizacaoId, usuarioId } = getContext(req);
+
+    const alvoUsuarioId =
+      Number(req.body.usuario_id) || usuarioId;
+
+    const transacao = await NTCoinsService.creditar({
+      organizacaoId,
+      usuarioId: alvoUsuarioId,
+      quantidade: req.body.quantidade,
+      tipo: req.body.tipo || 'CREDITO',
+      descricao: req.body.descricao,
+      referencia: req.body.referencia
+    });
+
+    res.status(201).json({
+      ok: true,
+      moeda: 'NTCoins',
+      transacao
+    });
+  } catch (error) {
+    res.status(error.status || 400).json({
+      ok: false,
+      erro: error.message
+    });
+  }
+});
+
+/* =========================================================
+   POST /api/ntcoins/debitar
+   AJUSTE MANUAL — SOMENTE ADMIN
+   ========================================================= */
+router.post('/debitar', requireAdmin, async (req, res) => {
+  try {
+    const { organizacaoId, usuarioId } = getContext(req);
+
+    const alvoUsuarioId =
+      Number(req.body.usuario_id) || usuarioId;
+
+    const transacao = await NTCoinsService.debitar({
+      organizacaoId,
+      usuarioId: alvoUsuarioId,
+      quantidade: req.body.quantidade,
+      descricao: req.body.descricao || 'Ajuste administrativo',
+      referencia: req.body.referencia
+    });
+
+    res.json({
+      ok: true,
+      moeda: 'NTCoins',
+      transacao
+    });
+  } catch (error) {
+    res.status(
+      error.message === 'Saldo NTCoins insuficiente'
+        ? 402
+        : (error.status || 400)
+    ).json({
+      ok: false,
+      erro: error.message
+    });
+  }
+});
+
+module.exports = router;

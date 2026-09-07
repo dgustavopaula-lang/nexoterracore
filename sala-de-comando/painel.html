@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NexoTerraCore — Sala de Comando</title>
   <link rel="stylesheet" href="./css/style.css">
+
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#071419">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NexoTerraCore">
+<link rel="apple-touch-icon" href="./icons/nexoterracore-192.png">
+
 </head>
 
 <body>
@@ -27,6 +36,7 @@
         <button class="menu-item" data-view="financeiro">Financeiro</button>
         <button class="menu-item" data-view="mapas">Mapas</button>
         <button class="menu-item" data-view="api">API / Control Plane</button>
+        <button class="menu-item" data-view="turing">Turing</button>
         <button class="menu-item" data-view="administracao">Administração</button>
       </nav>
 
@@ -265,7 +275,12 @@
         <div class="section-header">
           <div>
             <h2>Financeiro / Contabilidade</h2>
-            <p>Centro financeiro, custos, orçamento e resultado operacional.</p>
+            <p>Receitas, despesas, contas, fluxo de caixa e resultado operacional.</p>
+          </div>
+          <div class="section-actions">
+            <button id="btnAtualizarFinanceiro" class="btn-primary" type="button">
+              Atualizar valores
+            </button>
           </div>
         </div>
 
@@ -284,26 +299,91 @@
           </article>
         </div>
 
-        <div class="operational-grid">
+        <div class="operational-grid finance-layout">
           <article class="operation-panel">
-            <h3>Custos agrícolas</h3>
-            <p>Custo por hectare</p><strong>—</strong>
-            <p>Custo por tonelada</p><strong>—</strong>
-            <p>Custo por saca 60 kg</p><strong>—</strong>
+            <h3>Novo lançamento</h3>
+
+            <form id="formFinanceiro" class="finance-form">
+              <label>
+                Tipo
+                <select name="tipo" required>
+                  <option value="receita">Receita</option>
+                  <option value="despesa">Despesa</option>
+                </select>
+              </label>
+
+              <label>
+                Descrição
+                <input name="descricao" maxlength="180" required>
+              </label>
+
+              <label>
+                Categoria
+                <input name="categoria" value="Geral" maxlength="100" required>
+              </label>
+
+              <label>
+                Centro de custo
+                <input name="centroCusto" value="Administrativo" maxlength="100" required>
+              </label>
+
+              <label>
+                Valor
+                <input name="valor" type="number" min="0.01" step="0.01" required>
+              </label>
+
+              <label>
+                Vencimento
+                <input name="vencimento" type="date">
+              </label>
+
+              <label>
+                Status
+                <select name="status" required>
+                  <option value="aberto">Em aberto</option>
+                  <option value="pago">Pago</option>
+                  <option value="recebido">Recebido</option>
+                  <option value="vencido">Vencido</option>
+                </select>
+              </label>
+
+              <label>
+                Observação
+                <textarea name="observacao" rows="3"></textarea>
+              </label>
+
+              <button class="btn-primary" type="submit">
+                Salvar lançamento
+              </button>
+            </form>
+
+            <p id="finMensagem" class="module-message">
+              Aguardando atualização.
+            </p>
           </article>
 
-          <article class="operation-panel">
-            <h3>Contabilidade</h3>
-            <p>Contas a pagar</p><strong>R$ 0,00</strong>
-            <p>Contas a receber</p><strong>R$ 0,00</strong>
-            <p>Fluxo de caixa</p><strong>R$ 0,00</strong>
-          </article>
+          <article class="operation-panel finance-history">
+            <h3>Lançamentos</h3>
 
-          <article class="operation-panel">
-            <h3>Planejamento</h3>
-            <p>Meta</p><strong>—</strong>
-            <p>Orçamento x realizado</p><strong>—</strong>
-            <p>Margem operacional</p><strong>—</strong>
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tipo</th>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Valor</th>
+                    <th>Vencimento</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="finLancamentos">
+                  <tr>
+                    <td colspan="6">Carregando dados...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </article>
         </div>
       </section>
@@ -413,6 +493,75 @@
           </div>
         </div>
 
+      </section>
+
+
+      <section id="view-turing" class="content view">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow">INTELIGÊNCIA NEXOTERRACORE</span>
+            <h2>Turing Chat</h2>
+            <p>Agente de IA integrado ao núcleo, à API e ao contexto autorizado da Sala de Comando.</p>
+          </div>
+
+          <div class="section-actions">
+            <button id="btnTuringLimpar" class="btn-secondary" type="button">
+              Nova conversa
+            </button>
+          </div>
+        </div>
+
+        <div class="turing-shell">
+          <aside class="turing-context">
+            <div class="turing-orb">T</div>
+
+            <strong>Turing</strong>
+            <span>Agente operacional NexoTerraCore</span>
+
+            <div id="turingStatus" class="turing-status">
+              Turing aguardando login
+            </div>
+
+            <div class="turing-context-card">
+              <span>Integração</span>
+              <strong>NexoTerraCore API</strong>
+            </div>
+
+            <div class="turing-context-card">
+              <span>Segurança</span>
+              <strong>Sessão autenticada</strong>
+            </div>
+
+            <div class="turing-context-card">
+              <span>Arquitetura</span>
+              <strong>Multiempresa</strong>
+            </div>
+          </aside>
+
+          <div class="turing-chat">
+            <div id="turingMensagens" class="turing-messages"></div>
+
+            <div class="turing-compose">
+              <textarea
+                id="turingInput"
+                rows="3"
+                placeholder="Pergunte ao Turing sobre dados, operações, patrimônio, agro, API ou contexto autorizado..."
+              ></textarea>
+
+              <div class="turing-compose-footer">
+                <small>Ctrl + Enter para enviar</small>
+
+                <button
+                  id="btnTuringEnviar"
+                  class="btn-primary"
+                  type="button"
+                >
+                  Enviar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="view-administracao" class="content view">
@@ -928,8 +1077,10 @@
   </div>
 
   <script src="./js/app.js"></script>
+<script src="./js/financeiro.js"></script>
   <script src="./js/clientes.js"></script>
   <script src="./js/mapas.js"></script>
+  <script src="./js/turing.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("btnSidebar");
@@ -966,6 +1117,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
+</script>
+
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("./service-worker.js")
+      .then(() => console.log("NexoTerraCore PWA ativo"))
+      .catch(err => console.error("Erro PWA:", err));
+  });
+}
 </script>
 
 </body>

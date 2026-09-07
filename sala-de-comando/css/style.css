@@ -1493,3 +1493,303 @@ body {
     padding: 38px 26px;
   }
 }
+
+/* Financeiro / Contabilidade */
+.finance-layout {
+  grid-template-columns: minmax(300px, 0.75fr) minmax(0, 1.6fr);
+  align-items: start;
+}
+
+.finance-layout .operation-panel,
+.finance-history {
+  min-width: 0;
+}
+
+.finance-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.finance-form label {
+  display: grid;
+  gap: 7px;
+  color: #a8b8c1;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.finance-form input,
+.finance-form select,
+.finance-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #173e43;
+  border-radius: 12px;
+  background: #06191d;
+  color: #eef8f7;
+  padding: 13px 14px;
+  font: inherit;
+  outline: none;
+}
+
+.finance-form input:focus,
+.finance-form select:focus,
+.finance-form textarea:focus {
+  border-color: #08dfaa;
+  box-shadow: 0 0 0 3px rgba(8, 223, 170, 0.1);
+}
+
+.finance-form textarea {
+  resize: vertical;
+}
+
+.finance-form .btn-primary {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.module-message {
+  margin-top: 18px;
+  color: #86a0a5;
+  font-size: 0.88rem;
+}
+
+.module-message.erro {
+  color: #ff7b7b;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 18px;
+}
+
+.data-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+}
+
+.data-table th,
+.data-table td {
+  padding: 15px 12px;
+  border-bottom: 1px solid #17343a;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.data-table th {
+  color: #7f969c;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.data-table td {
+  color: #dce8e8;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1050px) {
+  .finance-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =========================================================
+   NEXOTERRACORE TURING CHAT
+   ========================================================= */
+
+.turing-shell {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 20px;
+  min-height: 620px;
+}
+
+.turing-context,
+.turing-chat {
+  background: #111317;
+  border: 1px solid #292c32;
+  border-radius: 18px;
+}
+
+.turing-context {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.turing-orb {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: #ff6b1a;
+  color: #090a0c;
+  font-size: 24px;
+  font-weight: 900;
+  box-shadow: 0 0 35px rgba(255, 107, 26, .18);
+}
+
+.turing-context > strong {
+  font-size: 22px;
+}
+
+.turing-context > span {
+  color: #8f9299;
+  font-size: 13px;
+}
+
+.turing-status {
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #1a1d22;
+  color: #a7a9af;
+  font-size: 12px;
+}
+
+.turing-status.online {
+  color: #f5f5f5;
+  border-left: 3px solid #ff6b1a;
+}
+
+.turing-context-card {
+  padding: 14px;
+  background: #0b0d10;
+  border: 1px solid #22252b;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.turing-context-card span {
+  color: #73767e;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.turing-context-card strong {
+  font-size: 13px;
+  color: #e7e7e8;
+}
+
+.turing-chat {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.turing-messages {
+  flex: 1;
+  min-height: 430px;
+  max-height: 560px;
+  overflow-y: auto;
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.turing-message {
+  max-width: 82%;
+  padding: 15px 17px;
+  border-radius: 14px;
+  background: #181b20;
+  border: 1px solid #292c32;
+}
+
+.turing-message.usuario {
+  align-self: flex-end;
+  background: #21150f;
+  border-color: #55301b;
+}
+
+.turing-message.turing {
+  align-self: flex-start;
+}
+
+.turing-message.erro {
+  border-color: #7a3030;
+}
+
+.turing-message-author {
+  margin-bottom: 7px;
+  color: #ff6b1a;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.turing-message.usuario .turing-message-author {
+  color: #d7d7d9;
+}
+
+.turing-message-content {
+  color: #e9e9ea;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.turing-fontes {
+  margin-top: 12px;
+  color: #73767e;
+  font-size: 10px;
+}
+
+.turing-compose {
+  padding: 18px;
+  background: #0b0d10;
+  border-top: 1px solid #292c32;
+}
+
+#turingInput {
+  width: 100%;
+  resize: vertical;
+  box-sizing: border-box;
+  background: #111317;
+  color: #f5f5f5;
+  border: 1px solid #343840;
+  border-radius: 12px;
+  padding: 14px;
+  font: inherit;
+  outline: none;
+}
+
+#turingInput:focus {
+  border-color: #ff6b1a;
+}
+
+.turing-compose-footer {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.turing-compose-footer small {
+  color: #73767e;
+}
+
+@media (max-width: 900px) {
+  .turing-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .turing-context {
+    min-height: auto;
+  }
+
+  .turing-message {
+    max-width: 94%;
+  }
+}

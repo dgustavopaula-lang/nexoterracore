@@ -69,6 +69,7 @@ const SalaDeComando = {
 
     btnSair.addEventListener("click", () => {
       this.token = null;
+      window.nexoAuthToken = null;
       this.desafioLogin = null;
 
       document.querySelector("#statusSessao").textContent =
@@ -189,6 +190,7 @@ const SalaDeComando = {
 
   ativarSessao(sessao) {
     this.token = sessao.token;
+    window.nexoAuthToken = sessao.token;
     this.desafioLogin = null;
 
     const nome =

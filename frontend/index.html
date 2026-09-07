@@ -16,6 +16,7 @@
     .registro{border-left:4px solid var(--gold)}.registro button{width:auto;margin-top:10px;padding:9px 12px;background:#7b3434;font-size:14px}.status-ok{color:var(--ok)}.status-warn{color:var(--warn)}.status-danger{color:var(--danger)}.mensagem{color:var(--ok);font-weight:bold}.nota{padding:12px;border:1px solid var(--border);border-radius:8px;background:#0b1e33}
     @media(max-width:600px){main{width:94%;margin:20px auto;padding:20px}.resumo{grid-template-columns:1fr}header{padding:22px 4%}}
   </style>
+    <link rel="stylesheet" href="ntcoins-wallet.css">
 </head>
 <body>
   <header><h1>NexoTerraCore</h1><p>Central Inteligente de Gestão Rural</p></header>
@@ -55,5 +56,6 @@
     function salvarDiagnostico(e){e.preventDefault();const f=e.target;gravar('nexoterra_diagnosticos',{problema:f.problema.value,prioridade:f.prioridade.value,acao:f.acao.value});abrirDiagnostico();document.querySelector('#mensagem').textContent='Diagnóstico salvo.'}
     abrirPainel();
   </script>
+    <script src="ntcoins-wallet.js"></script>
 </body>
 </html>

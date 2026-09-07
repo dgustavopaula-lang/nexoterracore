@@ -12,12 +12,33 @@ const { criarMiddlewaresAuth } = require("./middleware/auth");
 const { criarRateLimitApiKey } = require("./middleware/rate-limit");
 const { criarMeteringApiKey } = require("./middleware/metering");
 const {
+  criarLimitador,
+  monitorarSeguranca,
+  exigirJson
+} = require("./middleware/security-monitor");
+const {
   ErroAssistente,
   responderPergunta
 } = require("./services/assistente");
 require("dotenv").config();
+const {
+  garantirEstruturaFinanceira,
+  criarRouterFinanceiro
+} = require("./modules/financeiro");
+const ntcoinsRoutes = require('./routes/ntcoins');
+const { cobrarNTCoins } = require('./middleware/ntcoins');
+const ntcoinsWebhookRoutes = require('./routes/ntcoins-webhook');
+const path = require('path');
+const ntcoinsPaypalRoutes = require('./routes/ntcoins-paypal');
+
 
 const app = express();
+
+app.disable("x-powered-by");
+
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 const PORT = Number(process.env.PORT) || 3000;
 const SESSION_TTL_HOURS =
   process.env.SESSION_TTL_HOURS === undefined
@@ -69,7 +90,45 @@ const { autenticar, autorizar } = criarMiddlewaresAuth(pool);
 const rateLimitApiKey = criarRateLimitApiKey({ janelaMs: 60_000, max: 60 });
 const meteringApiKey = criarMeteringApiKey(pool);
 
-app.use(helmet());
+const limiteGlobal = criarLimitador({
+  nome: "global",
+  janelaMs: 60_000,
+  max: 240
+});
+
+const limiteLogin = criarLimitador({
+  nome: "login",
+  janelaMs: 15 * 60_000,
+  max: 8
+});
+
+const limiteSelecaoFazenda = criarLimitador({
+  nome: "selecao_fazenda",
+  janelaMs: 15 * 60_000,
+  max: 15
+});
+
+const limiteTuring = criarLimitador({
+  nome: "turing",
+  janelaMs: 60_000,
+  max: 30
+});
+
+app.use(
+  helmet({
+    hsts:
+      process.env.NODE_ENV === "production"
+        ? {
+            maxAge: 31536000,
+            includeSubDomains: true,
+            preload: true
+          }
+        : false
+  })
+);
+
+app.use(monitorarSeguranca);
+app.use(limiteGlobal);
 
 app.use(
   cors({
@@ -85,7 +144,8 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: "200kb" }));
+app.use(express.json({ limit: "64kb", strict: true }));
+app.use(exigirJson);
 
 function lerId(valor) {
   const id = Number(valor);
@@ -416,7 +476,7 @@ function listarFazendasPermitidas(vinculos) {
   }));
 }
 
-app.post("/api/auth/login", async (req, res) => {
+app.post("/api/auth/login", limiteLogin, async (req, res) => {
   const email =
     typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
   const senha = typeof req.body?.senha === "string" ? req.body.senha : "";
@@ -486,7 +546,7 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-app.post("/api/auth/selecionar-fazenda", async (req, res) => {
+app.post("/api/auth/selecionar-fazenda", limiteSelecaoFazenda, async (req, res) => {
   const desafio = typeof req.body?.desafio === "string" ? req.body.desafio : "";
   const fazendaId = lerId(req.body?.fazendaId);
 
@@ -732,7 +792,8 @@ app.delete(
   }
 );
 
-app.post("/api/assistente/perguntar", autenticar, async (req, res, next) => {
+app.post("/api/assistente/perguntar",
+  cobrarNTCoins('TURING_PERGUNTA'), autenticar, limiteTuring, async (req, res, next) => {
   const pergunta = typeof req.body?.pergunta === "string" ? req.body.pergunta.trim() : "";
 
   if (!pergunta || pergunta.length > 500) {
@@ -1895,6 +1956,17 @@ app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });
 });
 
+app.use(
+  "/api/financeiro",
+  criarRouterFinanceiro({
+    pool,
+    autenticar,
+    comTransacao,
+    registrarAuditoria,
+    lerId
+  })
+);
+
 app.use((erro, req, res, next) => {
   if (res.headersSent) {
     return next(erro);
@@ -1924,6 +1996,7 @@ app.use((erro, req, res, next) => {
 });
 
 async function iniciarServidor() {
+  await garantirEstruturaFinanceira(pool);
   const migration = await pool.query(
     "SELECT 1 FROM schema_migrations WHERE versao = $1",
     ["003_desafios_login_multifazenda"]
@@ -1933,7 +2006,34 @@ async function iniciarServidor() {
     throw new Error("A migration de autenticação ainda não foi aplicada.");
   }
 
-  app.listen(PORT, () => {
+  app.use('/api/ntcoins', ntcoinsRoutes);
+
+app.use('/api/ntcoins/webhook', ntcoinsWebhookRoutes);
+
+
+app.use(
+  '/api/ntcoins/paypal',
+  ntcoinsPaypalRoutes
+);
+
+const ntcFrontendPath =
+  path.join(__dirname, '../../frontend');
+
+app.use(
+  '/app',
+  express.static(ntcFrontendPath)
+);
+
+app.get('/app/*', (req, res) => {
+  res.sendFile(
+    path.join(
+      ntcFrontendPath,
+      'index.html'
+    )
+  );
+});
+
+app.listen(PORT, () => {
     console.log(`NexoTerraCore API: http://localhost:${PORT}`);
   });
 }
