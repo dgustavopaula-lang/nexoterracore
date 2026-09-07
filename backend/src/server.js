@@ -1956,18 +1956,23 @@ app.post("/api/imoveis", autenticar, autorizar("imoveis", "POST"), async (req, r
 // =========================================================
 // NEXOTERRACORE WEB APP
 // =========================================================
-const frontendPath = path.join(__dirname, "../../frontend");
+const consolePath = path.join(
+  __dirname,
+  "../../sala-de-comando"
+);
+
+app.get(["/app", "/app/"], (req, res) => {
+  res.sendFile(
+    path.join(consolePath, "painel.html")
+  );
+});
 
 app.use(
   "/app",
-  express.static(frontendPath)
+  express.static(consolePath, {
+    index: false
+  })
 );
-
-app.get("/app", (req, res) => {
-  res.sendFile(
-    path.join(frontendPath, "index.html")
-  );
-});
 
 
 // =========================================================
