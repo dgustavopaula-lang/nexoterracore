@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const helmet = require("helmet");
 const { Pool } = require("pg");
@@ -28,7 +29,6 @@ const {
 const ntcoinsRoutes = require('./routes/ntcoins');
 const { cobrarNTCoins } = require('./middleware/ntcoins');
 const ntcoinsWebhookRoutes = require('./routes/ntcoins-webhook');
-const path = require('path');
 const ntcoinsPaypalRoutes = require('./routes/ntcoins-paypal');
 
 
@@ -1969,6 +1969,14 @@ app.get("/app", (req, res) => {
   );
 });
 
+
+// =========================================================
+// NTCOINS + PAYPAL
+// =========================================================
+app.use('/api/ntcoins/webhook', ntcoinsWebhookRoutes);
+app.use('/api/ntcoins/paypal', ntcoinsPaypalRoutes);
+app.use('/api/ntcoins', ntcoinsRoutes);
+
 app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });
 });
@@ -2023,34 +2031,7 @@ async function iniciarServidor() {
     throw new Error("A migration de autenticação ainda não foi aplicada.");
   }
 
-  app.use('/api/ntcoins', ntcoinsRoutes);
-
-app.use('/api/ntcoins/webhook', ntcoinsWebhookRoutes);
-
-
-app.use(
-  '/api/ntcoins/paypal',
-  ntcoinsPaypalRoutes
-);
-
-const ntcFrontendPath =
-  path.join(__dirname, '../../frontend');
-
-app.use(
-  '/app',
-  express.static(ntcFrontendPath)
-);
-
-app.get('/app/*', (req, res) => {
-  res.sendFile(
-    path.join(
-      ntcFrontendPath,
-      'index.html'
-    )
-  );
-});
-
-app.listen(PORT, () => {
+  app.listen(PORT, () => {
     console.log(`NexoTerraCore API: http://localhost:${PORT}`);
   });
 }
