@@ -1,9 +1,12 @@
 (() => {
   "use strict";
 
-  const API_BASE = ["localhost", "127.0.0.1"].includes(window.location.hostname)
-    ? "http://localhost:3000"
-    : "https://nexoterracore-api.onrender.com";
+  const API_BASE =
+    window.location.port === "3000"
+      ? window.location.origin
+      : ["localhost", "127.0.0.1"].includes(window.location.hostname)
+        ? "http://localhost:3000"
+        : "https://nexoterracore-api.onrender.com";
 
   const state = {
     token: null,
