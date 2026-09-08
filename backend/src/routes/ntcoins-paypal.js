@@ -110,15 +110,17 @@ router.post('/criar', async (req, res) => {
       ]
     );
 
-    const origin =
-      `${req.protocol}://${req.get('host')}`;
+    const turingPublicUrl = String(
+      process.env.TURING_PUBLIC_URL ||
+      'https://turing.gustavopaulasantos.com.br/'
+    ).replace(/\/+$/, '');
 
     const returnUrl =
-      `${origin}/app/?ntcoins=paypal-return` +
+      `${turingPublicUrl}/?ntcoins=paypal-return` +
       `&pedido=${encodeURIComponent(pedidoId)}`;
 
     const cancelUrl =
-      `${origin}/app/?ntcoins=paypal-cancel`;
+      `${turingPublicUrl}/?ntcoins=paypal-cancel`;
 
     let paypal;
 
