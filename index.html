@@ -1,104 +1,191 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>NexoTerraCore</title>
-  <style>
-    :root{--n:#0b1428;--c:#13213c;--d:#d7a84a;--t:#eef4ff;--m:#aab9d5}*{box-sizing:border-box}body{margin:0;background:var(--n);color:var(--t);font:16px Arial}header,main{max-width:850px;margin:auto;padding:18px}header{display:flex;justify-content:space-between;align-items:center}b{font-size:21px}b span,.hero p{color:var(--d)}small,.muted{color:var(--m)}button,input,select,textarea{font:inherit;border-radius:12px;padding:13px;border:1px solid #35507d}button{background:var(--c);color:var(--t);cursor:pointer}.hero,#area,.cards div,.menu button{background:var(--c);border:1px solid #22395f;border-radius:16px}.hero,#area{padding:20px}.hero h1{margin:6px 0}.cards,.menu{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:15px 0}.cards div{padding:16px}.cards strong{font-size:25px;display:block;color:var(--d);margin-top:6px}.menu button{text-align:left;min-height:70px;font-weight:bold}form{display:grid;gap:10px;margin-top:15px}input,select,textarea{width:100%;background:#091326;color:#fff}textarea{min-height:90px;resize:vertical}form button{background:var(--d);color:#141414;border:0;font-weight:bold}.item{border-top:1px solid #294267;padding:12px 0;display:flex;justify-content:space-between;gap:10px}.item-acoes{display:flex;align-items:center;gap:7px}.item-acoes button{padding:9px;width:auto}.perigo{background:#7b3434}.mensagem{color:#7ee787}.erro{color:#ff7b72}@media(max-width:600px){header,main{padding:14px}.cards,.menu{grid-template-columns:repeat(2,1fr)}header button{font-size:12px;padding:9px}.item{display:block}.item-acoes{margin-top:10px}}
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090C10">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Turing">
+  <title>Turing — NexoTerraCore</title>
+  <link rel="manifest" href="/sala-de-comando/turing/manifest.json">
+  <link rel="apple-touch-icon" href="/sala-de-comando/icons/nexoterracore-192.png">
+  <link rel="stylesheet" href="/sala-de-comando/turing/style.css">
 </head>
 <body>
-  <header><div><b>NEXOTERRA<span>CORE</span></b><small>Central Inteligente de Gestão Rural</small></div><button onclick="exp()">Exportar dados</button></header>
-  <main><section class="hero"><p>FAZENDA PIPE</p><h1>Painel do gerente</h1><small id="data"></small></section><section id="cards" class="cards"></section><section class="menu"><button onclick="abrir('producao')">🌾 Produção</button><button onclick="abrir('financeiro')">R$ Financeiro</button><button onclick="abrir('atividades')">✓ Atividades</button><button onclick="abrir('maquinas')">⚙ Máquinas</button><button onclick="abrir('diagnostico')">! Diagnóstico</button></section><section id="area"></section></main>
-  <script>
-    const API='http://localhost:3000/api';
-    const M={producao:['Produto','Quantidade'],atividades:['Atividade','Responsável'],diagnostico:['Problema','Prioridade']};
-    const g=x=>document.getElementById(x);
-    const ler=k=>JSON.parse(localStorage.getItem('nexoterra_'+k)||'[]');
-    const salvar=(k,v)=>localStorage.setItem('nexoterra_'+k,JSON.stringify(v));
-    const escapar=t=>String(t??'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;');
-    const hoje=()=>new Date().toISOString().slice(0,10);
-    const dinheiro=valor=>Number(valor||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-    let maquinaEmEdicao=null;
-    let financeiroEmEdicao=null;
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div>
+          <strong>Turing</strong>
+          <span>NexoTerraCore</span>
+        </div>
+      </div>
 
-    g('data').textContent=new Date().toLocaleDateString('pt-BR',{dateStyle:'full'});
+      <div class="topbar-actions">
+        <button id="ntcBadge" class="ntc-badge" type="button" data-view-target="wallet" aria-label="Abrir carteira NTCoins">
+          <span>NTC</span>
+          <strong id="ntcBalance">—</strong>
+        </button>
+        <button id="accountButton" class="avatar-button" type="button" data-view-target="profile" aria-label="Abrir conta">G</button>
+      </div>
+    </header>
 
-    async function listarMaquinas(){const resposta=await fetch(`${API}/maquinas`);if(!resposta.ok)throw new Error('API indisponível');return resposta.json()}
-    async function listarFinanceiro(){const resposta=await fetch(`${API}/financeiro`);if(!resposta.ok)throw new Error('API indisponível');return resposta.json()}
-    async function resumoFinanceiro(){const resposta=await fetch(`${API}/financeiro/resumo`);if(!resposta.ok)throw new Error('API indisponível');return resposta.json()}
+    <main class="workspace">
+      <section id="view-chat" class="view active" data-view="chat">
+        <div class="chat-head">
+          <div>
+            <span class="eyebrow">INTELIGÊNCIA OPERACIONAL</span>
+            <h1>Olá. Sou o Turing.</h1>
+            <p>Conectado ao núcleo NexoTerraCore para trabalhar com dados, cálculos e contexto autorizado.</p>
+          </div>
+          <div id="turingStatus" class="status-pill">Aguardando acesso</div>
+        </div>
 
-    async function painel(){
-      const p=ler('producao'),a=ler('atividades');let maquinas=[],resumo={saldo:0},banco='PostgreSQL conectado';
-      try{[maquinas,resumo]=await Promise.all([listarMaquinas(),resumoFinanceiro()])}catch{banco='Backend indisponível'}
-      g('cards').innerHTML=`<div>Produções<strong>${p.length}</strong></div><div>Saldo<strong>${dinheiro(resumo.saldo)}</strong></div><div>Atividades<strong>${a.length}</strong></div><div>Máquinas<strong>${maquinas.length}</strong><small>${banco}</small></div>`;
-    }
+        <div class="quick-grid" aria-label="Ações rápidas">
+          <button class="quick-action" type="button" data-prompt="Analise os dados disponíveis e destaque os pontos mais importantes.">
+            <span>Analisar dados</span>
+            <small>Resumo e prioridades</small>
+          </button>
+          <button class="quick-action" type="button" data-prompt="Ajude-me com uma análise do agronegócio e das operações rurais.">
+            <span>Agro e operação</span>
+            <small>Produção e gestão</small>
+          </button>
+          <button class="quick-action" type="button" data-prompt="Faça um cálculo operacional ou financeiro para mim.">
+            <span>Cálculos</span>
+            <small>Turing Math Engine</small>
+          </button>
+          <button class="quick-action" type="button" data-prompt="Ajude-me a organizar e interpretar um documento ou informação técnica.">
+            <span>Documentos</span>
+            <small>Organização e leitura</small>
+          </button>
+        </div>
 
-    function abrir(k){
-      if(k==='maquinas'){abrirMaquinas();return}
-      if(k==='financeiro'){abrirFinanceiro();return}
-      const [a,b]=M[k],r=ler(k);
-      g('area').innerHTML=`<h2>${k[0].toUpperCase()+k.slice(1)}</h2><p class="muted">Registros salvos neste aparelho.</p><form id="form"><input required name="a" placeholder="${a}"><input required name="b" placeholder="${b}" ${k==='financeiro'?'type="number"':''}><input type="date" name="data" value="${hoje()}"><button>Salvar registro</button></form>${r.slice().reverse().map((x,i)=>`<div class="item"><span><b>${escapar(x.a)}</b><br><small>${escapar(x.b)} · ${escapar(x.data)}</small></span><button onclick="apagar('${k}',${r.length-1-i})">Excluir</button></div>`).join('')||'<p class="muted">Nenhum registro ainda.</p>'}`;
-      g('form').onsubmit=e=>{e.preventDefault();salvar(k,[...r,Object.fromEntries(new FormData(e.target))]);abrir(k);painel()};
-    }
+        <div id="messages" class="messages" aria-live="polite">
+          <article class="message turing">
+            <div class="message-author">Turing</div>
+            <div class="message-bubble">Estou pronto. Para consultar o núcleo NexoTerraCore, entre com sua conta.</div>
+          </article>
+        </div>
+      </section>
 
-    async function abrirMaquinas(mensagem='',erro=false){
-      maquinaEmEdicao=null;g('area').innerHTML='<h2>Máquinas</h2><p class="muted">Carregando dados do PostgreSQL...</p>';let registros;
-      try{registros=await listarMaquinas()}catch{g('area').innerHTML='<h2>Máquinas</h2><p class="erro">Backend indisponível. Inicie a API na porta 3000.</p>';return}
-      const lista=registros.map(i=>`<div class="item"><span><b>${escapar(i.nome)}</b><br><small>${escapar(i.modelo||'Sem modelo')} · ${escapar(i.operacao)} · ${escapar(i.horimetro)} h · ${escapar(String(i.data_operacao).slice(0,10))}<br>Status: ${escapar(i.status)} · Próxima revisão: ${escapar(i.proxima_revisao)} h · Combustível: ${escapar(i.combustivel)} L${i.observacao?`<br>${escapar(i.observacao)}`:''}</small></span><span class="item-acoes"><button onclick="editarMaquina(${Number(i.id)})">Editar</button><button class="perigo" onclick="excluirMaquina(${Number(i.id)})">Excluir</button></span></div>`).join('')||'<p class="muted">Nenhuma máquina cadastrada.</p>';
-      g('area').innerHTML=`<h2>Máquinas</h2><p class="muted">Cadastro real pela API NexoTerraCore e PostgreSQL.</p><form id="form-maquina"><input required maxlength="120" name="maquina" placeholder="Máquina"><input maxlength="120" name="modelo" placeholder="Modelo"><input maxlength="120" name="numeroSerie" placeholder="Número de série"><select required name="operacao"><option value="">Selecione a operação</option><option>Plantio</option><option>Colheita</option><option>Preparo do solo</option><option>Pulverização</option><option>Transporte</option><option>Manutenção</option></select><input required type="number" min="0" step="0.1" name="horimetro" placeholder="Horímetro atual"><input required type="number" min="0" step="0.1" name="proximaRevisao" placeholder="Próxima revisão (horas)"><input required type="number" min="0" step="0.1" name="combustivel" placeholder="Combustível consumido (litros)"><input required type="date" name="data" value="${hoje()}"><select required name="status"><option>Ativa</option><option>Manutenção</option><option>Inativa</option></select><textarea name="observacao" placeholder="Observação"></textarea><button id="salvar-maquina">Cadastrar máquina</button><button id="cancelar-edicao" type="button" onclick="abrirMaquinas('Edição cancelada.')" hidden>Cancelar edição</button></form><p id="mensagem-maquina" class="${erro?'erro':'mensagem'}">${escapar(mensagem)}</p><h3>Máquinas cadastradas</h3>${lista}`;
-      g('form-maquina').onsubmit=salvarMaquina;painel();
-    }
+      <section id="view-wallet" class="view" data-view="wallet">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">CARTEIRA</span>
+            <h2>NTCoins</h2>
+            <p>Créditos internos de utilidade do ecossistema NexoTerraCore.</p>
+          </div>
+          <button id="refreshWallet" class="secondary-button" type="button">Atualizar</button>
+        </div>
 
-    function mensagemMaquina(texto,erro=false){const mensagem=g('mensagem-maquina');if(!mensagem)return;mensagem.textContent=texto;mensagem.className=erro?'erro':'mensagem'}
+        <div class="wallet-balance-card">
+          <span>Saldo disponível</span>
+          <strong><span id="walletBalance">—</span> NTC</strong>
+          <small id="walletProfile">Entre para consultar sua carteira.</small>
+        </div>
 
-    async function salvarMaquina(evento){
-      evento.preventDefault();const f=evento.target,id=maquinaEmEdicao,botao=g('salvar-maquina');botao.disabled=true;mensagemMaquina(id?'Atualizando...':'Cadastrando...');
-      const dados={maquina:f.maquina.value,modelo:f.modelo.value,numeroSerie:f.numeroSerie.value,operacao:f.operacao.value,horimetro:Number(f.horimetro.value),proximaRevisao:Number(f.proximaRevisao.value),combustivel:Number(f.combustivel.value),data:f.data.value,status:f.status.value,observacao:f.observacao.value};
-      try{const resposta=await fetch(id?`${API}/maquinas/${id}`:`${API}/maquinas`,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(dados)});const resultado=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(resultado.erro||'Não foi possível salvar a máquina.');await abrirMaquinas(id?'Máquina atualizada no PostgreSQL.':'Máquina cadastrada no PostgreSQL.')}catch(erro){mensagemMaquina(erro.message,true);botao.disabled=false}
-    }
+        <div class="panel-card">
+          <div class="panel-title">
+            <h3>Movimentações recentes</h3>
+          </div>
+          <div id="walletTransactions" class="transaction-list">
+            <p class="muted">Nenhuma sessão autenticada.</p>
+          </div>
+        </div>
+      </section>
 
-    async function editarMaquina(id){
-      mensagemMaquina('Carregando máquina...');
-      try{const resposta=await fetch(`${API}/maquinas/${id}`),i=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(i.erro||'Não foi possível carregar a máquina.');const f=g('form-maquina');maquinaEmEdicao=id;f.maquina.value=i.nome||'';f.modelo.value=i.modelo||'';f.numeroSerie.value=i.numero_serie||'';f.operacao.value=i.operacao||'';f.horimetro.value=i.horimetro;f.proximaRevisao.value=i.proxima_revisao;f.combustivel.value=i.combustivel;f.data.value=String(i.data_operacao).slice(0,10);f.status.value=i.status||'Ativa';f.observacao.value=i.observacao||'';g('salvar-maquina').textContent='Salvar alterações';g('cancelar-edicao').hidden=false;mensagemMaquina('Editando máquina. Altere os campos e salve.');f.scrollIntoView({behavior:'smooth'});f.maquina.focus()}catch(erro){mensagemMaquina(erro.message,true)}
-    }
+      <section id="view-history" class="view" data-view="history">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">CONVERSAS</span>
+            <h2>Histórico</h2>
+            <p>Histórico da sessão atual. Nada é salvo no navegador.</p>
+          </div>
+          <button id="clearHistory" class="secondary-button" type="button">Limpar</button>
+        </div>
+        <div id="historyList" class="history-list">
+          <p class="muted">Nenhuma conversa nesta sessão.</p>
+        </div>
+      </section>
 
-    async function excluirMaquina(id){
-      if(!confirm('Excluir esta máquina do PostgreSQL?'))return;
-      try{const resposta=await fetch(`${API}/maquinas/${id}`,{method:'DELETE'});if(!resposta.ok){const resultado=await resposta.json().catch(()=>({}));throw new Error(resultado.erro||'Não foi possível excluir.')}await abrirMaquinas('Máquina excluída do PostgreSQL.')}catch(erro){mensagemMaquina(erro.message,true)}
-    }
+      <section id="view-profile" class="view" data-view="profile">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">CONTA</span>
+            <h2>Perfil</h2>
+            <p>Autenticação segura para acessar o núcleo NexoTerraCore.</p>
+          </div>
+        </div>
 
-    async function abrirFinanceiro(mensagem='',erro=false){
-      financeiroEmEdicao=null;g('area').innerHTML='<h2>Financeiro</h2><p class="muted">Carregando dados do PostgreSQL...</p>';let registros,resumo;
-      try{[registros,resumo]=await Promise.all([listarFinanceiro(),resumoFinanceiro()])}catch{g('area').innerHTML='<h2>Financeiro</h2><p class="erro">Backend indisponível. Inicie a API na porta 3000.</p>';return}
-      const lista=registros.map(i=>`<div class="item"><span><b>${escapar(i.descricao)}</b><br><small>${escapar(i.tipo)} · ${escapar(i.categoria)} · ${dinheiro(i.valor)} · ${escapar(String(i.data_lancamento).slice(0,10))}${i.observacao?`<br>${escapar(i.observacao)}`:''}</small></span><span class="item-acoes"><button onclick="editarFinanceiro(${Number(i.id)})">Editar</button><button class="perigo" onclick="excluirFinanceiro(${Number(i.id)})">Excluir</button></span></div>`).join('')||'<p class="muted">Nenhum lançamento financeiro cadastrado.</p>';
-      g('area').innerHTML=`<h2>Financeiro</h2><p class="muted">Receitas e despesas armazenadas pela API NexoTerraCore no PostgreSQL.</p><section class="cards"><div>Receitas<strong>${dinheiro(resumo.receitas)}</strong></div><div>Despesas<strong>${dinheiro(resumo.despesas)}</strong></div><div>Saldo<strong>${dinheiro(resumo.saldo)}</strong></div></section><form id="form-financeiro"><input required maxlength="160" name="descricao" placeholder="Descrição"><input required maxlength="100" name="categoria" placeholder="Categoria"><input required type="number" min="0.01" step="0.01" name="valor" placeholder="Valor"><input required type="date" name="data" value="${hoje()}"><select required name="tipo"><option value="">Selecione o tipo</option><option>Receita</option><option>Despesa</option></select><textarea name="observacao" placeholder="Observação"></textarea><button id="salvar-financeiro">Cadastrar lançamento</button><button id="cancelar-financeiro" type="button" onclick="abrirFinanceiro('Edição cancelada.')" hidden>Cancelar edição</button></form><p id="mensagem-financeiro" class="${erro?'erro':'mensagem'}">${escapar(mensagem)}</p><h3>Lançamentos cadastrados</h3>${lista}`;
-      g('form-financeiro').onsubmit=salvarFinanceiro;painel();
-    }
+        <div id="profileLoggedOut" class="panel-card">
+          <h3>Acesso necessário</h3>
+          <p class="muted">Entre para usar o Turing, consultar NTCoins e acessar dados autorizados.</p>
+          <button id="openLoginFromProfile" class="primary-button full" type="button">Entrar</button>
+        </div>
 
-    function mensagemFinanceiro(texto,erro=false){const mensagem=g('mensagem-financeiro');if(!mensagem)return;mensagem.textContent=texto;mensagem.className=erro?'erro':'mensagem'}
+        <div id="profileLoggedIn" class="panel-card hidden">
+          <span class="eyebrow">SESSÃO ATIVA</span>
+          <h3 id="profileName">Usuário</h3>
+          <p id="profileContext" class="muted">Contexto ativo</p>
+          <button id="logoutButton" class="secondary-button full" type="button">Sair</button>
+        </div>
 
-    async function salvarFinanceiro(evento){
-      evento.preventDefault();const f=evento.target,id=financeiroEmEdicao,botao=g('salvar-financeiro');botao.disabled=true;mensagemFinanceiro(id?'Atualizando...':'Cadastrando...');
-      const dados={descricao:f.descricao.value,categoria:f.categoria.value,valor:Number(f.valor.value),data:f.data.value,tipo:f.tipo.value,observacao:f.observacao.value};
-      try{const resposta=await fetch(id?`${API}/financeiro/${id}`:`${API}/financeiro`,{method:id?'PUT':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(dados)});const resultado=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(resultado.erro||'Não foi possível salvar o lançamento.');await abrirFinanceiro(id?'Lançamento atualizado no PostgreSQL.':'Lançamento cadastrado no PostgreSQL.')}catch(erro){mensagemFinanceiro(erro.message,true);botao.disabled=false}
-    }
+        <button id="installButton" class="install-card hidden" type="button">
+          <strong>Instalar Turing</strong>
+          <span>Adicionar o aplicativo à tela inicial.</span>
+        </button>
+      </section>
+    </main>
 
-    async function editarFinanceiro(id){
-      mensagemFinanceiro('Carregando lançamento...');
-      try{const resposta=await fetch(`${API}/financeiro/${id}`),i=await resposta.json().catch(()=>({}));if(!resposta.ok)throw new Error(i.erro||'Não foi possível carregar o lançamento.');const f=g('form-financeiro');financeiroEmEdicao=id;f.descricao.value=i.descricao||'';f.categoria.value=i.categoria||'';f.valor.value=i.valor;f.data.value=String(i.data_lancamento).slice(0,10);f.tipo.value=i.tipo||'';f.observacao.value=i.observacao||'';g('salvar-financeiro').textContent='Salvar alterações';g('cancelar-financeiro').hidden=false;mensagemFinanceiro('Editando lançamento. Altere os campos e salve.');f.scrollIntoView({behavior:'smooth'});f.descricao.focus()}catch(erro){mensagemFinanceiro(erro.message,true)}
-    }
+    <form id="composer" class="composer" autocomplete="off">
+      <textarea id="promptInput" rows="1" maxlength="500" placeholder="Pergunte ao Turing..." aria-label="Pergunte ao Turing"></textarea>
+      <button id="sendButton" type="submit" aria-label="Enviar pergunta">Enviar</button>
+    </form>
 
-    async function excluirFinanceiro(id){
-      if(!confirm('Excluir este lançamento do PostgreSQL?'))return;
-      try{const resposta=await fetch(`${API}/financeiro/${id}`,{method:'DELETE'});if(!resposta.ok){const resultado=await resposta.json().catch(()=>({}));throw new Error(resultado.erro||'Não foi possível excluir.')}await abrirFinanceiro('Lançamento excluído do PostgreSQL.')}catch(erro){mensagemFinanceiro(erro.message,true)}
-    }
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button class="nav-item active" type="button" data-view-target="chat"><span>T</span><small>Turing</small></button>
+      <button class="nav-item" type="button" data-view-target="wallet"><span>N</span><small>Carteira</small></button>
+      <button class="nav-item" type="button" data-view-target="history"><span>H</span><small>Histórico</small></button>
+      <button class="nav-item" type="button" data-view-target="profile"><span>G</span><small>Perfil</small></button>
+    </nav>
+  </div>
 
-    function apagar(k,i){const r=ler(k);r.splice(i,1);salvar(k,r);abrir(k);painel()}
-    async function exp(){const d={};Object.keys(M).forEach(k=>d[k]=ler(k));try{[d.maquinas,d.financeiro]=await Promise.all([listarMaquinas(),listarFinanceiro()])}catch{d.maquinas=[];d.financeiro=[]}const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(d,null,2)]));a.download='nexoterracore-dados.json';a.click()}
+  <div id="loginSheet" class="sheet-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <section class="bottom-sheet">
+      <div class="drag-handle"></div>
+      <div class="sheet-head">
+        <div>
+          <span class="eyebrow">ACESSO AUTORIZADO</span>
+          <h2 id="loginTitle">Entrar no Turing</h2>
+        </div>
+        <button id="closeLogin" class="icon-button" type="button" aria-label="Fechar">×</button>
+      </div>
 
-    painel();abrir('producao');
-  </script>
+      <form id="loginForm" class="form-stack">
+        <label>E-mail<input id="loginEmail" type="email" autocomplete="username" required></label>
+        <label>Senha<input id="loginPassword" type="password" autocomplete="current-password" required></label>
+        <div id="loginError" class="form-error"></div>
+        <button id="loginSubmit" class="primary-button full" type="submit">Entrar</button>
+      </form>
+    </section>
+  </div>
+
+  <div id="farmSheet" class="sheet-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="farmTitle">
+    <section class="bottom-sheet">
+      <div class="drag-handle"></div>
+      <div class="sheet-head">
+        <div>
+          <span class="eyebrow">CONTEXTO DE OPERAÇÃO</span>
+          <h2 id="farmTitle">Selecionar unidade</h2>
+        </div>
+      </div>
+      <div id="farmList" class="farm-list"></div>
+    </section>
+  </div>
+
+  <script src="/sala-de-comando/turing/app.js"></script>
 </body>
 </html>
