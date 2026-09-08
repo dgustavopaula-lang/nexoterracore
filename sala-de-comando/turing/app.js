@@ -146,6 +146,8 @@
       $("#walletBalance").textContent = "—";
       $("#walletProfile").textContent = "Entre para consultar sua carteira.";
       $("#walletTransactions").innerHTML = '<p class="muted">Nenhuma sessão autenticada.</p>';
+      $("#ntcPackages").innerHTML = '<p class="muted">Entre para ver os pacotes disponíveis.</p>';
+      setPaymentStatus("");
     }
   }
 
@@ -269,13 +271,129 @@
     }
   }
 
+  function setPaymentStatus(message = "", type = "") {
+    const el = $("#ntcPaymentStatus");
+    if (!el) return;
+
+    el.className = `payment-status${type ? ` ${type}` : ""}`;
+    el.textContent = message;
+  }
+
+  function renderPackages(data) {
+    const list = $("#ntcPackages");
+    if (!list) return;
+
+    const packages = Array.isArray(data?.pacotes)
+      ? data.pacotes
+      : [];
+
+    if (!packages.length) {
+      list.innerHTML =
+        '<p class="muted">Nenhum pacote disponível neste momento.</p>';
+      return;
+    }
+
+    list.innerHTML = packages.map((item) => {
+      const ntcoins = Number(item.ntcoins || 0);
+      const bonus = Number(item.bonus_ntcoins || 0);
+      const total = ntcoins + bonus;
+      const price = Number(item.preco_brl || 0);
+
+      return `
+        <article class="package-card">
+          <span class="eyebrow">NTCOINS</span>
+
+          <h3>${escapeHtml(item.nome || item.codigo || "Pacote")}</h3>
+
+          <div class="package-amount">
+            ${total.toLocaleString("pt-BR")}
+            <small>NTC</small>
+          </div>
+
+          ${
+            bonus > 0
+              ? `<div class="package-bonus">
+                   ${ntcoins.toLocaleString("pt-BR")} NTC +
+                   ${bonus.toLocaleString("pt-BR")} bônus
+                 </div>`
+              : ""
+          }
+
+          <p>
+            ${escapeHtml(
+              item.descricao ||
+              "Créditos internos de utilidade do NexoTerraCore."
+            )}
+          </p>
+
+          <strong class="package-price">
+            ${price.toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL"
+            })}
+          </strong>
+
+          <button
+            class="primary-button full package-buy"
+            type="button"
+            data-package="${escapeHtml(item.codigo)}"
+          >
+            Comprar com PayPal
+          </button>
+        </article>
+      `;
+    }).join("");
+  }
+
+  async function buyPackage(code, button) {
+    if (!state.token) {
+      showLogin();
+      return;
+    }
+
+    const original = button.textContent;
+
+    try {
+      button.disabled = true;
+      button.textContent = "Abrindo PayPal...";
+
+      setPaymentStatus(
+        "Criando pagamento seguro no PayPal..."
+      );
+
+      const result = await api(
+        "/api/ntcoins/paypal/criar",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            pacote_codigo: code
+          })
+        }
+      );
+
+      if (!result.approval_url) {
+        throw new Error(
+          "PayPal não retornou o endereço de pagamento."
+        );
+      }
+
+      window.location.assign(result.approval_url);
+
+    } catch (err) {
+      setPaymentStatus(err.message, "error");
+      button.disabled = false;
+      button.textContent = original;
+    }
+  }
+
   async function loadWallet() {
     if (!state.token) return;
 
     try {
-      const [me, statement] = await Promise.all([
+      const [me, statement, packages] = await Promise.all([
         api("/api/ntcoins/me"),
-        api("/api/ntcoins/extrato")
+        api("/api/ntcoins/extrato"),
+        api("/api/ntcoins/pacotes")
       ]);
 
       const balance = Number(me.saldo ?? statement.saldo ?? 0);
@@ -288,6 +406,8 @@
       $("#walletProfile").textContent = me.admin_isento
         ? `${me.perfil || "Perfil"} · administração isenta`
         : `${me.perfil || "Perfil"} · carteira ativa`;
+
+      renderPackages(packages);
 
       const transactions = Array.isArray(statement.transacoes) ? statement.transacoes.slice(0, 8) : [];
       $("#walletTransactions").innerHTML = transactions.length
@@ -345,6 +465,16 @@
     $("#openLoginFromProfile").addEventListener("click", showLogin);
     $("#logoutButton").addEventListener("click", logout);
     $("#refreshWallet").addEventListener("click", loadWallet);
+
+    $("#ntcPackages").addEventListener("click", (event) => {
+      const button = event.target.closest(".package-buy");
+      if (!button) return;
+
+      buyPackage(
+        button.dataset.package,
+        button
+      );
+    });
     $("#clearHistory").addEventListener("click", () => {
       state.history = [];
       renderHistory();
