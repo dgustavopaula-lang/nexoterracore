@@ -1992,10 +1992,6 @@ app.use('/api/ntcoins/webhook', ntcoinsWebhookRoutes);
 app.use('/api/ntcoins/paypal', autenticar, ntcoinsPaypalRoutes);
 app.use('/api/ntcoins', autenticar, ntcoinsRoutes);
 
-app.use((req, res) => {
-  res.status(404).json({ erro: "Rota não encontrada." });
-});
-
 app.use(
   "/api/financeiro",
   criarRouterFinanceiro({
@@ -2006,6 +2002,10 @@ app.use(
     lerId
   })
 );
+
+app.use((req, res) => {
+  res.status(404).json({ erro: "Rota não encontrada." });
+});
 
 app.use((erro, req, res, next) => {
   if (res.headersSent) {
