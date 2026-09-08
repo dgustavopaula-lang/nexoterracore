@@ -52,6 +52,7 @@ const LOGIN_CHALLENGE_TTL_MINUTES =
 const origensPermitidas = [
   "https://nexoterracore-api.onrender.com",
   "https://gustavopaulasantos.com.br",
+  "https://console.gustavopaulasantos.com.br",
   "http://127.0.0.1:5500",
   "http://localhost:5500",
   "http://127.0.0.1:5501",
@@ -1970,6 +1971,10 @@ app.get(["/app", "/app/"], (req, res) => {
   res.sendFile(
     path.join(consolePath, "painel.html")
   );
+});
+
+app.get(["/app/turing", "/app/turing/"], (req, res) => {
+  res.sendFile(path.join(consolePath, "turing", "index.html"));
 });
 
 app.use(
