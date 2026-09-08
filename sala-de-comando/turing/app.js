@@ -5,13 +5,18 @@
     ? "http://localhost:3000"
     : "https://nexoterracore-api.onrender.com";
 
+  const paramsIniciais = new URLSearchParams(window.location.search);
+  const pacotePendenteInicial = paramsIniciais.get("comprar");
+  const pacotesPermitidos = new Set(["NTC_START", "NTC_PRO", "NTC_BUSINESS"]);
+
   const state = {
     token: null,
     challenge: null,
     user: null,
     farm: null,
     history: [],
-    installPrompt: null
+    installPrompt: null,
+    pendingPurchase: pacotesPermitidos.has(pacotePendenteInicial) ? pacotePendenteInicial : null
   };
 
   const $ = (selector) => document.querySelector(selector);
@@ -161,7 +166,7 @@
     setView("wallet");
 
     try {
-      const result = await api("/api/ntcoins/paypal/capturar", {
+      await api("/api/ntcoins/paypal/capturar", {
         method: "POST",
         body: JSON.stringify({ pedido_id: pedido, paypal_order_id: paypalOrderId })
       });
@@ -177,6 +182,17 @@
     }
   }
 
+  async function resumePendingPurchase() {
+    const packageCode = state.pendingPurchase;
+    if (!packageCode || !state.token) return;
+
+    state.pendingPurchase = null;
+    history.replaceState({}, "", window.location.pathname);
+    setView("wallet");
+    $("#walletPaymentStatus").textContent = "Preparando checkout PayPal...";
+    await buyPackage(packageCode, null);
+  }
+
   function activateSession(session) {
     state.token = session.token;
     state.challenge = null;
@@ -186,6 +202,7 @@
     hideLogin();
     updateAuthUI();
     addMessage("turing", `Acesso confirmado${state.user?.nome ? `, ${state.user.nome}` : ""}. O núcleo NexoTerraCore está disponível para esta sessão.`);
+    resumePendingPurchase();
   }
 
   async function login(event) {
@@ -306,10 +323,14 @@
       showLogin();
       return;
     }
-    const original = button.textContent;
-    button.disabled = true;
-    button.textContent = "Abrindo PayPal...";
+
+    const original = button ? button.textContent : "";
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Abrindo PayPal...";
+    }
     $("#walletPaymentStatus").textContent = "Criando checkout seguro...";
+
     try {
       const result = await api("/api/ntcoins/paypal/criar", {
         method: "POST",
@@ -322,8 +343,10 @@
       window.location.href = result.approval_url;
     } catch (err) {
       $("#walletPaymentStatus").textContent = err.message;
-      button.disabled = false;
-      button.textContent = original;
+      if (button) {
+        button.disabled = false;
+        button.textContent = original;
+      }
     }
   }
 
@@ -430,5 +453,11 @@
     renderHistory();
     registerPwa();
     await finishPendingPaypal();
+
+    if (state.pendingPurchase && !state.token) {
+      setView("wallet");
+      $("#walletPaymentStatus").textContent = "Entre para continuar a compra com PayPal.";
+      showLogin();
+    }
   });
 })();
