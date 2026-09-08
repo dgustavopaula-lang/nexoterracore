@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <meta name="theme-color" content="#090C10">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Turing">
+  <title>Turing — NexoTerraCore</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="apple-touch-icon" href="../icons/nexoterracore-192.png">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">T</div>
+        <div>
+          <strong>Turing</strong>
+          <span>NexoTerraCore</span>
+        </div>
+      </div>
+
+      <div class="topbar-actions">
+        <button id="ntcBadge" class="ntc-badge" type="button" data-view-target="wallet" aria-label="Abrir carteira NTCoins">
+          <span>NTC</span>
+          <strong id="ntcBalance">—</strong>
+        </button>
+        <button id="accountButton" class="avatar-button" type="button" data-view-target="profile" aria-label="Abrir conta">G</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section id="view-chat" class="view active" data-view="chat">
+        <div class="chat-head">
+          <div>
+            <span class="eyebrow">INTELIGÊNCIA OPERACIONAL</span>
+            <h1>Olá. Sou o Turing.</h1>
+            <p>Conectado ao núcleo NexoTerraCore para trabalhar com dados, cálculos e contexto autorizado.</p>
+          </div>
+          <div id="turingStatus" class="status-pill">Aguardando acesso</div>
+        </div>
+
+        <div class="quick-grid" aria-label="Ações rápidas">
+          <button class="quick-action" type="button" data-prompt="Analise os dados disponíveis e destaque os pontos mais importantes.">
+            <span>Analisar dados</span>
+            <small>Resumo e prioridades</small>
+          </button>
+          <button class="quick-action" type="button" data-prompt="Ajude-me com uma análise do agronegócio e das operações rurais.">
+            <span>Agro e operação</span>
+            <small>Produção e gestão</small>
+          </button>
+          <button class="quick-action" type="button" data-prompt="Faça um cálculo operacional ou financeiro para mim.">
+            <span>Cálculos</span>
+            <small>Turing Math Engine</small>
+          </button>
+          <button class="quick-action" type="button" data-prompt="Ajude-me a organizar e interpretar um documento ou informação técnica.">
+            <span>Documentos</span>
+            <small>Organização e leitura</small>
+          </button>
+        </div>
+
+        <div id="messages" class="messages" aria-live="polite">
+          <article class="message turing">
+            <div class="message-author">Turing</div>
+            <div class="message-bubble">Estou pronto. Para consultar o núcleo NexoTerraCore, entre com sua conta.</div>
+          </article>
+        </div>
+      </section>
+
+      <section id="view-wallet" class="view" data-view="wallet">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">CARTEIRA</span>
+            <h2>NTCoins</h2>
+            <p>Créditos internos de utilidade do ecossistema NexoTerraCore.</p>
+          </div>
+          <button id="refreshWallet" class="secondary-button" type="button">Atualizar</button>
+        </div>
+
+        <div class="wallet-balance-card">
+          <span>Saldo disponível</span>
+          <strong><span id="walletBalance">—</span> NTC</strong>
+          <small id="walletProfile">Entre para consultar sua carteira.</small>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-title">
+            <h3>Movimentações recentes</h3>
+          </div>
+          <div id="walletTransactions" class="transaction-list">
+            <p class="muted">Nenhuma sessão autenticada.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-history" class="view" data-view="history">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">CONVERSAS</span>
+            <h2>Histórico</h2>
+            <p>Histórico da sessão atual. Nada é salvo no navegador.</p>
+          </div>
+          <button id="clearHistory" class="secondary-button" type="button">Limpar</button>
+        </div>
+        <div id="historyList" class="history-list">
+          <p class="muted">Nenhuma conversa nesta sessão.</p>
+        </div>
+      </section>
+
+      <section id="view-profile" class="view" data-view="profile">
+        <div class="section-head">
+          <div>
+            <span class="eyebrow">CONTA</span>
+            <h2>Perfil</h2>
+            <p>Autenticação segura para acessar o núcleo NexoTerraCore.</p>
+          </div>
+        </div>
+
+        <div id="profileLoggedOut" class="panel-card">
+          <h3>Acesso necessário</h3>
+          <p class="muted">Entre para usar o Turing, consultar NTCoins e acessar dados autorizados.</p>
+          <button id="openLoginFromProfile" class="primary-button full" type="button">Entrar</button>
+        </div>
+
+        <div id="profileLoggedIn" class="panel-card hidden">
+          <span class="eyebrow">SESSÃO ATIVA</span>
+          <h3 id="profileName">Usuário</h3>
+          <p id="profileContext" class="muted">Contexto ativo</p>
+          <button id="logoutButton" class="secondary-button full" type="button">Sair</button>
+        </div>
+
+        <button id="installButton" class="install-card hidden" type="button">
+          <strong>Instalar Turing</strong>
+          <span>Adicionar o aplicativo à tela inicial.</span>
+        </button>
+      </section>
+    </main>
+
+    <form id="composer" class="composer" autocomplete="off">
+      <textarea id="promptInput" rows="1" maxlength="500" placeholder="Pergunte ao Turing..." aria-label="Pergunte ao Turing"></textarea>
+      <button id="sendButton" type="submit" aria-label="Enviar pergunta">Enviar</button>
+    </form>
+
+    <nav class="bottom-nav" aria-label="Navegação principal">
+      <button class="nav-item active" type="button" data-view-target="chat"><span>T</span><small>Turing</small></button>
+      <button class="nav-item" type="button" data-view-target="wallet"><span>N</span><small>Carteira</small></button>
+      <button class="nav-item" type="button" data-view-target="history"><span>H</span><small>Histórico</small></button>
+      <button class="nav-item" type="button" data-view-target="profile"><span>G</span><small>Perfil</small></button>
+    </nav>
+  </div>
+
+  <div id="loginSheet" class="sheet-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <section class="bottom-sheet">
+      <div class="drag-handle"></div>
+      <div class="sheet-head">
+        <div>
+          <span class="eyebrow">ACESSO AUTORIZADO</span>
+          <h2 id="loginTitle">Entrar no Turing</h2>
+        </div>
+        <button id="closeLogin" class="icon-button" type="button" aria-label="Fechar">×</button>
+      </div>
+
+      <form id="loginForm" class="form-stack">
+        <label>E-mail<input id="loginEmail" type="email" autocomplete="username" required></label>
+        <label>Senha<input id="loginPassword" type="password" autocomplete="current-password" required></label>
+        <div id="loginError" class="form-error"></div>
+        <button id="loginSubmit" class="primary-button full" type="submit">Entrar</button>
+      </form>
+    </section>
+  </div>
+
+  <div id="farmSheet" class="sheet-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="farmTitle">
+    <section class="bottom-sheet">
+      <div class="drag-handle"></div>
+      <div class="sheet-head">
+        <div>
+          <span class="eyebrow">CONTEXTO DE OPERAÇÃO</span>
+          <h2 id="farmTitle">Selecionar unidade</h2>
+        </div>
+      </div>
+      <div id="farmList" class="farm-list"></div>
+    </section>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
