@@ -22,7 +22,6 @@ const {
   ErroAssistente,
   responderPergunta
 } = require("./services/assistente");
-const { responderPerguntaPublica } = require("./services/turing-publico");
 require("dotenv").config();
 const {
   garantirEstruturaFinanceira,
@@ -798,24 +797,6 @@ app.delete(
     }
   }
 );
-
-app.post("/api/turing/publico", limiteTuring, async (req, res, next) => {
-  try {
-    const pergunta =
-      typeof req.body?.pergunta === "string"
-        ? req.body.pergunta.trim()
-        : "";
-
-    const resultado = await responderPerguntaPublica(pergunta);
-
-    res.json({
-      ok: true,
-      ...resultado
-    });
-  } catch (erro) {
-    next(erro);
-  }
-});
 
 app.post("/api/assistente/perguntar",
   autenticar, cobrarNTCoins('TURING_PERGUNTA'), limiteTuring, async (req, res, next) => {

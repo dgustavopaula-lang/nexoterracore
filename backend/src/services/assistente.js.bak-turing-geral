@@ -1,6 +1,5 @@
 const { temPermissao } = require("../security/permissions");
 const { consultarConhecimentoInterno } = require("./turing-knowledge");
-const { consultarConhecimentoGeral } = require("./turing-general-knowledge");
 
 const dinheiro = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -320,12 +319,6 @@ async function responderPergunta(pool, auth, perguntaOriginal) {
 
   if (conhecimentoInterno) {
     return conhecimentoInterno;
-  }
-
-  const conhecimentoGeral = consultarConhecimentoGeral(pergunta);
-
-  if (conhecimentoGeral) {
-    return conhecimentoGeral;
   }
 
   return consultarOllama(perguntaOriginal);

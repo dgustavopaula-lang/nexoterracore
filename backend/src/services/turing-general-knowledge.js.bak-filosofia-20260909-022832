@@ -1,0 +1,133 @@
+"use strict";
+
+function normalizar(texto = "") {
+  return String(texto)
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+const STOPWORDS = new Set([
+  "a","o","as","os","um","uma","uns","umas",
+  "de","da","do","das","dos","e","em","no","na",
+  "nos","nas","para","por","com","que","qual","quais",
+  "como","porque","pra","me","eu","voce","isso","isto",
+  "ser","sao","eh"
+]);
+
+function tokens(texto) {
+  return normalizar(texto)
+    .split(" ")
+    .filter(t => t.length >= 2 && !STOPWORDS.has(t));
+}
+
+const BASE_GERAL = [
+  {
+    id: "turing_demo_001",
+    categoria: "matematica",
+    pergunta: "Como calcular a área de um círculo?",
+    resposta: "A área de um círculo é A = π × r², onde r é o raio.",
+    palavras_chave: ["area do circulo", "circulo", "raio", "pi"]
+  },
+  {
+    id: "turing_demo_002",
+    categoria: "filosofia",
+    pergunta: "O que é o método socrático?",
+    resposta: "É um método de investigação baseado em perguntas que examinam conceitos, pressupostos e possíveis contradições.",
+    palavras_chave: ["socrates", "metodo socratico", "maieutica"]
+  },
+  {
+    id: "turing_demo_003",
+    categoria: "biologia",
+    pergunta: "O que é seleção natural?",
+    resposta: "É um mecanismo evolutivo pelo qual características hereditárias que favorecem reprodução em determinado ambiente podem tornar-se mais frequentes ao longo das gerações.",
+    palavras_chave: ["selecao natural", "darwin", "evolucao"]
+  },
+  {
+    id: "turing_demo_004",
+    categoria: "inteligencia_artificial",
+    pergunta: "O que é RAG?",
+    resposta: "RAG combina recuperação de informações externas com geração de linguagem, permitindo fornecer contexto relevante ao modelo antes da resposta.",
+    palavras_chave: ["rag", "retrieval augmented generation", "ia"]
+  }
+];
+
+function pontuar(item, perguntaOriginal) {
+  const pergunta = normalizar(perguntaOriginal);
+  const canonica = normalizar(item.pergunta);
+
+  if (!pergunta) return 0;
+  if (pergunta === canonica) return 100;
+
+  const entrada = new Set(tokens(pergunta));
+  const alvo = new Set(tokens(canonica));
+
+  let intersecao = 0;
+  for (const token of alvo) {
+    if (entrada.has(token)) intersecao++;
+  }
+
+  let score = 0;
+
+  if (alvo.size) {
+    score += (intersecao / alvo.size) * 5;
+  }
+
+  for (const palavra of item.palavras_chave || []) {
+    const chave = normalizar(palavra);
+    if (!chave) continue;
+
+    if (pergunta.includes(chave)) {
+      score += chave.includes(" ") ? 4 : 2;
+    }
+  }
+
+  return score;
+}
+
+function consultarConhecimentoGeral(pergunta) {
+  let melhor = null;
+  let melhorScore = 0;
+  let segundoScore = 0;
+
+  for (const item of BASE_GERAL) {
+    const score = pontuar(item, pergunta);
+
+    if (score > melhorScore) {
+      segundoScore = melhorScore;
+      melhorScore = score;
+      melhor = item;
+    } else if (score > segundoScore) {
+      segundoScore = score;
+    }
+  }
+
+  if (!melhor || melhorScore < 4) {
+    return null;
+  }
+
+  if (
+    melhorScore < 100 &&
+    segundoScore > 0 &&
+    melhorScore - segundoScore < 0.75
+  ) {
+    return null;
+  }
+
+  return {
+    resposta: melhor.resposta,
+    fontes: ["turing:base-geral"],
+    dados: {
+      id: melhor.id,
+      categoria: melhor.categoria
+    }
+  };
+}
+
+module.exports = {
+  consultarConhecimentoGeral,
+  BASE_GERAL
+};
