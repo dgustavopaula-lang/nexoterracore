@@ -41,11 +41,18 @@ async function garantirEstruturaAdminWorkspace(pool) {
   `);
 }
 
-function criarRouterAdminWorkspace({ pool, autenticar, autorizar }) {
+function criarRouterAdminWorkspace({ pool, autenticar }) {
   const router = express.Router();
   router.use(autenticar);
 
-  router.get("/modulos/:modulo", autorizar("configuracoes", "GET"), async (req, res, next) => {
+  router.use((req, res, next) => {
+    if (!Array.isArray(req.auth?.perfis) || !req.auth.perfis.includes("proprietario")) {
+      return res.status(403).json({ erro: "Área exclusiva do proprietário." });
+    }
+    next();
+  });
+
+  router.get("/modulos/:modulo", async (req, res, next) => {
     try {
       const modulo = moduloValido(req.params.modulo);
       if (!modulo) return res.status(400).json({ erro: "Módulo inválido." });
@@ -61,7 +68,7 @@ function criarRouterAdminWorkspace({ pool, autenticar, autorizar }) {
     } catch (e) { next(e); }
   });
 
-  router.put("/modulos/:modulo", autorizar("configuracoes", "PUT"), async (req, res, next) => {
+  router.put("/modulos/:modulo", async (req, res, next) => {
     try {
       const modulo = moduloValido(req.params.modulo);
       if (!modulo) return res.status(400).json({ erro: "Módulo inválido." });
@@ -80,7 +87,7 @@ function criarRouterAdminWorkspace({ pool, autenticar, autorizar }) {
     } catch (e) { next(e); }
   });
 
-  router.get("/contatos", autorizar("configuracoes", "GET"), async (req, res, next) => {
+  router.get("/contatos", async (req, res, next) => {
     try {
       const r = await pool.query(
         `SELECT id, empresa, responsavel, email, whatsapp, projeto, mensagem, status,
@@ -94,7 +101,7 @@ function criarRouterAdminWorkspace({ pool, autenticar, autorizar }) {
     } catch (e) { next(e); }
   });
 
-  router.post("/contatos", autorizar("configuracoes", "POST"), async (req, res, next) => {
+  router.post("/contatos", async (req, res, next) => {
     try {
       const empresa = texto(req.body.empresa, 180);
       if (!empresa) return res.status(400).json({ erro: "Empresa é obrigatória." });
@@ -120,7 +127,7 @@ function criarRouterAdminWorkspace({ pool, autenticar, autorizar }) {
     } catch (e) { next(e); }
   });
 
-  router.put("/contatos/:id", autorizar("configuracoes", "PUT"), async (req, res, next) => {
+  router.put("/contatos/:id", async (req, res, next) => {
     try {
       const id = Number(req.params.id);
       const empresa = texto(req.body.empresa, 180);
@@ -153,7 +160,7 @@ function criarRouterAdminWorkspace({ pool, autenticar, autorizar }) {
     } catch (e) { next(e); }
   });
 
-  router.delete("/contatos/:id", autorizar("configuracoes", "DELETE"), async (req, res, next) => {
+  router.delete("/contatos/:id", async (req, res, next) => {
     try {
       const id = Number(req.params.id);
       if (!Number.isSafeInteger(id) || id <= 0) return res.status(400).json({ erro: "ID inválido." });
