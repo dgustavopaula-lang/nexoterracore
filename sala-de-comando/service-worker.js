@@ -1,4 +1,4 @@
-const CACHE = "nexoterracore-mobile-v1";
+const CACHE = "nexoterracore-mobile-v2";
 
 const APP_SHELL = [
   "./",
@@ -6,7 +6,13 @@ const APP_SHELL = [
   "./manifest.json",
   "./css/style.css",
   "./js/app.js",
+  "./js/financeiro.js",
+  "./js/clientes.js",
+  "./js/mapas.js",
   "./js/turing.js",
+  "./js/admin-control.js",
+  "./ntcoins-wallet.js",
+  "./ntcoins-wallet.css",
   "./icons/nexoterracore-192.png",
   "./icons/nexoterracore-512.png"
 ];
