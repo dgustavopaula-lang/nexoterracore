@@ -1,4 +1,8 @@
 const express = require("express");
+const {
+  garantirEstruturaAdminWorkspace,
+  criarRouterAdminWorkspace
+} = require("./admin-workspace");
 
 function validarLancamento(body) {
   const tipo = String(body.tipo || "").trim().toLowerCase();
@@ -61,16 +65,24 @@ async function garantirEstruturaFinanceira(pool) {
     CREATE INDEX IF NOT EXISTS idx_financeiro_organizacao
     ON financeiro_lancamentos (organizacao_id, vencimento DESC, id DESC)
   `);
+
+  await garantirEstruturaAdminWorkspace(pool);
 }
 
 function criarRouterFinanceiro({
   pool,
   autenticar,
+  autorizar,
   comTransacao,
   registrarAuditoria,
   lerId
 }) {
   const router = express.Router();
+
+  router.use(
+    "/admin-workspace",
+    criarRouterAdminWorkspace({ pool, autenticar, autorizar })
+  );
 
   router.use(autenticar);
 
