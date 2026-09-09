@@ -184,11 +184,64 @@ async function consultarModelo(pergunta) {
   return null;
 }
 
+
+function dataBCB(data) {
+  return String(data.getDate()).padStart(2, "0") + "/" +
+    String(data.getMonth() + 1).padStart(2, "0") + "/" +
+    data.getFullYear();
+}
+
+async function consultarSelicBCB() {
+  try {
+    const fim = new Date();
+    const inicio = new Date(Date.now() - 45 * 24 * 60 * 60 * 1000);
+
+    const url =
+      "https://api.bcb.gov.br/dados/serie/bcdata.sgs.432/dados" +
+      "?formato=json" +
+      "&dataInicial=" + encodeURIComponent(dataBCB(inicio)) +
+      "&dataFinal=" + encodeURIComponent(dataBCB(fim));
+
+    const r = await fetch(url, {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(6000)
+    });
+
+    if (!r.ok) return null;
+
+    const dados = await r.json();
+    if (!Array.isArray(dados) || !dados.length) return null;
+
+    const ultimo = dados[dados.length - 1];
+    const valor = Number(String(ultimo.valor).replace(",", "."));
+
+    if (!Number.isFinite(valor)) return null;
+
+    return resposta(
+      `A meta Selic informada pelo Banco Central é ${valor.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}% ao ano. Referência: ${ultimo.data}.`,
+      "bcb:sgs:432"
+    );
+
+  } catch (_) {
+    return null;
+  }
+}
+
 async function responderPerguntaPublica(perguntaOriginal) {
   const pergunta = String(perguntaOriginal || "").trim();
 
   if (!pergunta || pergunta.length > 500) {
     return resposta("Envie uma pergunta entre 1 e 500 caracteres.");
+  }
+
+  const normalizada = normalizar(pergunta);
+
+  if (/\b(selic|meta selic)\b/.test(normalizada)) {
+    const selic = await consultarSelicBCB();
+    if (selic) return selic;
   }
 
   const calculo = tentarCalculo(pergunta);
