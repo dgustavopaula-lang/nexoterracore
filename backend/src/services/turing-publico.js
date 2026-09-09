@@ -19,7 +19,12 @@ function normalizar(texto = "") {
 
 function tentarCalculo(perguntaOriginal) {
   const p = normalizar(perguntaOriginal)
-    .replace(/quanto e|calcule|calcular|resultado de|qual e o resultado de/g, "")
+    .replace(/qual e o resultado de|quanto e|calcule|calcular|resultado de/g, "")
+    .replace(/dividido por/g, "/")
+    .replace(/vezes/g, "x")
+    .replace(/mais/g, "+")
+    .replace(/menos/g, "-")
+    .replace(/[?!;:]+$/g, "")
     .trim();
 
   const m = p.match(
