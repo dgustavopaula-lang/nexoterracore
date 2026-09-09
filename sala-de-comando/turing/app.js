@@ -266,31 +266,60 @@
   async function ask(question) {
     const prompt = String(question || "").trim();
     if (!prompt) return;
-    if (!state.token) {
-      addMessage("turing", "Para consultar o núcleo NexoTerraCore, entre com sua conta.");
-      showLogin();
-      return;
-    }
+
     const input = $("#promptInput");
     const send = $("#sendButton");
+
     addMessage("user", prompt);
     input.value = "";
     autoGrowInput();
     send.disabled = true;
     send.textContent = "...";
-    const placeholder = addMessage("turing", "Consultando o núcleo NexoTerraCore...");
+
+    const placeholder = addMessage("turing", "Pensando...");
+
     try {
-      const result = await api("/api/assistente/perguntar", {
-        method: "POST",
-        body: JSON.stringify({ pergunta: prompt })
-      });
-      const answer = result.resposta || result.answer || result.mensagem || "O Turing respondeu sem conteúdo textual.";
-      placeholder.querySelector(".message-bubble").innerHTML = formatText(answer);
+      let result;
+
+      if (state.token) {
+        result = await api("/api/assistente/perguntar", {
+          method: "POST",
+          body: JSON.stringify({ pergunta: prompt })
+        });
+
+        const textoPrivado =
+          result.resposta || result.answer || result.mensagem || "";
+
+        if (/não existem dados suficientes|consulta segura disponível/i.test(textoPrivado)) {
+          result = await api("/api/turing/publico", {
+            method: "POST",
+            body: JSON.stringify({ pergunta: prompt })
+          });
+        }
+      } else {
+        result = await api("/api/turing/publico", {
+          method: "POST",
+          body: JSON.stringify({ pergunta: prompt })
+        });
+      }
+
+      const answer =
+        result.resposta ||
+        result.answer ||
+        result.mensagem ||
+        "O Turing respondeu sem conteúdo textual.";
+
+      placeholder.querySelector(".message-bubble").innerHTML =
+        formatText(answer);
+
       pushHistory(prompt, answer);
-      loadWallet();
+
+      if (state.token) loadWallet();
+
     } catch (err) {
       placeholder.classList.add("error");
-      placeholder.querySelector(".message-bubble").innerHTML = formatText(`Falha ao consultar o Turing: ${err.message}`);
+      placeholder.querySelector(".message-bubble").innerHTML =
+        formatText(`Falha ao consultar o Turing: ${err.message}`);
     } finally {
       send.disabled = false;
       send.textContent = "Enviar";

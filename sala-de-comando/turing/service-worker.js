@@ -1,4 +1,4 @@
-const CACHE = "turing-pwa-v2";
+const CACHE = "turing-pwa-v3";
 
 const APP_SHELL = [
   "./",
