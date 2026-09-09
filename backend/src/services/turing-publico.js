@@ -231,7 +231,7 @@ async function consultarSelicBCB() {
 }
 
 
-async function consultarIPCABCB() {
+async function consultarIPCABCB(perguntaOriginal = "") {
   try {
     const fim = new Date();
     const inicio = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000);
@@ -257,11 +257,34 @@ async function consultarIPCABCB() {
 
     if (!Number.isFinite(valor)) return null;
 
+    const [dia, mes, ano] = String(ultimo.data).split("/");
+    const meses = [
+      "janeiro", "fevereiro", "março", "abril",
+      "maio", "junho", "julho", "agosto",
+      "setembro", "outubro", "novembro", "dezembro"
+    ];
+
+    const referencia =
+      meses[Number(mes) - 1] && ano
+        ? `${meses[Number(mes) - 1]} de ${ano}`
+        : ultimo.data;
+
+    const percentual = valor.toLocaleString("pt-BR", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    const pergunta = normalizar(perguntaOriginal);
+
+    if (pergunta.includes("inflacao")) {
+      return resposta(
+        `Considerando o IPCA como referência oficial da inflação ao consumidor, o índice de ${referencia} foi ${percentual}% no mês.`,
+        "bcb:sgs:433"
+      );
+    }
+
     return resposta(
-      `O IPCA mais recente disponível é ${valor.toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}% no mês. Referência: ${ultimo.data}.`,
+      `O IPCA de ${referencia} foi ${percentual}% no mês.`,
       "bcb:sgs:433"
     );
   } catch (_) {
@@ -284,7 +307,7 @@ async function responderPerguntaPublica(perguntaOriginal) {
   }
 
   if (/\b(ipca|inflacao)\b/.test(normalizada)) {
-    const ipca = await consultarIPCABCB();
+    const ipca = await consultarIPCABCB(pergunta);
     if (ipca) return ipca;
   }
 
