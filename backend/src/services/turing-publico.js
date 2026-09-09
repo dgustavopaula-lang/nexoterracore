@@ -230,6 +230,45 @@ async function consultarSelicBCB() {
   }
 }
 
+
+async function consultarIPCABCB() {
+  try {
+    const fim = new Date();
+    const inicio = new Date(Date.now() - 180 * 24 * 60 * 60 * 1000);
+
+    const url =
+      "https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados" +
+      "?formato=json" +
+      "&dataInicial=" + encodeURIComponent(dataBCB(inicio)) +
+      "&dataFinal=" + encodeURIComponent(dataBCB(fim));
+
+    const r = await fetch(url, {
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(6000)
+    });
+
+    if (!r.ok) return null;
+
+    const dados = await r.json();
+    if (!Array.isArray(dados) || !dados.length) return null;
+
+    const ultimo = dados[dados.length - 1];
+    const valor = Number(String(ultimo.valor).replace(",", "."));
+
+    if (!Number.isFinite(valor)) return null;
+
+    return resposta(
+      `O IPCA mais recente disponível é ${valor.toLocaleString("pt-BR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      })}% no mês. Referência: ${ultimo.data}.`,
+      "bcb:sgs:433"
+    );
+  } catch (_) {
+    return null;
+  }
+}
+
 async function responderPerguntaPublica(perguntaOriginal) {
   const pergunta = String(perguntaOriginal || "").trim();
 
@@ -242,6 +281,11 @@ async function responderPerguntaPublica(perguntaOriginal) {
   if (/\b(selic|meta selic)\b/.test(normalizada)) {
     const selic = await consultarSelicBCB();
     if (selic) return selic;
+  }
+
+  if (/\b(ipca|inflacao)\b/.test(normalizada)) {
+    const ipca = await consultarIPCABCB();
+    if (ipca) return ipca;
   }
 
   const calculo = tentarCalculo(pergunta);
