@@ -27,6 +27,48 @@ function calcularMatematica(texto) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 
+  // Linguagem natural: área disponível / tamanho do lote
+  const contextoLoteamento =
+    /\barea\b/.test(pergunta) &&
+    /\blotes?\b/.test(pergunta) &&
+    /\b(quanto|quantos|cabem|cabe|dividir|dividida|dividido)\b/.test(pergunta);
+
+  if (contextoLoteamento) {
+    const numeros =
+      texto.match(/-?\d{1,3}(?:\.\d{3})+(?:,\d+)?|-?\d+(?:,\d+)?|-?\d+(?:\.\d+)?/g);
+
+    if (numeros && numeros.length >= 2) {
+      const areaM2 = numeroBR(numeros[0]);
+      const loteM2 = numeroBR(numeros[1]);
+
+      if (
+        areaM2 !== null &&
+        loteM2 !== null &&
+        areaM2 > 0 &&
+        loteM2 > 0
+      ) {
+        const quantidade = Math.floor(areaM2 / loteM2);
+        const sobraM2 = areaM2 - quantidade * loteM2;
+
+        return {
+          resposta:
+            `Cabem ${formatarNumero(quantidade)} lotes inteiros de ` +
+            `${formatarNumero(loteM2)} m². ` +
+            `Sobra ${formatarNumero(sobraM2)} m².`,
+          fontes: ["turing:math-engine:v1"],
+          dados: {
+            motor: "math",
+            contexto: "loteamento",
+            areaM2,
+            loteM2,
+            quantidade,
+            sobraM2
+          }
+        };
+      }
+    }
+  }
+
   let operacao = null;
   let simbolo = null;
 
