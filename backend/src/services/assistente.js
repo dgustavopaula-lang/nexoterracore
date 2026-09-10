@@ -1,3 +1,4 @@
+const { interpretarLoteamentoEconomico } = require("./turing-loteamento-economico");
 const { calcularMatematica } = require("./turing-math");
 const { temPermissao } = require("../security/permissions");
 const { consultarConhecimentoInterno } = require("./turing-knowledge");
@@ -315,6 +316,13 @@ async function responderPergunta(pool, auth, perguntaOriginal) {
   }
   if (/\b(resumo|situacao)\b.*\bfinanceir[oa]\b/.test(pergunta)) {
     return consultarResumoFinanceiro(pool, auth, "resumo", periodo);
+  }
+
+  const economiaLoteamento =
+    interpretarLoteamentoEconomico(perguntaOriginal);
+
+  if (economiaLoteamento) {
+    return economiaLoteamento;
   }
 
   const matematica = calcularMatematica(perguntaOriginal);
