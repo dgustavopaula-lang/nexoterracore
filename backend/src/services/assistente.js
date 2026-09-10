@@ -1,6 +1,10 @@
 const { interpretarLoteamentoEconomico } = require("./turing-loteamento-economico");
 const { calcularMatematica } = require("./turing-math");
 const { temPermissao } = require("../security/permissions");
+const {
+  validarCapacidade,
+  anexarGovernanca
+} = require("../security/turing-capabilities");
 const { consultarConhecimentoInterno } = require("./turing-knowledge");
 const { consultarConhecimentoGeral } = require("./turing-general-knowledge");
 
@@ -56,6 +60,22 @@ function exigirPermissao(auth, recurso) {
   if (!temPermissao(auth.perfis, recurso, "GET")) {
     throw new ErroAssistente(403, "Sem permissão para consultar esses dados.");
   }
+}
+
+function exigirCapacidade(auth, nome) {
+  const validacao = validarCapacidade(nome, auth);
+
+  if (!validacao.ok) {
+    throw new ErroAssistente(validacao.status, validacao.mensagem);
+  }
+
+  return validacao.capacidade;
+}
+
+async function executarCapacidade(auth, nome, executar) {
+  exigirCapacidade(auth, nome);
+  const resultado = await executar();
+  return anexarGovernanca(resultado, nome);
 }
 
 function detectarInstrucaoProibida(pergunta) {
@@ -224,7 +244,6 @@ async function consultarUltimosLancamentos(pool, auth, periodo) {
   };
 }
 
-
 async function consultarOllama(pergunta) {
   const url = process.env.OLLAMA_URL || "http://127.0.0.1:11434";
   const modelo = process.env.OLLAMA_MODEL || "qwen2.5:0.5b";
@@ -286,12 +305,14 @@ async function responderPergunta(pool, auth, perguntaOriginal) {
   const periodo = extrairPeriodo(pergunta);
 
   // Loteamentos têm prioridade sobre regras financeiras genéricas.
-  const pareceLoteamento =
-    /\blotes?\b|\bvgv\b/.test(pergunta);
+  const pareceLoteamento = /\blotes?\b|\bvgv\b/.test(pergunta);
 
   if (pareceLoteamento) {
-    const economiaLoteamento =
-      interpretarLoteamentoEconomico(perguntaOriginal);
+    const economiaLoteamento = await executarCapacidade(
+      auth,
+      "loteamento.economico",
+      () => interpretarLoteamentoEconomico(perguntaOriginal)
+    );
 
     if (economiaLoteamento) {
       return economiaLoteamento;
@@ -307,49 +328,77 @@ async function responderPergunta(pool, auth, perguntaOriginal) {
   }
 
   if (/\b(quantas?|numero|total)\b.*\bmaquinas?\b|\bmaquinas?\b.*\b(quantas?|numero)\b/.test(pergunta)) {
-    return consultarMaquinas(pool, auth, "quantidade");
+    return executarCapacidade(auth, "maquinas.consulta", () =>
+      consultarMaquinas(pool, auth, "quantidade")
+    );
   }
   if (/\bmaquinas?\b.*\b(paradas?|inativas?|manutencao)\b|\b(paradas?|inativas?)\b.*\bmaquinas?\b/.test(pergunta)) {
-    return consultarMaquinas(pool, auth, "nao_ativas");
+    return executarCapacidade(auth, "maquinas.consulta", () =>
+      consultarMaquinas(pool, auth, "nao_ativas")
+    );
   }
   if (/\b(mostrar?|listar?|quais?|dados?)\b.*\bmaquinas?\b|\bmaquinas? cadastradas?\b/.test(pergunta)) {
-    return consultarMaquinas(pool, auth, "lista");
+    return executarCapacidade(auth, "maquinas.consulta", () =>
+      consultarMaquinas(pool, auth, "lista")
+    );
   }
   if (/\b(ultimos?|recentes?)\b.*\b(lancamentos?|movimentacoes?)\b/.test(pergunta)) {
-    return consultarUltimosLancamentos(pool, auth, periodo);
+    return executarCapacidade(auth, "financeiro.consulta", () =>
+      consultarUltimosLancamentos(pool, auth, periodo)
+    );
   }
   if (/\b(receitas?|faturamento)\b/.test(pergunta)) {
-    return consultarResumoFinanceiro(pool, auth, "receitas", periodo);
+    return executarCapacidade(auth, "financeiro.consulta", () =>
+      consultarResumoFinanceiro(pool, auth, "receitas", periodo)
+    );
   }
   if (/\b(despesas?|gastos?|custos?)\b/.test(pergunta)) {
-    return consultarResumoFinanceiro(pool, auth, "despesas", periodo);
+    return executarCapacidade(auth, "financeiro.consulta", () =>
+      consultarResumoFinanceiro(pool, auth, "despesas", periodo)
+    );
   }
   if (/\b(saldo|resultado financeiro)\b/.test(pergunta)) {
-    return consultarResumoFinanceiro(pool, auth, "saldo", periodo);
+    return executarCapacidade(auth, "financeiro.consulta", () =>
+      consultarResumoFinanceiro(pool, auth, "saldo", periodo)
+    );
   }
   if (/\b(resumo|situacao)\b.*\bfinanceir[oa]\b/.test(pergunta)) {
-    return consultarResumoFinanceiro(pool, auth, "resumo", periodo);
+    return executarCapacidade(auth, "financeiro.consulta", () =>
+      consultarResumoFinanceiro(pool, auth, "resumo", periodo)
+    );
   }
 
-  const matematica = calcularMatematica(perguntaOriginal);
+  const matematica = await executarCapacidade(auth, "matematica", () =>
+    calcularMatematica(perguntaOriginal)
+  );
 
   if (matematica) {
     return matematica;
   }
 
-  const conhecimentoInterno = consultarConhecimentoInterno(pergunta);
+  const conhecimentoInterno = await executarCapacidade(
+    auth,
+    "conhecimento.interno",
+    () => consultarConhecimentoInterno(pergunta)
+  );
 
   if (conhecimentoInterno) {
     return conhecimentoInterno;
   }
 
-  const conhecimentoGeral = consultarConhecimentoGeral(pergunta);
+  const conhecimentoGeral = await executarCapacidade(
+    auth,
+    "conhecimento.geral",
+    () => consultarConhecimentoGeral(pergunta)
+  );
 
   if (conhecimentoGeral) {
     return conhecimentoGeral;
   }
 
-  return consultarOllama(perguntaOriginal);
+  return executarCapacidade(auth, "modelo.generativo", () =>
+    consultarOllama(perguntaOriginal)
+  );
 }
 
 module.exports = { ErroAssistente, responderPergunta };
