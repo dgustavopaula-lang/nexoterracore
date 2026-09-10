@@ -285,6 +285,19 @@ async function responderPergunta(pool, auth, perguntaOriginal) {
 
   const periodo = extrairPeriodo(pergunta);
 
+  // Loteamentos têm prioridade sobre regras financeiras genéricas.
+  const pareceLoteamento =
+    /\blotes?\b|\bvgv\b/.test(pergunta);
+
+  if (pareceLoteamento) {
+    const economiaLoteamento =
+      interpretarLoteamentoEconomico(perguntaOriginal);
+
+    if (economiaLoteamento) {
+      return economiaLoteamento;
+    }
+  }
+
   if (/\b(custo|gasto|despesa)s?\b.*\bmanutencao\b|\bmanutencao\b.*\b(custo|gasto|despesa)s?\b/.test(pergunta)) {
     return {
       resposta: "Não existem dados suficientes para relacionar custos de manutenção a uma máquina. Os lançamentos financeiros atuais não possuem vínculo com máquinas.",
@@ -316,13 +329,6 @@ async function responderPergunta(pool, auth, perguntaOriginal) {
   }
   if (/\b(resumo|situacao)\b.*\bfinanceir[oa]\b/.test(pergunta)) {
     return consultarResumoFinanceiro(pool, auth, "resumo", periodo);
-  }
-
-  const economiaLoteamento =
-    interpretarLoteamentoEconomico(perguntaOriginal);
-
-  if (economiaLoteamento) {
-    return economiaLoteamento;
   }
 
   const matematica = calcularMatematica(perguntaOriginal);
