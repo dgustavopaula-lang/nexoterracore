@@ -1,3 +1,4 @@
+const { calcularMatematica } = require("./turing-math");
 const { temPermissao } = require("../security/permissions");
 const { consultarConhecimentoInterno } = require("./turing-knowledge");
 const { consultarConhecimentoGeral } = require("./turing-general-knowledge");
@@ -314,6 +315,12 @@ async function responderPergunta(pool, auth, perguntaOriginal) {
   }
   if (/\b(resumo|situacao)\b.*\bfinanceir[oa]\b/.test(pergunta)) {
     return consultarResumoFinanceiro(pool, auth, "resumo", periodo);
+  }
+
+  const matematica = calcularMatematica(perguntaOriginal);
+
+  if (matematica) {
+    return matematica;
   }
 
   const conhecimentoInterno = consultarConhecimentoInterno(pergunta);
