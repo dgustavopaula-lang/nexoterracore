@@ -54,6 +54,9 @@ function calcularCenariosLoteamento(entrada = {}) {
   const precoPorLote =
     numeroOpcional(entrada.precoPorLote, "Preço por lote");
 
+  const precoPorM2 =
+    numeroOpcional(entrada.precoPorM2, "Preço por m²");
+
   const custoTotal =
     numeroOpcional(entrada.custoTotal, "Custo total");
 
@@ -87,9 +90,14 @@ function calcularCenariosLoteamento(entrada = {}) {
     const sobraM2 =
       areaConsideradaM2 - areaUtilizadaM2;
 
+    const precoCalculadoPorLote =
+      precoPorM2 !== null
+        ? tamanhoLoteM2 * precoPorM2
+        : precoPorLote;
+
     const vgv =
-      precoPorLote !== null
-        ? quantidadeLotes * precoPorLote
+      precoCalculadoPorLote !== null
+        ? quantidadeLotes * precoCalculadoPorLote
         : null;
 
     const lucroEstimado =
@@ -124,9 +132,9 @@ function calcularCenariosLoteamento(entrada = {}) {
         lotesProprietario =
           quantidadeLotes * fator;
 
-        if (precoPorLote !== null) {
+        if (precoCalculadoPorLote !== null) {
           participacaoProprietario =
-            lotesProprietario * precoPorLote;
+            lotesProprietario * precoCalculadoPorLote;
         }
       }
     }
@@ -136,7 +144,11 @@ function calcularCenariosLoteamento(entrada = {}) {
       quantidadeLotes,
       areaUtilizadaM2,
       sobraM2,
-      precoPorLote,
+      precoPorM2,
+
+      precoPorLote: precoCalculadoPorLote,
+
+      criterioPreco: precoPorM2 !== null ? "m2" : "lote",
       vgv,
       custoTotal,
       lucroEstimado,
