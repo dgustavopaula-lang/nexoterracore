@@ -23,6 +23,9 @@ const {
   responderPergunta
 } = require("./services/assistente");
 const { responderPerguntaPublica } = require("./services/turing-publico");
+const {
+  calcularCenariosLoteamento
+} = require("./services/loteamento-cenarios");
 require("dotenv").config();
 const {
   garantirEstruturaFinanceira,
@@ -1791,6 +1794,28 @@ app.delete("/api/financeiro/:id", autenticar, autorizar("financeiro", "DELETE"),
   }
 });
 
+
+
+// Calculadora privada de estimativas de loteamento
+app.post(
+  "/api/projetos/loteamento/cenarios",
+  autenticar,
+  autorizar("imoveis", "GET"),
+  (req, res) => {
+    try {
+      const resultado =
+        calcularCenariosLoteamento(req.body || {});
+
+      return res.json(resultado);
+    } catch (erro) {
+      return res.status(400).json({
+        erro:
+          erro.message ||
+          "Não foi possível calcular as estimativas."
+      });
+    }
+  }
+);
 
 app.get("/api/imoveis", autenticar, rateLimitApiKey, meteringApiKey, autorizar("imoveis", "GET"), async (req, res) => {
   try {
