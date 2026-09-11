@@ -809,6 +809,13 @@ app.post("/api/turing/publico", limiteTuring, async (req, res, next) => {
         ? req.body.pergunta.trim()
         : "";
 
+    if (!pergunta || pergunta.length > 500) {
+      return res.status(400).json({
+        ok: false,
+        erro: "A pergunta deve possuir entre 1 e 500 caracteres."
+      });
+    }
+
     const resultado = await responderPerguntaPublica(pergunta);
 
     res.json({
@@ -2011,6 +2018,118 @@ const consolePath = path.join(
   "../../sala-de-comando"
 );
 
+
+// ============================================================
+// NEXOTERRACORE — CALCULADORA DE LOTEAMENTO
+// Cálculo técnico; parâmetros urbanísticos devem ser informados
+// conforme legislação/plano diretor aplicável ao empreendimento.
+// ============================================================
+app.post(
+  "/api/loteamentos/calcular",
+  autenticar,
+  autorizar("imoveis", "POST"),
+  async (req, res) => {
+    try {
+      const b = req.body || {};
+
+      const areaTotal = Number(b.area_total_m2);
+      const areaLote = Number(b.area_lote_m2);
+      const pctViario = Number(b.percentual_sistema_viario ?? 0);
+      const pctPublico = Number(b.percentual_areas_publicas ?? 0);
+
+      const modalidade = String(b.modalidade || "privado")
+        .trim()
+        .toLowerCase();
+
+      if (!Number.isFinite(areaTotal) || areaTotal <= 0) {
+        return res.status(400).json({
+          erro: "area_total_m2 deve ser maior que zero"
+        });
+      }
+
+      if (!Number.isFinite(areaLote) || areaLote <= 0) {
+        return res.status(400).json({
+          erro: "area_lote_m2 deve ser maior que zero"
+        });
+      }
+
+      if (
+        !Number.isFinite(pctViario) ||
+        !Number.isFinite(pctPublico) ||
+        pctViario < 0 ||
+        pctPublico < 0 ||
+        pctViario + pctPublico >= 100
+      ) {
+        return res.status(400).json({
+          erro: "Percentuais inválidos"
+        });
+      }
+
+      const areaSistemaViario = areaTotal * pctViario / 100;
+      const areaPublica = areaTotal * pctPublico / 100;
+      const areaLoteavel =
+        areaTotal - areaSistemaViario - areaPublica;
+
+      const quantidadeLotes =
+        Math.floor(areaLoteavel / areaLote);
+
+      const areaUtilizadaLotes =
+        quantidadeLotes * areaLote;
+
+      const areaResidual =
+        areaLoteavel - areaUtilizadaLotes;
+
+      const aproveitamento =
+        areaLoteavel / areaTotal * 100;
+
+      return res.json({
+        sistema: "NexoTerraCore",
+        modulo: "loteamentos",
+        modalidade,
+
+        entrada: {
+          area_total_m2: areaTotal,
+          area_lote_m2: areaLote,
+          percentual_sistema_viario: pctViario,
+          percentual_areas_publicas: pctPublico
+        },
+
+        resultado: {
+          area_sistema_viario_m2:
+            Number(areaSistemaViario.toFixed(2)),
+
+          area_publica_m2:
+            Number(areaPublica.toFixed(2)),
+
+          area_loteavel_m2:
+            Number(areaLoteavel.toFixed(2)),
+
+          quantidade_lotes: quantidadeLotes,
+
+          area_utilizada_lotes_m2:
+            Number(areaUtilizadaLotes.toFixed(2)),
+
+          area_residual_m2:
+            Number(areaResidual.toFixed(2)),
+
+          aproveitamento_percentual:
+            Number(aproveitamento.toFixed(2))
+        },
+
+        observacao:
+          "O cálculo não substitui parâmetros urbanísticos, ambientais ou municipais aplicáveis ao empreendimento."
+      });
+
+    } catch (erro) {
+      console.error("Erro cálculo loteamento:", erro);
+      return res.status(500).json({
+        erro: "Erro interno ao calcular loteamento"
+      });
+    }
+  }
+);
+
+
 app.get(["/app", "/app/"], (req, res) => {
   res.sendFile(
     path.join(consolePath, "painel.html")
@@ -2116,6 +2235,104 @@ async function garantirEstruturaNTCoins() {
   );
 }
 
+
+// ===== TURING SECURITY WORKER v2 =====
+// Opera no backend independentemente do Console.
+// Estágio atual: somente leitura / observação.
+const TURING_SECURITY_INTERVAL_MS =
+  Number(process.env.TURING_SECURITY_INTERVAL_MS || 60000);
+
+let turingSecurityTimer = null;
+let turingSecurityExecutando = false;
+
+async function executarCicloTuringSecurity() {
+  if (turingSecurityExecutando) return;
+
+  turingSecurityExecutando = true;
+  const inicio = Date.now();
+
+  let estado = "PASS";
+  let banco = "conectado";
+  let erro = null;
+  let bancoOk = false;
+  let persistido = false;
+
+  try {
+    await pool.query("SELECT 1");
+    bancoOk = true;
+  } catch (err) {
+    estado = "ALERT";
+    banco = "indisponivel";
+    erro = err?.message || "erro desconhecido";
+  }
+
+  if (bancoOk) {
+    try {
+      await pool.query(
+        `INSERT INTO turing_security_events
+          (agente, evento, estado, banco, modo, duracao_ms, contexto)
+         VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb)`,
+        [
+          "Turing",
+          "security_worker_cycle",
+          estado,
+          banco,
+          "observacao",
+          Date.now() - inicio,
+          JSON.stringify({
+            origem: "backend",
+            persistencia: "audit_only",
+            dados_operacionais_alterados: false
+          })
+        ]
+      );
+
+      persistido = true;
+    } catch (err) {
+      estado = "WARN";
+      erro = `falha de auditoria: ${err?.message || "erro desconhecido"}`;
+    }
+  }
+
+  console.log(JSON.stringify({
+    nivel: "security",
+    agente: "Turing",
+    evento: "security_worker_cycle",
+    estado,
+    banco,
+    modo: "observacao",
+    persistencia: "audit_only",
+    persistido,
+    duracaoMs: Date.now() - inicio,
+    horario: new Date().toISOString(),
+    ...(erro ? { erro } : {})
+  }));
+
+  turingSecurityExecutando = false;
+}
+
+function iniciarTuringSecurityWorker() {
+  if (turingSecurityTimer) return;
+
+  console.log(JSON.stringify({
+    nivel: "security",
+    agente: "Turing",
+    evento: "security_worker_started",
+    estado: "ATIVO",
+    modo: "read_only",
+    intervaloMs: TURING_SECURITY_INTERVAL_MS,
+    horario: new Date().toISOString()
+  }));
+
+  executarCicloTuringSecurity();
+
+  turingSecurityTimer = setInterval(
+    executarCicloTuringSecurity,
+    TURING_SECURITY_INTERVAL_MS
+  );
+}
+// ===== FIM TURING SECURITY WORKER v2 =====
+
 async function iniciarServidor() {
   await garantirEstruturaNTCoins();
   await garantirEstruturaFinanceira(pool);
@@ -2130,6 +2347,7 @@ async function iniciarServidor() {
 
   app.listen(PORT, () => {
     console.log(`NexoTerraCore API: http://localhost:${PORT}`);
+    iniciarTuringSecurityWorker();
   });
 }
 
