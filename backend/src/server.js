@@ -638,41 +638,69 @@ app.get("/api/control-plane", autenticar, autorizar("control_plane", "GET"), asy
   try {
     const organizacaoId = req.auth.organizacaoId;
 
-    const [organizacao, apiKeys, consumo] = await Promise.all([
-      pool.query(
-        `SELECT id, nome, slug, ativo
-         FROM organizacoes
-         WHERE id = $1`,
-        [organizacaoId]
-      ),
-      pool.query(
-        `SELECT
-           id,
-           nome,
-           prefixo,
-           scopes,
-           ativo,
-           expira_em,
-           ultimo_uso_em,
-           revogado_em,
-           criado_em
-         FROM api_keys
-         WHERE organizacao_id = $1
-         ORDER BY id DESC`,
-        [organizacaoId]
-      ),
-      pool.query(
-        `SELECT
-           COUNT(*)::int AS total_requisicoes,
-           COUNT(*) FILTER (
-             WHERE criado_em >= NOW() - INTERVAL '24 hours'
-           )::int AS requisicoes_24h,
-           MAX(criado_em) AS ultimo_consumo_em
-         FROM api_usage
-         WHERE organizacao_id = $1`,
-        [organizacaoId]
-      )
-    ]);
+    const [organizacao, apiKeys, consumo, turingEventos, turingResumo] =
+      await Promise.all([
+        pool.query(
+          `SELECT id, nome, slug, ativo
+           FROM organizacoes
+           WHERE id = $1`,
+          [organizacaoId]
+        ),
+        pool.query(
+          `SELECT
+             id,
+             nome,
+             prefixo,
+             scopes,
+             ativo,
+             expira_em,
+             ultimo_uso_em,
+             revogado_em,
+             criado_em
+           FROM api_keys
+           WHERE organizacao_id = $1
+           ORDER BY id DESC`,
+          [organizacaoId]
+        ),
+        pool.query(
+          `SELECT
+             COUNT(*)::int AS total_requisicoes,
+             COUNT(*) FILTER (
+               WHERE criado_em >= NOW() - INTERVAL '24 hours'
+             )::int AS requisicoes_24h,
+             MAX(criado_em) AS ultimo_consumo_em
+           FROM api_usage
+           WHERE organizacao_id = $1`,
+          [organizacaoId]
+        ),
+        pool.query(
+          `SELECT
+             id,
+             agente,
+             evento,
+             estado,
+             banco,
+             modo,
+             duracao_ms,
+             contexto,
+             criado_em
+           FROM turing_security_events
+           ORDER BY criado_em DESC
+           LIMIT 30`
+        ),
+        pool.query(
+          `SELECT
+             COUNT(*)::int AS total,
+             COUNT(*) FILTER (
+               WHERE criado_em >= NOW() - INTERVAL '24 hours'
+             )::int AS eventos_24h,
+             COUNT(*) FILTER (WHERE estado = 'PASS')::int AS pass,
+             COUNT(*) FILTER (WHERE estado = 'WARN')::int AS warn,
+             COUNT(*) FILTER (WHERE estado = 'ALERT')::int AS alert,
+             MAX(criado_em) AS ultimo_evento_em
+           FROM turing_security_events`
+        )
+      ]);
 
     res.json({
       organizacao: organizacao.rows[0] || null,
@@ -681,6 +709,10 @@ app.get("/api/control-plane", autenticar, autorizar("control_plane", "GET"), asy
       rateLimit: {
         limite: 60,
         janelaSegundos: 60
+      },
+      turingSecurity: {
+        resumo: turingResumo.rows[0],
+        eventos: turingEventos.rows
       }
     });
   } catch (erro) {
