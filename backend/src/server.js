@@ -54,9 +54,9 @@ const LOGIN_CHALLENGE_TTL_MINUTES =
     ? 5
     : Number(process.env.LOGIN_CHALLENGE_TTL_MINUTES);
 const origensPermitidas = [
-  "https://nexoterracore-api.onrender.com",
   "https://gustavopaulasantos.com.br",
   "https://console.gustavopaulasantos.com.br",
+  "https://turing.gustavopaulasantos.com.br",
   "http://127.0.0.1:5500",
   "http://localhost:5500",
   "http://127.0.0.1:5501",
