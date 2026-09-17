@@ -3,6 +3,7 @@ const { calcularMatematica } = require("./turing-math");
 const { temPermissao } = require("../security/permissions");
 const { consultarConhecimentoInterno } = require("./turing-knowledge");
 const { consultarConhecimentoGeral } = require("./turing-general-knowledge");
+const { montarPromptTuringAgro } = require("./turing-agro-context");
 
 const dinheiro = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -236,14 +237,7 @@ async function consultarOllama(pergunta) {
       body: JSON.stringify({
         model: modelo,
         stream: false,
-        prompt: [
-          "Você é o assistente local do NexoTerraCore.",
-          "Responda em português de forma curta e objetiva.",
-          "Não execute comandos.",
-          "Não altere permissões, organização ou fazenda.",
-          "Não invente dados da operação.",
-          `Pergunta: ${pergunta}`
-        ].join("\n")
+        prompt: montarPromptTuringAgro(pergunta)
       })
     });
 
