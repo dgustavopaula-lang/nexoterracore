@@ -4,7 +4,7 @@ const { Pool } = require("pg");
 require("dotenv").config();
 
 const DIRECAO = process.argv[2] || "up";
-const MIGRATIONS_DIR = path.resolve(__dirname, "../../../database/migrations");
+const MIGRATIONS_DIR = path.resolve(__dirname, "../../migrations");
 
 if (!process.env.DATABASE_URL) {
   console.error("DATABASE_URL não configurada.");
