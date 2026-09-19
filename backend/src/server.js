@@ -150,7 +150,8 @@ app.use(
       const erro = new Error("Origem não permitida pelo CORS.");
       erro.status = 403;
       callback(erro);
-    }
+    },
+    credentials: true
   })
 );
 
@@ -160,6 +161,39 @@ app.use(exigirJson);
 function lerId(valor) {
   const id = Number(valor);
   return Number.isSafeInteger(id) && id > 0 ? id : null;
+}
+
+function lerCookieSeguro(req, nome) {
+  const cabecalho = req.get("cookie") || "";
+  const prefixo = `${nome}=`;
+
+  for (const parte of cabecalho.split(";")) {
+    const item = parte.trim();
+    if (!item.startsWith(prefixo)) continue;
+
+    try {
+      return decodeURIComponent(item.slice(prefixo.length));
+    } catch {
+      return "";
+    }
+  }
+
+  return "";
+}
+
+function ehProprietario(auth) {
+  return Array.isArray(auth?.perfis) && auth.perfis.includes("proprietario");
+}
+
+function autenticarConsoleCookie(req, res, next) {
+  const token = lerCookieSeguro(req, "ntc_console");
+
+  if (!/^[A-Za-z0-9_-]{40,200}$/.test(token)) {
+    return res.status(401).json({ erro: "Sessão do Console necessária." });
+  }
+
+  req.headers.authorization = `Bearer ${token}`;
+  return autenticar(req, res, next);
 }
 
 async function comTransacao(callback) {
@@ -633,6 +667,82 @@ app.get("/api/auth/me", autenticar, (req, res) => {
     perfis: req.auth.perfis
   });
 });
+
+app.post("/api/auth/console", autenticar, (req, res) => {
+  if (!ehProprietario(req.auth)) {
+    return res.status(403).json({
+      erro: "Acesso ao Console restrito ao perfil proprietário."
+    });
+  }
+
+  const cabecalho = req.get("authorization") || "";
+  const correspondencia = cabecalho.match(/^Bearer ([A-Za-z0-9_-]{40,200})$/);
+
+  if (!correspondencia) {
+    return res.status(401).json({ erro: "Sessão inválida." });
+  }
+
+  res.cookie("ntc_console", correspondencia[1], {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    domain:
+      process.env.NODE_ENV === "production"
+        ? ".gustavopaulasantos.com.br"
+        : undefined,
+    path: "/",
+    maxAge: SESSION_TTL_HOURS * 60 * 60 * 1000
+  });
+
+  res.json({
+    autorizado: true,
+    usuario: {
+      id: req.auth.usuarioId,
+      nome: req.auth.usuarioNome
+    },
+    perfis: req.auth.perfis
+  });
+});
+
+app.get(
+  "/api/auth/console/verify",
+  autenticarConsoleCookie,
+  (req, res) => {
+    if (!ehProprietario(req.auth)) {
+      return res.status(403).json({ erro: "Console não autorizado." });
+    }
+
+    return res.status(204).end();
+  }
+);
+
+app.post(
+  "/api/auth/console/logout",
+  autenticarConsoleCookie,
+  async (req, res, next) => {
+    try {
+      await pool.query(
+        "UPDATE sessoes_usuario SET revogada_em = NOW() WHERE id = $1",
+        [req.auth.sessaoId]
+      );
+
+      res.clearCookie("ntc_console", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        domain:
+          process.env.NODE_ENV === "production"
+            ? ".gustavopaulasantos.com.br"
+            : undefined,
+        path: "/"
+      });
+
+      return res.status(204).end();
+    } catch (erro) {
+      next(erro);
+    }
+  }
+);
 
 app.get("/api/control-plane", autenticar, autorizar("control_plane", "GET"), async (req, res, next) => {
   try {
