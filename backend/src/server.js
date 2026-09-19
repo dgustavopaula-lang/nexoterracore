@@ -521,11 +521,16 @@ function listarFazendasPermitidas(vinculos) {
 }
 
 app.post("/api/auth/login", limiteLogin, async (req, res) => {
-  const email =
-    typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+  const identificadorBruto =
+    typeof req.body?.usuario === "string"
+      ? req.body.usuario
+      : typeof req.body?.email === "string"
+        ? req.body.email
+        : "";
+  const identificador = identificadorBruto.trim().toLowerCase();
   const senha = typeof req.body?.senha === "string" ? req.body.senha : "";
 
-  if (!email || email.length > 254 || !senha) {
+  if (!identificador || identificador.length > 254 || !senha) {
     return res.status(400).json({ erro: "Credenciais inválidas." });
   }
 
@@ -535,10 +540,16 @@ app.post("/api/auth/login", limiteLogin, async (req, res) => {
         SELECT id, nome, email, senha_hash, senha_salt
         FROM usuarios
         WHERE ativo = TRUE
-          AND LOWER(BTRIM(email)) = $1
+          AND (
+            LOWER(BTRIM(email)) = $1
+            OR LOWER(BTRIM(nome)) = $1
+          )
+        ORDER BY
+          CASE WHEN LOWER(BTRIM(email)) = $1 THEN 0 ELSE 1 END,
+          id
         LIMIT 1
       `,
-      [email]
+      [identificador]
     );
 
     const linhaUsuario = usuario.rows[0];
