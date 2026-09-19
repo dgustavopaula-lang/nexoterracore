@@ -19,7 +19,7 @@
 
 <body>
 
-  <div class="app-shell app-locked" id="appShellMain">
+  <div class="app-shell" id="appShellMain">
 
     <aside class="sidebar" id="sidebar">
       <button id="btnSidebar" class="sidebar-toggle" type="button" title="Recolher menu">☰</button>
@@ -43,7 +43,7 @@
 
       <div class="sidebar-footer">
         <strong>Gustavo Admin</strong>
-        <span id="statusSessao">Sessão não iniciada</span>
+        <span id="statusSessao">Console ativo</span>
       </div>
     </aside>
 
@@ -56,9 +56,6 @@
         </div>
 
         <div class="topbar-actions">
-          <button id="btnEntrar" class="btn-secondary">Entrar</button>
-          <button id="btnSair" class="btn-secondary oculto">Sair</button>
-
           <div class="system-status">
             <span>API</span>
             <strong>Aguardando conexão</strong>
@@ -957,109 +954,6 @@
   </div>
 
   
-  <div id="modalLogin" class="modal login-modal">
-    <div class="login-shell">
-
-      <section class="login-brand-panel">
-        <div class="login-brand-top">
-          <div class="login-logo">N</div>
-          <div>
-            <strong>NexoTerraCore</strong>
-            <span>Sala de Comando</span>
-          </div>
-        </div>
-
-        <div class="login-brand-content">
-          <span class="login-kicker">AMBIENTE OPERACIONAL PRIVADO</span>
-          <h1>Centro de Operações</h1>
-          <p>
-            Gestão integrada de patrimônio, finanças,
-            operações, dados e infraestrutura.
-          </p>
-
-          <div class="login-status-grid">
-            <article>
-              <span>CORE</span>
-              <strong>API operacional</strong>
-            </article>
-
-            <article>
-              <span>DADOS</span>
-              <strong>PostgreSQL</strong>
-            </article>
-
-            <article>
-              <span>SEGURANÇA</span>
-              <strong>Acesso protegido</strong>
-            </article>
-          </div>
-        </div>
-
-        <div class="login-brand-footer">
-          NexoTerraCore · Control Plane
-        </div>
-      </section>
-
-      <section class="login-form-panel">
-        <button id="fecharLogin" class="login-close" type="button" aria-label="Fechar">
-          ×
-        </button>
-
-        <div class="login-form-header">
-          <span class="login-kicker">ACESSO AUTORIZADO</span>
-          <h2>Acesso ao NexoTerraCore</h2>
-          <div class="access-badge">AMBIENTE PRIVADO</div>
-          <p>Use suas credenciais para acessar o ambiente operacional.</p>
-        </div>
-
-        <form id="formLogin" class="login-form">
-          <label>
-            E-mail
-            <input
-              id="loginUsuario"
-              name="usuario"
-              type="text"
-              autocomplete="username"
-              placeholder="seu e-mail de acesso"
-              required
-            >
-          </label>
-
-          <label>
-            Senha
-            <input
-              id="loginSenha"
-              name="senha"
-              type="password"
-              autocomplete="current-password"
-              placeholder="••••••••"
-              required
-            >
-          </label>
-
-          <div class="login-security-note">
-            <span></span>
-            Sessão protegida pelo NexoTerraCore
-          </div>
-
-          <div id="erroLogin" class="form-error"></div>
-
-          <button type="submit" class="btn-primary login-submit">
-            Acessar Sala de Comando
-          </button>
-        </form>
-
-        <div class="login-footer-info">
-          <span>API</span>
-          <strong>localhost:3000</strong>
-          <span>Ambiente privado</span>
-        </div>
-      </section>
-
-    </div>
-  </div>
-
-
   <div id="modalFazenda" class="modal oculto">
     <div class="modal-card">
       <div class="modal-header">
@@ -1095,30 +989,6 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
   <script src="./js/admin-control.js"></script>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const app = document.getElementById("appShellMain");
-  const modal = document.getElementById("modalLogin");
-
-  function liberarConsole() {
-    if (!app) return;
-    app.classList.remove("app-locked");
-  }
-
-  const observer = new MutationObserver(() => {
-    if (modal && modal.classList.contains("oculto")) {
-      liberarConsole();
-    }
-  });
-
-  if (modal) {
-    observer.observe(modal, {
-      attributes: true,
-      attributeFilter: ["class"]
-    });
-  }
-});
-</script>
 
 
 <script>
