@@ -1,8 +1,8 @@
 const SalaDeComando = {
   versao: "0.2.0",
   apiBase: ["localhost", "127.0.0.1"].includes(window.location.hostname)
-    ? "http://localhost:3000"
-    : "https://nexoterracore-api.onrender.com",
+    ? "https://api.gustavopaulasantos.com.br"
+    : "https://api.gustavopaulasantos.com.br",
   token: null,
   desafioLogin: null,
 
