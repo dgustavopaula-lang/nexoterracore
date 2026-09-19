@@ -58,6 +58,8 @@ const SalaDeComando = {
     const btnSair = document.querySelector("#btnSair");
     const fechar = document.querySelector("#fecharLogin");
 
+    if (!modal || !form || !btnEntrar || !btnSair || !fechar) return;
+
     btnEntrar.addEventListener("click", () => {
       modal.classList.remove("oculto");
       document.querySelector("#loginUsuario").focus();
@@ -401,7 +403,7 @@ const SalaDeComando = {
       .querySelector("#btnAtualizarImoveis")
       .addEventListener("click", () => {
         if (!this.token) {
-          document.querySelector("#modalLogin").classList.remove("oculto");
+          console.warn("Login removido da interface; módulo exige sessão da API.")
           return;
         }
 
@@ -448,7 +450,7 @@ const SalaDeComando = {
       .querySelector("#btnNovoImovel")
       .addEventListener("click", () => {
         if (!this.token) {
-          document.querySelector("#modalLogin").classList.remove("oculto");
+          console.warn("Login removido da interface; módulo exige sessão da API.")
           return;
         }
 
