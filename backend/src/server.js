@@ -35,6 +35,7 @@ const ntcoinsRoutes = require('./routes/ntcoins');
 const { cobrarNTCoins } = require('./middleware/ntcoins');
 const ntcoinsWebhookRoutes = require('./routes/ntcoins-webhook');
 const ntcoinsPaypalRoutes = require('./routes/ntcoins-paypal');
+const criarRotasTuringCentroOeste = require("./routes/turing-centro-oeste");
 
 
 const app = express();
@@ -2197,6 +2198,8 @@ app.use(
     lerId
   })
 );
+
+app.use("/api/turing/centro-oeste", criarRotasTuringCentroOeste(pool));
 
 app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });
