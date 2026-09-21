@@ -1,0 +1,80 @@
+{
+  "versao": "1.0.0",
+  "regiao": "Centro-Oeste",
+  "foco_inicial": {
+    "estados": ["GO", "MG"],
+    "corredores": [
+      "Sudoeste Goiano",
+      "Sul Goiano",
+      "Rio Verde-Jatai",
+      "Paranaiguara-Sao Simao",
+      "Quirinopolis",
+      "Itumbiara-Uberlandia",
+      "Triangulo Mineiro"
+    ]
+  },
+  "setores_prioritarios": [
+    {
+      "setor": "armazenagem_graos",
+      "dores": [
+        "deficit ou saturacao de armazenagem",
+        "ociosidade sazonal de estruturas",
+        "necessidade de expansao",
+        "alto custo operacional",
+        "necessidade de parceiro ou arrendatario"
+      ]
+    },
+    {
+      "setor": "logistica_agro",
+      "dores": [
+        "frete elevado",
+        "falta de caminhoes em picos de safra",
+        "rotas ineficientes",
+        "retorno vazio",
+        "dificuldade de coordenacao entre carga e armazenagem"
+      ]
+    },
+    {
+      "setor": "cerealistas",
+      "dores": [
+        "originação de graos",
+        "controle de estoque",
+        "formacao de preco",
+        "gestao de fornecedores",
+        "expansao regional"
+      ]
+    },
+    {
+      "setor": "produtor_rural",
+      "dores": [
+        "controle financeiro",
+        "estoque de insumos",
+        "cadastro de compradores",
+        "custos por propriedade",
+        "decisao de venda",
+        "gestao simples pelo celular"
+      ]
+    },
+    {
+      "setor": "agroindustria",
+      "dores": [
+        "fornecimento de materia-prima",
+        "armazenagem",
+        "logistica",
+        "rastreabilidade",
+        "integracao de dados"
+      ]
+    },
+    {
+      "setor": "imoveis_rurais",
+      "dores": [
+        "captacao de compradores",
+        "avaliacao comercial",
+        "organizacao documental",
+        "inteligencia territorial",
+        "divulgacao de ativos"
+      ]
+    }
+  ],
+  "oportunidades": []
+}
