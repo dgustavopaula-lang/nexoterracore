@@ -116,7 +116,7 @@ CHALLENGE="radar-vhost-check-$$"
 printf '%s' "$CHALLENGE" > "$WEB/.well-known/acme-challenge/$CHALLENGE"
 PROVA="$(curl -fsS --max-time 8 --resolve "$DOMAIN:80:127.0.0.1" "http://$DOMAIN/.well-known/acme-challenge/$CHALLENGE")"
 rm -f -- "$WEB/.well-known/acme-challenge/$CHALLENGE"
-if [ "$PROVA" != "$CHALLENGE" ]; then echo "ABORTADO: desafio HTTP nao corresponde."; exit 2; fi
+if [ "$PROVA" != "$CHALLENGE" ]; then echo "ABORTADO: desafio HTTP nao corresponde."; false; fi
 
 # Nao solicita pagamento nem modifica configuracao de sites existentes.
 if [ ! -s "$CERT" ] || [ ! -s "$KEY" ]; then
@@ -182,7 +182,7 @@ LEGACY_STATUS="$(curl -sS --max-time 10 --resolve "$DOMAIN:443:127.0.0.1" -o /de
 printf 'HTTPS_HOME=%s\nRADAR_SEM_LOGIN=%s\nROTA_ANTIGA_NO_SUBDOMINIO=%s\n' "$HOME_STATUS" "$AUTH_STATUS" "$LEGACY_STATUS"
 if [ "$HOME_STATUS" != 200 ] || [ "$AUTH_STATUS" != 401 ] || [ "$LEGACY_STATUS" != 404 ]; then
   echo "ABORTADO: resultado HTTP fora do esperado."
-  exit 2
+  false
 fi
 
 CREATED=0
