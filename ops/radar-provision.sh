@@ -195,12 +195,31 @@ NGINX_HTTPS
 nginx -t
 systemctl reload nginx
 
-HOME_STATUS="$(curl --noproxy '*' -sS --max-time 10 --resolve "$DOMAIN:443:127.0.0.1" -o /dev/null -w '%{http_code}' "https://$DOMAIN/")"
+echo "Aguardando HTTPS e certificado do novo vhost (ate 20 tentativas)..."
+HOME_STATUS=""
+for TENTATIVA in $(seq 1 20); do
+  if HOME_STATUS="$(curl --noproxy '*' -sS --max-time 5 --resolve "$DOMAIN:443:127.0.0.1" -o /dev/null -w '%{http_code}' "https://$DOMAIN/" 2>/dev/null)" && [ "$HOME_STATUS" = 200 ]; then
+    echo "HTTPS OK na tentativa $TENTATIVA."
+    break
+  fi
+  sleep 1
+done
+if [ "$HOME_STATUS" != 200 ]; then
+  echo "ERRO: HTTPS nao retornou 200 com certificado valido. HTTP=$HOME_STATUS"
+  echo "=== CERTIFICADO EM DISCO (apenas nomes, sem chaves) ==="
+  openssl x509 -in "$CERT" -noout -subject -ext subjectAltName || true
+  echo "=== CERTIFICADO APRESENTADO PELO NGINX (apenas nomes) ==="
+  timeout 8 openssl s_client -connect 127.0.0.1:443 -servername "$DOMAIN" </dev/null 2>/dev/null | openssl x509 -noout -subject -ext subjectAltName || true
+  echo "=== VHOST RADAR ATIVO ==="
+  nginx -T 2>/dev/null | grep -n -B 2 -A 22 -F "server_name $DOMAIN;" | tail -65 || true
+  false
+fi
+
 AUTH_STATUS="$(curl --noproxy '*' -sS --max-time 10 --resolve "$DOMAIN:443:127.0.0.1" -o /dev/null -w '%{http_code}' "https://$DOMAIN/api/seo/radar/v1?q=gestao-rural")"
 LEGACY_STATUS="$(curl --noproxy '*' -sS --max-time 10 --resolve "$DOMAIN:443:127.0.0.1" -o /dev/null -w '%{http_code}' "https://$DOMAIN/api/seo/radar?q=gestao-rural")"
 printf 'HTTPS_HOME=%s\nRADAR_SEM_LOGIN=%s\nROTA_ANTIGA_NO_SUBDOMINIO=%s\n' "$HOME_STATUS" "$AUTH_STATUS" "$LEGACY_STATUS"
-if [ "$HOME_STATUS" != 200 ] || [ "$AUTH_STATUS" != 401 ] || [ "$LEGACY_STATUS" != 404 ]; then
-  echo "ABORTADO: resultado HTTP fora do esperado."
+if [ "$AUTH_STATUS" != 401 ] || [ "$LEGACY_STATUS" != 404 ]; then
+  echo "ABORTADO: protecao HTTP fora do esperado."
   false
 fi
 
