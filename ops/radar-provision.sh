@@ -114,7 +114,7 @@ CREATED=1
 nginx -t
 systemctl reload nginx
 
-CHALLENGE="radar-vhost-check-$"
+CHALLENGE="radar-vhost-check-$$"
 printf '%s' "$CHALLENGE" > "$WEB/.well-known/acme-challenge/$CHALLENGE"
 echo 'Verificando desafio HTTP diretamente no Nginx, sem proxy (ate 20 tentativas)...'
 PROVA=""
