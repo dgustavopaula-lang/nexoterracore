@@ -20,6 +20,7 @@ rollback() {
     echo "FALHA NA INSTALACAO. Revertendo apenas o vhost novo..."
     rm -f -- "$ENABLED" "$CONF"
     rm -f -- "$WEB/index.html"
+    if [ -n "${CHALLENGE:-}" ]; then rm -f -- "$WEB/.well-known/acme-challenge/$CHALLENGE"; fi
     if nginx -t >/dev/null 2>&1; then
       systemctl reload nginx || true
     else
@@ -113,12 +114,28 @@ CREATED=1
 nginx -t
 systemctl reload nginx
 
-CHALLENGE="radar-vhost-check-$$"
+CHALLENGE="radar-vhost-check-$"
 printf '%s' "$CHALLENGE" > "$WEB/.well-known/acme-challenge/$CHALLENGE"
-echo 'Verificando desafio HTTP diretamente no Nginx, sem proxy...'
-PROVA="$(curl --noproxy '*' -fsS --max-time 8 --resolve "$DOMAIN:80:127.0.0.1" "http://$DOMAIN/.well-known/acme-challenge/$CHALLENGE")"
+echo 'Verificando desafio HTTP diretamente no Nginx, sem proxy (ate 20 tentativas)...'
+PROVA=""
+for TENTATIVA in $(seq 1 20); do
+  if PROVA="$(curl --noproxy '*' -fsS --max-time 4 --resolve "$DOMAIN:80:127.0.0.1" "http://$DOMAIN/.well-known/acme-challenge/$CHALLENGE" 2>/dev/null)" && [ "$PROVA" = "$CHALLENGE" ]; then
+    echo "Desafio HTTP OK na tentativa $TENTATIVA."
+    break
+  fi
+  sleep 1
+done
+if [ "$PROVA" != "$CHALLENGE" ]; then
+  echo "ERRO: desafio HTTP continua inacessivel apos 20 tentativas; diagnostico:"
+  ls -ld "$WEB" "$WEB/.well-known" "$WEB/.well-known/acme-challenge" || true
+  ls -l "$WEB/.well-known/acme-challenge/$CHALLENGE" || true
+  echo "=== RESPOSTA HTTP ==="
+  curl --noproxy '*' -sS --max-time 6 -D - -o /dev/null --resolve "$DOMAIN:80:127.0.0.1" "http://$DOMAIN/.well-known/acme-challenge/$CHALLENGE" || true
+  echo "=== VHOST NGINX ==="
+  nginx -T 2>/dev/null | grep -n -B 3 -A 20 -F "server_name $DOMAIN;" | tail -55 || true
+  false
+fi
 rm -f -- "$WEB/.well-known/acme-challenge/$CHALLENGE"
-if [ "$PROVA" != "$CHALLENGE" ]; then echo "ABORTADO: desafio HTTP nao corresponde."; false; fi
 
 # Nao solicita pagamento nem modifica configuracao de sites existentes.
 if [ ! -s "$CERT" ] || [ ! -s "$KEY" ]; then
