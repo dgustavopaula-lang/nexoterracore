@@ -169,7 +169,7 @@ server {
         add_header Cache-Control "private, no-store" always;
     }
     location ^~ /api/ { return 404; }
-    location ~ /\\. { return 404; }
+    location ~ /\. { return 404; }
     location / { try_files $uri $uri/ =404; }
 }
 NGINX_HTTPS
