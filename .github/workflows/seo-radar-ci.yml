@@ -1,0 +1,41 @@
+name: SEO Radar - validacao do backend
+
+on:
+  push:
+    branches:
+      - feature/seo-radar-auth-20260925
+    paths:
+      - backend/**
+      - .github/workflows/seo-radar-ci.yml
+  pull_request:
+    paths:
+      - backend/**
+      - .github/workflows/seo-radar-ci.yml
+
+permissions:
+  contents: read
+
+jobs:
+  validar:
+    name: Sintaxe e testes do Radar SEO
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Obter codigo
+        uses: actions/checkout@v4
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Instalar dependencias sem executar scripts de instalacao
+        run: npm ci --prefix backend --ignore-scripts
+
+      - name: Validar sintaxe
+        run: npm run check --prefix backend
+
+      - name: Testar autenticacao, autorizacao e contexto multitenant
+        run: npm run test:seo --prefix backend

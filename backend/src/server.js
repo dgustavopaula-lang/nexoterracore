@@ -35,6 +35,7 @@ const ntcoinsRoutes = require('./routes/ntcoins');
 const { cobrarNTCoins } = require('./middleware/ntcoins');
 const ntcoinsWebhookRoutes = require('./routes/ntcoins-webhook');
 const ntcoinsPaypalRoutes = require('./routes/ntcoins-paypal');
+const { criarRouterSeoRadar } = require("./routes/seo-radar");
 
 
 const app = express();
@@ -754,6 +755,8 @@ app.post(
     }
   }
 );
+
+app.use("/api/seo", criarRouterSeoRadar({ autenticar, autorizar }));
 
 app.get("/api/control-plane", autenticar, autorizar("control_plane", "GET"), async (req, res, next) => {
   try {
