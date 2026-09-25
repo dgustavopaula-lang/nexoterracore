@@ -57,8 +57,8 @@ command -v certbot >/dev/null
 nginx -t
 systemctl is-active --quiet nginx
 systemctl is-active --quiet nexoterracore
-curl -fsS --max-time 8 -o /dev/null "http://127.0.0.1:3000/api/health"
-curl -fsS --max-time 8 -o /dev/null "http://127.0.0.1:3101/api/seo/radar?q=teste"
+curl --noproxy '*' -fsS --max-time 8 -o /dev/null "http://127.0.0.1:3000/api/health"
+curl --noproxy '*' -fsS --max-time 8 -o /dev/null "http://127.0.0.1:3101/api/seo/radar?q=teste"
 
 umask 077
 BACKUP="$(mktemp -d /root/backup-radar-vhost-XXXXXXXX)"
@@ -115,7 +115,8 @@ systemctl reload nginx
 
 CHALLENGE="radar-vhost-check-$$"
 printf '%s' "$CHALLENGE" > "$WEB/.well-known/acme-challenge/$CHALLENGE"
-PROVA="$(curl -fsS --max-time 8 --resolve "$DOMAIN:80:127.0.0.1" "http://$DOMAIN/.well-known/acme-challenge/$CHALLENGE")"
+echo 'Verificando desafio HTTP diretamente no Nginx, sem proxy...'
+PROVA="$(curl --noproxy '*' -fsS --max-time 8 --resolve "$DOMAIN:80:127.0.0.1" "http://$DOMAIN/.well-known/acme-challenge/$CHALLENGE")"
 rm -f -- "$WEB/.well-known/acme-challenge/$CHALLENGE"
 if [ "$PROVA" != "$CHALLENGE" ]; then echo "ABORTADO: desafio HTTP nao corresponde."; false; fi
 
@@ -177,9 +178,9 @@ NGINX_HTTPS
 nginx -t
 systemctl reload nginx
 
-HOME_STATUS="$(curl -sS --max-time 10 --resolve "$DOMAIN:443:127.0.0.1" -o /dev/null -w '%{http_code}' "https://$DOMAIN/")"
-AUTH_STATUS="$(curl -sS --max-time 10 --resolve "$DOMAIN:443:127.0.0.1" -o /dev/null -w '%{http_code}' "https://$DOMAIN/api/seo/radar/v1?q=gestao-rural")"
-LEGACY_STATUS="$(curl -sS --max-time 10 --resolve "$DOMAIN:443:127.0.0.1" -o /dev/null -w '%{http_code}' "https://$DOMAIN/api/seo/radar?q=gestao-rural")"
+HOME_STATUS="$(curl --noproxy '*' -sS --max-time 10 --resolve "$DOMAIN:443:127.0.0.1" -o /dev/null -w '%{http_code}' "https://$DOMAIN/")"
+AUTH_STATUS="$(curl --noproxy '*' -sS --max-time 10 --resolve "$DOMAIN:443:127.0.0.1" -o /dev/null -w '%{http_code}' "https://$DOMAIN/api/seo/radar/v1?q=gestao-rural")"
+LEGACY_STATUS="$(curl --noproxy '*' -sS --max-time 10 --resolve "$DOMAIN:443:127.0.0.1" -o /dev/null -w '%{http_code}' "https://$DOMAIN/api/seo/radar?q=gestao-rural")"
 printf 'HTTPS_HOME=%s\nRADAR_SEM_LOGIN=%s\nROTA_ANTIGA_NO_SUBDOMINIO=%s\n' "$HOME_STATUS" "$AUTH_STATUS" "$LEGACY_STATUS"
 if [ "$HOME_STATUS" != 200 ] || [ "$AUTH_STATUS" != 401 ] || [ "$LEGACY_STATUS" != 404 ]; then
   echo "ABORTADO: resultado HTTP fora do esperado."
