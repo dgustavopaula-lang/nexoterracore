@@ -19,6 +19,7 @@ rollback() {
   if [ "$CREATED" -eq 1 ]; then
     echo "FALHA NA INSTALACAO. Revertendo apenas o vhost novo..."
     rm -f -- "$ENABLED" "$CONF"
+    rm -f -- "$WEB/index.html"
     if nginx -t >/dev/null 2>&1; then
       systemctl reload nginx || true
     else
