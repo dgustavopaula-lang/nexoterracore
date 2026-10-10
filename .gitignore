@@ -3,3 +3,9 @@ node_modules/
 .env
 .env.*
 !.env.example
+
+# Ambientes Python locais (nao versionar)
+python/.venv/
+.venv/
+__pycache__/
+*.pyc
