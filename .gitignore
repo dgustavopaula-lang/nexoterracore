@@ -3,3 +3,29 @@ node_modules/
 .env
 .env.*
 !.env.example
+
+# Limpeza local
+*.bak
+*.backup*
+*.pre-*
+_backups/
+_backup-consolidacao-*/
+_consolidacao-*/
+_migracao-core-*/
+
+# Backups locais - padrões completos
+*.bak
+*.bak-*
+*.backup
+*.backup-*
+*.backup.*
+*.pre-*
+*.pre.*
+*.orig
+*~
+
+# Backups internos
+backend/backups/
+
+# Dados locais de treinamento/runtime
+backend/data/turing-training/*.jsonl

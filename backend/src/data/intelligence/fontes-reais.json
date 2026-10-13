@@ -1,0 +1,65 @@
+{
+  "schema": "nexoterracore.intelligence.sources.v1",
+  "politica": {
+    "inventar_dados": false,
+    "exigir_fonte": true,
+    "exigir_data_referencia": true,
+    "simulation_default": false
+  },
+  "agentes": {
+    "turing": {
+      "papel": "chefe_inteligencia_cybersecurity",
+      "coordena": ["guga", "gaia", "nexus", "argos"]
+    },
+    "guga": {
+      "dominio": ["Angola", "Malanje", "Cacuso"],
+      "fontes": ["ine_angola_censo_2024"]
+    },
+    "gaia": {
+      "dominio": ["Brasil", "Centro-Oeste", "agro", "territorio", "clima"],
+      "fontes": ["ibge", "inmet"]
+    },
+    "nexus": {
+      "dominio": ["API", "integracoes", "catalogo_de_fontes"]
+    },
+    "argos": {
+      "dominio": ["integridade", "auditoria", "cybersecurity"],
+      "subordinado_a": "turing"
+    }
+  },
+  "fontes": {
+    "ine_angola_censo_2024": {
+      "instituicao": "Instituto Nacional de Estatistica de Angola",
+      "territorio": "Angola/Malanje",
+      "referencia": "Censo 2024",
+      "status": "REAL",
+      "simulation": false
+    },
+    "ibge": {
+      "instituicao": "Instituto Brasileiro de Geografia e Estatistica",
+      "territorio": "Brasil/Centro-Oeste",
+      "status": "REAL",
+      "simulation": false
+    },
+    "inmet": {
+      "instituicao": "Instituto Nacional de Meteorologia",
+      "territorio": "Brasil/Centro-Oeste",
+      "status": "REAL",
+      "simulation": false
+    }
+  },
+  "conhecimento_validado": [
+    {
+      "id": "AO-MALANJE-CENSO-2024-POP",
+      "agente": "guga",
+      "territorio": "Malanje, Angola",
+      "indicador": "populacao_residente",
+      "valor": 1298250,
+      "unidade": "pessoas",
+      "data_referencia": "2024",
+      "fonte": "INE Angola - Resultados Definitivos RGPH 2024",
+      "status": "REAL",
+      "simulation": false
+    }
+  ]
+}

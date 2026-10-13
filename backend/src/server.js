@@ -1,3 +1,5 @@
+const { criarRotasAgroConexSync } = require("./routes/agroconex-sync");
+const { criarRotasAgroConex } = require("./routes/agroconex");
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
@@ -36,6 +38,10 @@ const { cobrarNTCoins } = require('./middleware/ntcoins');
 const ntcoinsWebhookRoutes = require('./routes/ntcoins-webhook');
 const ntcoinsPaypalRoutes = require('./routes/ntcoins-paypal');
 const criarRotasTuringCentroOeste = require("./routes/turing-centro-oeste");
+const criarRotasTuringAngola = require("./routes/turing-angola");
+const criarRotasWhatsApp = require("./routes/whatsapp");
+const criarRotasTuringTraining = require("./routes/turing-training");
+const criarRotasTuringConhecimento = require("./routes/turing-conhecimento");
 
 
 const app = express();
@@ -58,6 +64,7 @@ const origensPermitidas = [
   "https://gustavopaulasantos.com.br",
   "https://console.gustavopaulasantos.com.br",
   "https://turing.gustavopaulasantos.com.br",
+  "https://agrocore.gustavopaulasantos.com.br",
   "http://127.0.0.1:5500",
   "http://localhost:5500",
   "http://127.0.0.1:5501",
@@ -155,7 +162,13 @@ app.use(
   })
 );
 
-app.use(express.json({ limit: "64kb", strict: true }));
+app.use(express.json({
+  limit: "64kb",
+  strict: true,
+  verify: (req, res, buf) => {
+    req.rawBody = Buffer.from(buf);
+  }
+}));
 app.use(exigirJson);
 
 function lerId(valor) {
@@ -487,12 +500,39 @@ function listarFazendasPermitidas(vinculos) {
   }));
 }
 
+async function registrarFalhaLogin(motivo) {
+  try {
+    await pool.query(
+      `INSERT INTO turing_security_events
+        (agente, evento, estado, banco, modo, duracao_ms, contexto)
+       VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb)`,
+      [
+        "Turing",
+        "auth_login_failed",
+        "WARN",
+        "conectado",
+        "observacao",
+        0,
+        JSON.stringify({
+          regra: "SEC.AUTH.FAILS v4",
+          origem: "/api/auth/login",
+          motivo,
+          dados_sensiveis_registrados: false
+        })
+      ]
+    );
+  } catch (err) {
+    console.error(`Turing SEC.AUTH.FAILS: falha ao registrar evento: ${err?.message || "erro desconhecido"}`);
+  }
+}
+
 app.post("/api/auth/login", limiteLogin, async (req, res) => {
   const email =
     typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
   const senha = typeof req.body?.senha === "string" ? req.body.senha : "";
 
   if (!email || email.length > 254 || !senha) {
+    await registrarFalhaLogin("credenciais_malformadas");
     return res.status(400).json({ erro: "Credenciais inválidas." });
   }
 
@@ -514,6 +554,7 @@ app.post("/api/auth/login", limiteLogin, async (req, res) => {
       : await verificarSenha(senha, "00".repeat(64), "00".repeat(32));
 
     if (!linhaUsuario || !senhaValida) {
+      await registrarFalhaLogin("credenciais_invalidas");
       return res.status(401).json({ erro: "E-mail ou senha inválidos." });
     }
 
@@ -2200,12 +2241,24 @@ app.use(
 );
 
 app.use("/api/turing/centro-oeste", criarRotasTuringCentroOeste(pool));
+app.use("/api/turing/angola", criarRotasTuringAngola({ pool, autenticar }));
+app.use("/api/whatsapp", criarRotasWhatsApp({ pool }));
+
+app.use("/api/agroconex/sync", criarRotasAgroConexSync({ pool, autenticar }));
+app.use("/api/agroconex", criarRotasAgroConex({ pool, autenticar }));
+
+
+// Turing Security Training Lab
+app.use("/api/turing/training", criarRotasTuringTraining({ autenticar }));
+app.use("/api/turing/conhecimento", criarRotasTuringConhecimento({ pool, autenticar }));
 
 app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });
 });
 
 app.use((erro, req, res, next) => {
+
+
   if (res.headersSent) {
     return next(erro);
   }
@@ -2291,6 +2344,8 @@ async function executarCicloTuringSecurity() {
   let erro = null;
   let bancoOk = false;
   let persistido = false;
+  let falhasLogin10m = 0;
+  let estadoRegraAuth = "PASS";
 
   try {
     await pool.query("SELECT 1");
@@ -2299,6 +2354,33 @@ async function executarCicloTuringSecurity() {
     estado = "ALERT";
     banco = "indisponivel";
     erro = err?.message || "erro desconhecido";
+  }
+
+  if (bancoOk) {
+    try {
+      const resultadoFalhas = await pool.query(
+        `SELECT COUNT(*)::int AS total
+           FROM turing_security_events
+          WHERE evento = 'auth_login_failed'
+            AND criado_em >= NOW() - INTERVAL '10 minutes'`
+      );
+
+      falhasLogin10m = Number(resultadoFalhas.rows[0]?.total || 0);
+
+      estadoRegraAuth =
+        falhasLogin10m >= 5 ? "ALERT" :
+        falhasLogin10m >= 3 ? "WARN" :
+        "PASS";
+
+      if (estadoRegraAuth === "ALERT") {
+        estado = "ALERT";
+      } else if (estadoRegraAuth === "WARN" && estado === "PASS") {
+        estado = "WARN";
+      }
+    } catch (err) {
+      if (estado !== "ALERT") estado = "WARN";
+      erro = `falha ao avaliar SEC.AUTH.FAILS v4: ${err?.message || "erro desconhecido"}`;
+    }
   }
 
   if (bancoOk) {
@@ -2317,7 +2399,11 @@ async function executarCicloTuringSecurity() {
           JSON.stringify({
             origem: "backend",
             persistencia: "audit_only",
-            dados_operacionais_alterados: false
+            dados_operacionais_alterados: false,
+            regra: "SEC.AUTH.FAILS v4",
+            janela_minutos: 10,
+            falhas_login: falhasLogin10m,
+            estado_regra_auth: estadoRegraAuth
           })
         ]
       );
@@ -2338,6 +2424,9 @@ async function executarCicloTuringSecurity() {
     modo: "observacao",
     persistencia: "audit_only",
     persistido,
+    regraAuth: "SEC.AUTH.FAILS v4",
+    falhasLogin10m,
+    estadoRegraAuth,
     duracaoMs: Date.now() - inicio,
     horario: new Date().toISOString(),
     ...(erro ? { erro } : {})
