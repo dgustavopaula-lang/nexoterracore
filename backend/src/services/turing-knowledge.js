@@ -136,6 +136,24 @@ function consultarConhecimentoInterno(perguntaOriginal) {
     );
   }
 
+
+  // Avicultura simples
+  if (contem(pergunta, [
+    "producao de ovos",
+    "controlar ovos",
+    "quantos ovos",
+    "galinhas poedeiras",
+    "criacao de galinhas",
+    "controle de galinhas",
+    "pintinhos",
+    "reproducao de galinhas"
+  ])) {
+    return resposta(
+      "Para organizar uma pequena criação, registre diariamente quantidade de ovos, número de galinhas, alimentação, nascimentos de pintinhos, vendas e perdas. Com poucos dados por dia, o produtor consegue acompanhar produção, reprodução e resultado da criação pelo celular.",
+      "turing:knowledge:agro-avicultura:v1"
+    );
+  }
+
 // Tokens e créditos internos
   if (contem(pergunta, ["token de acesso", "bearer token", "token bearer", "token de autenticacao"])) {
     return resposta(
