@@ -137,20 +137,42 @@ function consultarConhecimentoInterno(perguntaOriginal) {
   }
 
 
-  // Avicultura simples
+  // Produção de ovos
   if (contem(pergunta, [
     "producao de ovos",
     "controlar ovos",
     "quantos ovos",
+    "ovos por dia"
+  ])) {
+    return resposta(
+      "Registre diariamente a quantidade de ovos coletados, a data e o número aproximado de galinhas em produção. Assim você consegue comparar dias e acompanhar se a produção está aumentando ou diminuindo.",
+      "turing:knowledge:agro-ovos:v1"
+    );
+  }
+
+  // Criação de galinhas
+  if (contem(pergunta, [
     "galinhas poedeiras",
     "criacao de galinhas",
     "controle de galinhas",
-    "pintinhos",
-    "reproducao de galinhas"
+    "quantas galinhas"
   ])) {
     return resposta(
-      "Para organizar uma pequena criação, registre diariamente quantidade de ovos, número de galinhas, alimentação, nascimentos de pintinhos, vendas e perdas. Com poucos dados por dia, o produtor consegue acompanhar produção, reprodução e resultado da criação pelo celular.",
-      "turing:knowledge:agro-avicultura:v1"
+      "Para controlar a criação de galinhas, registre quantidade de aves, alimentação, postura, vendas, perdas e observações. O controle pode ser simples e feito diariamente pelo celular.",
+      "turing:knowledge:agro-galinhas:v1"
+    );
+  }
+
+  // Pintinhos e reprodução
+  if (contem(pergunta, [
+    "pintinhos",
+    "reproducao de galinhas",
+    "nascimento de pintinhos",
+    "controle de pintinhos"
+  ])) {
+    return resposta(
+      "Registre os nascimentos de pintinhos por data, quantidade, origem e observações. Depois acompanhe crescimento, perdas e separação por lote para entender melhor o resultado da reprodução.",
+      "turing:knowledge:agro-pintinhos:v1"
     );
   }
 
