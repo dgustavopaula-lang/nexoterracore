@@ -29,7 +29,7 @@ function consultarConhecimentoInterno(perguntaOriginal) {
   const conceitual = perguntaConceitual(pergunta);
 
   // Identidade e arquitetura principal
-  if (contem(pergunta, ["quem e turing", "o que e turing", "o que e o turing", "turing", "agente turing", "chat turing"])) {
+  if (contem(pergunta, ["quem e turing", "o que e turing", "o que e o turing", "agente turing", "chat turing"])) {
     return resposta(
       "Turing é o agente de inteligência artificial integrado ao NexoTerraCore. Ele interpreta perguntas, utiliza conhecimento interno, trabalha com dados disponíveis no contexto autorizado e pode apoiar análises, decisões e automações conforme os recursos disponíveis."
     );
