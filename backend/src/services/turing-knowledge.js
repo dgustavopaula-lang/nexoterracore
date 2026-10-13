@@ -125,6 +125,8 @@ function consultarConhecimentoInterno(perguntaOriginal) {
   if (contem(pergunta, [
     "registrar despesa",
     "controle de despesas",
+    "controlar despesas",
+    "despesas da fazenda",
     "gastos da fazenda",
     "quanto estou gastando"
   ])) {
