@@ -65,7 +65,76 @@ function consultarConhecimentoInterno(perguntaOriginal) {
     );
   }
 
-  // Tokens e créditos internos
+
+  // Pequeno produtor rural / caderno digital
+  if (contem(pergunta, [
+    "pequeno produtor",
+    "controlo minha producao no caderno",
+    "controlar producao no caderno",
+    "organizar pelo celular",
+    "caderno digital",
+    "producao no caderno"
+  ])) {
+    return resposta(
+      "Comece simples: use o celular para registrar produção diária, estoque, vendas, despesas e observações. O objetivo é substituir o caderno aos poucos, sem complicar a rotina. Um mini software pode funcionar como caderno digital, com poucos campos e acesso rápido.",
+      "turing:knowledge:agro-pequeno-produtor:v1"
+    );
+  }
+
+
+  // Produção rural
+  if (contem(pergunta, [
+    "registrar producao",
+    "producao diaria",
+    "quanto produzi",
+    "controle de producao"
+  ])) {
+    return resposta(
+      "Registre diariamente a quantidade produzida, a data e uma observação curta. Comece com poucos campos. Depois você poderá comparar períodos e perceber aumento ou queda da produção.",
+      "turing:knowledge:agro-producao:v1"
+    );
+  }
+
+  // Estoque rural
+  if (contem(pergunta, [
+    "controlar estoque",
+    "estoque de milho",
+    "estoque da fazenda",
+    "quanto tenho em estoque"
+  ])) {
+    return resposta(
+      "Para controlar o estoque, registre produto, quantidade disponível, entrada, saída e data. O sistema deve mostrar rapidamente quanto ainda existe, sem exigir planilhas complicadas.",
+      "turing:knowledge:agro-estoque:v1"
+    );
+  }
+
+  // Vendas rurais
+  if (contem(pergunta, [
+    "registrar venda",
+    "controle de vendas",
+    "vendi minha producao",
+    "venda da producao"
+  ])) {
+    return resposta(
+      "Em cada venda, registre produto, quantidade, valor recebido, comprador e data. Isso permite acompanhar quanto foi vendido e quanto dinheiro entrou, mesmo usando apenas o celular.",
+      "turing:knowledge:agro-vendas:v1"
+    );
+  }
+
+  // Despesas rurais
+  if (contem(pergunta, [
+    "registrar despesa",
+    "controle de despesas",
+    "gastos da fazenda",
+    "quanto estou gastando"
+  ])) {
+    return resposta(
+      "Registre cada gasto com descrição, valor, categoria e data. Comece pelas despesas principais, como ração, combustível, manutenção e insumos. O objetivo é saber para onde o dinheiro está indo.",
+      "turing:knowledge:agro-despesas:v1"
+    );
+  }
+
+// Tokens e créditos internos
   if (contem(pergunta, ["token de acesso", "bearer token", "token bearer", "token de autenticacao"])) {
     return resposta(
       "Bearer token é um token utilizado para autenticação e autorização de acesso à API ou ao sistema. Ele representa autorização de acesso e não possui função de crédito, pagamento ou investimento."
