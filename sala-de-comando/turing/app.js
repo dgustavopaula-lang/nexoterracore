@@ -2,7 +2,7 @@
   "use strict";
 
   const API_BASE = ["localhost", "127.0.0.1"].includes(window.location.hostname)
-    ? "http://localhost:3000"
+    ? "https://api.gustavopaulasantos.com.br"
     : "https://api.gustavopaulasantos.com.br";
 
   const paramsIniciais = new URLSearchParams(window.location.search);

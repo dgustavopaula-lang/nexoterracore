@@ -38,6 +38,8 @@
         <button class="menu-item" data-view="mapas">Mapas</button>
         <button class="menu-item" data-view="api">API / Control Plane</button>
         <button class="menu-item" data-view="turing">Turing</button>
+        <button class="menu-item" data-view="angola">Angola Radar</button>
+        <button class="menu-item" data-view="centro-oeste">Centro-Oeste</button>
         <button class="menu-item" data-view="administracao">Administração</button>
       </nav>
 
@@ -562,6 +564,78 @@
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- ═══════════════ ANGOLA RADAR ═══════════════ -->
+      <section id="view-angola" class="content view">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow">GUGA · INTELIGÊNCIA</span>
+            <h2>Angola Radar</h2>
+            <p>Sinais georreferenciados monitorados pelo agente Guga — PIPE, sementes, financiamento e geolocalização.</p>
+          </div>
+          <button class="btn-secondary" id="btnAngolaAtualizar">Atualizar</button>
+        </div>
+
+        <div class="overview-grid" id="angolaResumoGrid">
+          <article class="info-card">
+            <span>Total Sinais</span>
+            <strong id="angolaTotal">—</strong>
+          </article>
+          <article class="info-card">
+            <span>Validados</span>
+            <strong id="angolaValidados">—</strong>
+          </article>
+          <article class="info-card">
+            <span>Monitorando</span>
+            <strong id="angolaMonitorando">—</strong>
+          </article>
+          <article class="info-card">
+            <span>Novos</span>
+            <strong id="angolaNovos">—</strong>
+          </article>
+          <article class="info-card">
+            <span>Setores</span>
+            <strong id="angolaSetores">—</strong>
+          </article>
+          <article class="info-card">
+            <span>Última Coleta</span>
+            <strong id="angolaUltimaColeta">—</strong>
+          </article>
+        </div>
+
+        <div class="section-header" style="margin-top:1.5rem">
+          <div><h3 style="margin:0">Sinais Recentes</h3></div>
+          <div style="display:flex;gap:.5rem;align-items:center">
+            <select id="angolaFiltroStatus" class="btn-secondary" style="padding:.4rem .8rem">
+              <option value="">Todos status</option>
+              <option value="validado">Validado</option>
+              <option value="monitorando">Monitorando</option>
+              <option value="novo">Novo</option>
+            </select>
+            <input id="angolaFiltroTermo" type="text" placeholder="Buscar..." class="btn-secondary" style="padding:.4rem .8rem;min-width:160px">
+          </div>
+        </div>
+
+        <div id="angolaSinaisLista" class="tabela-wrapper">
+          <p style="color:var(--text-muted,#888);padding:1rem">Carregando sinais…</p>
+        </div>
+      </section>
+
+      <!-- ═══════════════ CENTRO-OESTE ═══════════════ -->
+      <section id="view-centro-oeste" class="content view">
+        <div class="section-header">
+          <div>
+            <span class="eyebrow">GAIA · INTELIGÊNCIA</span>
+            <h2>Centro-Oeste</h2>
+            <p>Oportunidades comerciais monitoradas pelo agente Gaia — Goiás, Mato Grosso e Mato Grosso do Sul.</p>
+          </div>
+          <button class="btn-secondary" id="btnCentroOesteAtualizar">Atualizar</button>
+        </div>
+
+        <div id="centroOesteLista" class="tabela-wrapper">
+          <p style="color:var(--text-muted,#888);padding:1rem">Carregando oportunidades…</p>
         </div>
       </section>
 
@@ -1132,6 +1206,7 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 
+  <script src="./js/inteligencia.js"></script>
   <script src="./ntcoins-wallet.js"></script>
 </body>
 </html>

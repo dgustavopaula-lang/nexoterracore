@@ -1,10 +1,11 @@
 const SalaDeComando = {
   versao: "0.2.0",
   apiBase: ["localhost", "127.0.0.1"].includes(window.location.hostname)
-    ? "http://localhost:3000"
-    : "https://nexoterracore-api.onrender.com",
+    ? "https://api.gustavopaulasantos.com.br"
+    : "https://api.gustavopaulasantos.com.br",
   token: null,
   desafioLogin: null,
+  organizacaoId: null,
 
   async verificarAPI() {
     const status = document.querySelector(".system-status strong");
@@ -46,6 +47,12 @@ const SalaDeComando = {
 
         if (destino === "imoveis" && this.token) {
           this.carregarImoveis();
+        }
+        if (destino === "angola" && this.token) {
+          NexoInteligencia.carregarAngola();
+        }
+        if (destino === "centro-oeste" && this.token) {
+          NexoInteligencia.carregarCentroOeste();
         }
       });
     });
@@ -192,6 +199,7 @@ const SalaDeComando = {
     this.token = sessao.token;
     window.nexoAuthToken = sessao.token;
     this.desafioLogin = null;
+    this.organizacaoId = sessao.organizacao?.id || null;
 
     // Libera visualmente o Console após autenticação concluída
     document

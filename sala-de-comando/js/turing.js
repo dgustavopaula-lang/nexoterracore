@@ -5,8 +5,8 @@ const TuringChat = {
     return typeof SalaDeComando !== "undefined"
       ? SalaDeComando.apiBase
       : (["localhost", "127.0.0.1"].includes(window.location.hostname)
-          ? "http://localhost:3000"
-          : "https://nexoterracore-api.onrender.com");
+          ? "https://api.gustavopaulasantos.com.br"
+          : "https://api.gustavopaulasantos.com.br");
   },
 
   get token() {
