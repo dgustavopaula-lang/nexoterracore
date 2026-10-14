@@ -145,31 +145,46 @@ function criarRotasTuringConhecimento({ pool, autenticar }) {
         });
       }
 
-      const resultado = await pool.query(
-        `UPDATE turing_conhecimento
-            SET status = $1,
-                aprovado_por = CASE
-                  WHEN $1 = 'aprovado' THEN $2
-                  ELSE NULL
-                END,
-                aprovado_em = CASE
-                  WHEN $1 = 'aprovado' THEN NOW()
-                  ELSE NULL
-                END,
-                versao = versao + 1,
-                atualizado_em = NOW()
-          WHERE id = $3
-            AND organizacao_id = $4
-            AND status = 'rascunho'
-          RETURNING id, area, status, versao,
-                    aprovado_por, aprovado_em`,
-        [
-          status,
-          req.auth.usuarioId,
-          id,
-          req.auth.organizacaoId
-        ]
-      );
+      let resultado;
+
+      if (status === "aprovado") {
+        resultado = await pool.query(
+          `UPDATE turing_conhecimento
+              SET status = 'aprovado',
+                  aprovado_por = $1,
+                  aprovado_em = NOW(),
+                  versao = versao + 1,
+                  atualizado_em = NOW()
+            WHERE id = $2
+              AND organizacao_id = $3
+              AND status = 'rascunho'
+            RETURNING id, area, status, versao,
+                      aprovado_por, aprovado_em`,
+          [
+            req.auth.usuarioId,
+            id,
+            req.auth.organizacaoId
+          ]
+        );
+      } else {
+        resultado = await pool.query(
+          `UPDATE turing_conhecimento
+              SET status = 'rejeitado',
+                  aprovado_por = NULL,
+                  aprovado_em = NULL,
+                  versao = versao + 1,
+                  atualizado_em = NOW()
+            WHERE id = $1
+              AND organizacao_id = $2
+              AND status = 'rascunho'
+            RETURNING id, area, status, versao,
+                      aprovado_por, aprovado_em`,
+          [
+            id,
+            req.auth.organizacaoId
+          ]
+        );
+      }
 
       if (!resultado.rowCount) {
         return res.status(409).json({
