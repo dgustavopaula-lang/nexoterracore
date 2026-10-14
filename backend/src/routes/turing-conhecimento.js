@@ -206,8 +206,10 @@ function criarRotasTuringConhecimento({ pool, autenticar }) {
            FROM turing_conhecimento
           WHERE organizacao_id = $1
             AND status = 'aprovado'
-            AND ($2 = '' OR pergunta ILIKE '%' ||
-                 replace(replace(replace($2, E'\\', E'\\\\'), '%', E'\\%'), '_', E'\\_') || '%')
+            AND (
+              $2::text = ''
+              OR POSITION(LOWER($2::text) IN LOWER(pergunta)) > 0
+            )
           ORDER BY aprovado_em DESC, id DESC
           LIMIT 20`,
         [req.auth.organizacaoId, pergunta]
