@@ -240,9 +240,21 @@ function criarRotasTuringTraining({ autenticar } = {}) {
 
   router.post("/feedback", autenticar, (req, res) => {
     const adminEmail = (process.env.TURING_TRAINING_ADMIN_EMAIL || "").trim().toLowerCase();
-    if (!adminEmail || !req.auth?.usuarioEmail ||
-        req.auth.usuarioEmail.toLowerCase() !== adminEmail) {
-      return res.status(403).json({ erro: "Treinamento restrito ao administrador." });
+
+    const usuarioAdmin =
+      !!adminEmail &&
+      !!req.auth?.usuarioEmail &&
+      req.auth.usuarioEmail.toLowerCase() === adminEmail;
+
+    const apiKeyTreinamento =
+      req.auth?.tipo === "api_key" &&
+      Array.isArray(req.auth?.scopes) &&
+      req.auth.scopes.includes("turing:training");
+
+    if (!usuarioAdmin && !apiKeyTreinamento) {
+      return res.status(403).json({
+        erro: "Treinamento restrito ao administrador ou API key autorizada."
+      });
     }
     const mensagem =
       typeof req.body?.mensagem === "string"
