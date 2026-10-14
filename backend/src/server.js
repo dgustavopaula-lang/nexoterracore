@@ -42,6 +42,8 @@ const criarRotasTuringAngola = require("./routes/turing-angola");
 const criarRotasWhatsApp = require("./routes/whatsapp");
 const criarRotasTuringTraining = require("./routes/turing-training");
 const criarRotasTuringConhecimento = require("./routes/turing-conhecimento");
+const criarRotasGeoSentinel2 = require("./routes/geo-sentinel2");
+
 
 
 const app = express();
@@ -2251,6 +2253,12 @@ app.use("/api/agroconex", criarRotasAgroConex({ pool, autenticar }));
 // Turing Security Training Lab
 app.use("/api/turing/training", criarRotasTuringTraining({ autenticar }));
 app.use("/api/turing/conhecimento", criarRotasTuringConhecimento({ pool, autenticar }));
+
+app.use(
+  "/api/geo",
+  criarRotasGeoSentinel2({ autenticar })
+);
+
 
 app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });
