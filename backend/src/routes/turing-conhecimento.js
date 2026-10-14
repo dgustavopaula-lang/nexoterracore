@@ -20,16 +20,24 @@ function criarRotasTuringConhecimento({ pool, autenticar }) {
       req.auth?.usuarioEmail || ""
     ).trim().toLowerCase();
 
-    if (
-      !emailPermitido ||
-      !emailUsuario ||
-      emailUsuario !== emailPermitido ||
-      !Number.isSafeInteger(req.auth?.organizacaoId) ||
-      !Number.isSafeInteger(req.auth?.usuarioId)
-    ) {
+    const usuarioAdmin =
+      !!emailPermitido &&
+      !!emailUsuario &&
+      emailUsuario === emailPermitido &&
+      Number.isSafeInteger(req.auth?.organizacaoId) &&
+      Number.isSafeInteger(req.auth?.usuarioId);
+
+    const apiKeyTreinamento =
+      req.auth?.tipo === "api_key" &&
+      Number.isSafeInteger(req.auth?.organizacaoId) &&
+      Number.isSafeInteger(req.auth?.usuarioId) &&
+      Array.isArray(req.auth?.scopes) &&
+      req.auth.scopes.includes("turing:training");
+
+    if (!usuarioAdmin && !apiKeyTreinamento) {
       return res.status(403).json({
         ok: false,
-        erro: "Acesso administrativo necessário."
+        erro: "Acesso administrativo ou escopo turing:training necessário."
       });
     }
 
