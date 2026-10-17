@@ -1,0 +1,5 @@
+GPS.dev Console V2
+API Central: preservar
+Console antigo: preservar
+Novo frontend: desenvolvimento isolado
+Publicação: somente após testes
