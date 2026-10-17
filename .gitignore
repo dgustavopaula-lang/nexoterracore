@@ -29,3 +29,9 @@ backend/backups/
 
 # Dados locais de treinamento/runtime
 backend/data/turing-training/*.jsonl
+
+# backups locais
+backups/
+gpsdev-backup-*/
+*.tar.gz
+*.bak*
