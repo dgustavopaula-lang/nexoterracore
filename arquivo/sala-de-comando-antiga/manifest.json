@@ -1,0 +1,25 @@
+{
+  "name": "NexoTerraCore",
+  "short_name": "NexoTerraCore",
+  "description": "Sala de Comando e Turing AI do NexoTerraCore",
+  "start_url": "./painel.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#071419",
+  "theme_color": "#071419",
+  "icons": [
+    {
+      "src": "./icons/nexoterracore-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/nexoterracore-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
