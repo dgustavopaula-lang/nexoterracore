@@ -2260,6 +2260,15 @@ app.use(
 );
 
 
+// Turing Security: endpoint de saúde operacional.
+app.get("/api/turing/security/health", autenticar, (req, res) => {
+  res.json({
+    agente: "Turing Security",
+    status: turingSecurityTimer ? "ativo" : "inativo",
+    modo: "observacao"
+  });
+});
+
 app.use((req, res) => {
   res.status(404).json({ erro: "Rota não encontrada." });
 });
