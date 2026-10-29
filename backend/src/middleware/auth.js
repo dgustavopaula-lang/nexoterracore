@@ -20,7 +20,8 @@ function criarMiddlewaresAuth(pool) {
               k.id AS api_key_id,
               k.organizacao_id,
               k.nome,
-              k.scopes
+              k.scopes,
+              k.criado_por_usuario_id
             FROM api_keys k
             JOIN organizacoes o
               ON o.id = k.organizacao_id
@@ -44,7 +45,8 @@ function criarMiddlewaresAuth(pool) {
           apiKeyId: Number(apiKey.api_key_id),
           organizacaoId: Number(apiKey.organizacao_id),
           apiKeyNome: apiKey.nome,
-          scopes: apiKey.scopes || []
+          scopes: apiKey.scopes || [],
+          usuarioId: Number(apiKey.criado_por_usuario_id)
         };
 
         await pool.query(
