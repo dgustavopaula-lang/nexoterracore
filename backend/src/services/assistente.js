@@ -3,6 +3,11 @@ const { calcularMatematica } = require("./turing-math");
 const { temPermissao } = require("../security/permissions");
 const { consultarConhecimentoInterno } = require("./turing-knowledge");
 const { consultarConhecimentoGeral } = require("./turing-general-knowledge");
+const { responderTuringBrasil } = require("./turing-brasil");
+
+const {
+  responderTuringAngola
+} = require("./turing-angola-radar");
 
 const dinheiro = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -335,6 +340,26 @@ async function responderPergunta(pool, auth, perguntaOriginal) {
 
   if (matematica) {
     return matematica;
+  }
+
+  const turingBrasil = await responderTuringBrasil(
+    pool,
+    auth,
+    perguntaOriginal
+  );
+
+  if (turingBrasil) {
+    return turingBrasil;
+  }
+
+  const turingAngola = await responderTuringAngola(
+    pool,
+    auth,
+    perguntaOriginal
+  );
+
+  if (turingAngola) {
+    return turingAngola;
   }
 
   const conhecimentoInterno = consultarConhecimentoInterno(pergunta);

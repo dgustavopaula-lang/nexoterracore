@@ -3,7 +3,7 @@
 
   const API_BASE = ["localhost", "127.0.0.1"].includes(window.location.hostname)
     ? "http://localhost:3000"
-    : "https://nexoterracore-api.onrender.com";
+    : "https://api.gustavopaulasantos.com.br";
 
   const paramsIniciais = new URLSearchParams(window.location.search);
   const pacotePendenteInicial = paramsIniciais.get("comprar");

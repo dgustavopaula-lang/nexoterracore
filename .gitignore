@@ -3,3 +3,19 @@ node_modules/
 .env
 .env.*
 !.env.example
+# Runtime / dados locais
+backend/data/
+# Backups locais
+backend/backups/
+backups/
+*.bak
+*.bak-*
+*.backup
+*.backup-*
+*backup-*
+*.backup.html
+*.pre-postgresql.html
+*.backup-turing-*
+# Ambientes locais
+.venv/
+python/.venv/
